@@ -496,9 +496,8 @@ function saveScriptUrl() {
 
 function checkConnection() {
   setStatus('yellow','連線中…');
-  fetch(scriptUrl)
-    .then(function(r){return r.text();})
-    .then(function(t){setStatus('connected', t.includes('運作正常')?'已連線・資料將自動存入試算表':'已連線');})
+  fetch(scriptUrl, {mode:'no-cors'})
+    .then(function(){setStatus('connected','已連線・資料將自動存入試算表');})
     .catch(function(){setStatus('error','連線失敗，請確認網址');});
 }
 
