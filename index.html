@@ -203,7 +203,7 @@
 <div class="page active" id="page-form">
 <div class="form-wrap">
 
-  <div class="setup-card" id="setupCard">
+  <div class="setup-card" id="setupCard" style="display:none;">
     <h3>⚙️ 第一次使用請先設定 Apps Script 網址</h3>
     <input class="setup-input" type="url" id="scriptUrlInput" placeholder="貼上 Apps Script 網頁應用程式 URL">
     <button class="save-btn" onclick="saveScriptUrl()">儲存並連線</button>
@@ -420,7 +420,7 @@ var selectedAmount = 2500;
 var selectedType = '本月正常繳交';
 var isMinusType = false;
 var currentName = '';
-var scriptUrl = localStorage.getItem('scriptUrl') || '';
+var scriptUrl = 'https://script.google.com/macros/s/AKfycbyrMqk9BUoBUmpH1NOGt7GkXjjeDGf9vT5J8YxO6pI1tYSPXYo10xWD_8OFwebaJ8hUvA/exec';
 var dateMode = 'today';
 var sessionLog = []; // 今天的紀錄
 var backdateLog = []; // 補登的紀錄
@@ -438,14 +438,8 @@ window.onload = function() {
   document.getElementById('dateInput').value = today;
   document.getElementById('dateInput').max = today;
 
-  if (scriptUrl) {
-    document.getElementById('scriptUrlInput').value = scriptUrl;
-    document.getElementById('setupCard').style.display = 'none';
-    setStatus('connected','已連線・資料將自動存入試算表');
-    loadTodayData();
-  } else {
-    setStatus('yellow','尚未設定 Apps Script 網址');
-  }
+  setStatus('connected','已連線・資料將自動存入試算表');
+  loadTodayData();
   updateSubmit();
 };
 
@@ -490,7 +484,7 @@ function saveScriptUrl() {
   scriptUrl = val;
   localStorage.setItem('scriptUrl', scriptUrl);
   document.getElementById('setupCard').style.display = 'none';
-  checkConnection();
+  setStatus('connected','已連線・資料將自動存入試算表');
   loadTodayData();
 }
 
