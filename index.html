@@ -150,6 +150,9 @@
   .log-type-badge.minus{background:var(--danger-light);color:var(--danger);}
   .log-type-badge.backdate{background:var(--warn-light);color:var(--warn);}
   .log-note{font-size:12px;color:var(--muted);margin-top:3px;}
+  .log-delete-btn{display:flex;align-items:center;justify-content:flex-end;margin-top:8px;}
+  .delete-btn{padding:4px 10px;background:none;border:1px solid #fca5a5;border-radius:8px;color:var(--danger);font-size:12px;cursor:pointer;font-family:'Noto Sans TC',sans-serif;}
+  .delete-btn:active{background:var(--danger-light);}
   .log-empty{text-align:center;color:var(--muted);font-size:14px;padding:40px 20px;}
 
   /* 結帳區（只有桌機才顯示） */
@@ -505,12 +508,12 @@ function setStatus(state, text) {
   document.getElementById('statusText').textContent = text;
 }
 
-// ── 載入今日資料 ──────────────────────────────────────────
+// ── 載入今日及最近7天補登資料 ────────────────────────────
 function loadTodayData() {
   var today = getTodayStr();
-  setStatus('yellow','載入今日紀錄中…');
+  setStatus('yellow','載入紀錄中…');
 
-  fetch(scriptUrl+'?action=today&date='+encodeURIComponent(today))
+  fetch(scriptUrl+'?action=recent&date='+encodeURIComponent(today))
     .then(function(r){return r.json();})
     .then(function(res){
       if (res.status==='ok' && res.rows.length>0) {
@@ -528,7 +531,7 @@ function loadTodayData() {
 
         updateCounters();
         updateLogPage();
-        setStatus('connected','已連線・今日已載入 '+sessionLog.length+' 筆紀錄');
+        setStatus('connected','已連線・今日 '+sessionLog.length+' 筆・補登 '+backdateLog.length+' 筆');
       } else {
         setStatus('connected','已連線・資料將自動存入試算表');
       }
@@ -702,7 +705,7 @@ function updateLogPage() {
   if (sessionLog.length===0) {
     todayContainer.innerHTML = '<div style="text-align:center;color:var(--muted);font-size:13px;padding:16px 0;">今日尚無收費紀錄</div>';
   } else {
-    sessionLog.forEach(function(r){ todayContainer.appendChild(makeLogCard(r)); });
+    sessionLog.forEach(function(r,i){ todayContainer.appendChild(makeLogCard(r,i,false)); });
   }
 
   // 補登紀錄
@@ -728,7 +731,7 @@ function updateLogPage() {
       totalBackIn+=g.in; totalBackOut+=g.out;
       var parts=d.split('/'); var shortDate=parseInt(parts[1])+'/'+parseInt(parts[2]);
       summaryHtml+='<div class="backdate-date-row"><span>'+shortDate+'</span><b>'+net.toLocaleString()+' 元</b></div>';
-      g.items.forEach(function(r){ backdateItems.appendChild(makeLogCard(r)); });
+      g.items.forEach(function(r){ var idx=backdateLog.indexOf(r); backdateItems.appendChild(makeLogCard(r,idx,true)); });
     });
     var totalNet=totalBackIn+totalBackOut;
     summaryHtml+='<div class="backdate-total"><span>補登合計</span><b>'+totalNet.toLocaleString()+' 元</b></div>';
@@ -752,7 +755,7 @@ function updateLogPage() {
   document.getElementById('logEmpty').style.display = total===0?'block':'none';
 }
 
-function makeLogCard(r) {
+function makeLogCard(r, idx, isBackdate) {
   var div = document.createElement('div');
   div.className = 'log-item'+(r.minus?' minus':r.backdate?' backdate-item':'');
   var amtHtml = r.minus
@@ -769,7 +772,8 @@ function makeLogCard(r) {
       '<span class="log-type-badge '+badgeClass+'">'+r.type+'</span>'+
       '<span>'+dateLabel+'</span>'+
     '</div>'+
-    (r.note?'<div class="log-note">備註：'+r.note+'</div>':'');
+    (r.note?'<div class="log-note">備註：'+r.note+'</div>':'')+
+    '<div class="log-delete-btn"><button class="delete-btn" onclick="deleteRecord('+idx+','+!!isBackdate+')">🗑️ 刪除這筆</button></div>';
   return div;
 }
 
@@ -819,6 +823,39 @@ function nextRecord() {
     document.getElementById('roomInput').focus();
   }
   updateSubmit();
+}
+
+// ── 刪除紀錄 ─────────────────────────────────────────────
+function deleteRecord(idx, isBackdate) {
+  var log = isBackdate ? backdateLog : sessionLog;
+  var r = log[idx];
+  if (!r) return;
+
+  if (!confirm('確認刪除這筆紀錄？\n'+r.room+' '+r.name+'\n'+r.amount.toLocaleString()+' 元・'+r.type+'\n\n此操作無法復原')) return;
+
+  // 從試算表刪除並重跑清冊
+  var payload = { action: 'delete', time: r.time, room: r.room, amount: r.amount, type: r.type };
+
+  fetch(scriptUrl, { method: 'POST', body: JSON.stringify(payload) })
+    .then(function(res){ return res.json(); })
+    .then(function(data){
+      if (data.status === 'ok') {
+        // 從本地紀錄移除
+        log.splice(idx, 1);
+        // 更新今日累計
+        if (!isBackdate) {
+          sessionLog = log;
+        } else {
+          backdateLog = log;
+        }
+        updateCounters();
+        updateLogPage();
+        alert('✅ 已刪除！清冊已自動更新。');
+      } else {
+        alert('刪除失敗：'+data.message);
+      }
+    })
+    .catch(function(){ alert('刪除失敗，請確認網路連線。'); });
 }
 
 // ── 結帳 ──────────────────────────────────────────────────
