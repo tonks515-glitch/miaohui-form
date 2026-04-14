@@ -541,22 +541,28 @@ function lookupRoom(val) {
   var input = document.getElementById('roomInput');
   var display = document.getElementById('nameDisplay');
   var num = parseInt(val);
-  if (!val || val.length<3) {
-    input.className='room-input';
-    display.className='name-display empty';
-    display.innerHTML='<span>👤</span><span>輸入房號後自動顯示姓名</span>';
-    currentName=''; updateSubmit(); return;
+  if (!val || String(val).length < 3) {
+    input.className = 'room-input';
+    display.className = 'name-display empty';
+    display.innerHTML = '<span>👤</span><span>輸入房號後自動顯示姓名</span>';
+    currentName = ''; updateSubmit(); return;
   }
-  if (roomData[num]) {
-    currentName=roomData[num];
-    input.className='room-input valid';
-    display.className='name-display found';
-    display.innerHTML='<span>✓</span><b style="font-size:20px;letter-spacing:2px">'+currentName+'</b>';
+  var name = roomData[num];
+  if (name) {
+    currentName = name;
+    input.className = 'room-input valid';
+    display.className = 'name-display found';
+    var b = document.createElement('b');
+    b.style.fontSize = '20px';
+    b.style.letterSpacing = '2px';
+    b.textContent = currentName;
+    display.innerHTML = '<span>✓</span>';
+    display.appendChild(b);
   } else {
-    currentName='';
-    input.className='room-input invalid';
-    display.className='name-display not-found';
-    display.innerHTML='<span>✗</span><span>查無此房號，請確認</span>';
+    currentName = '';
+    input.className = 'room-input invalid';
+    display.className = 'name-display not-found';
+    display.innerHTML = '<span>✗</span><span>查無此房號，請確認</span>';
   }
   updateSubmit();
 }
@@ -824,7 +830,7 @@ function confirmSettle() {
   allLogs.forEach(function(r){ if(r.amount>0) periodIn+=r.amount; else periodOut+=r.amount; });
   var net = periodIn+periodOut;
 
-  if (!confirm('確認結帳？\n本期收入：'+periodIn.toLocaleString()+' 元\n本期支出：Math.abs(periodOut).toLocaleString()+' 元\n本期淨額：'+net.toLocaleString()+' 元\n\n結帳後將清零，資料存入歷史。')) return;
+  if (!confirm('確認結帳？\n本期收入：'+periodIn.toLocaleString()+' 元\n本期支出：'+Math.abs(periodOut).toLocaleString()+' 元\n本期淨額：'+net.toLocaleString()+' 元\n\n結帳後將清零，資料存入歷史。')) return;
 
   // 存入歷史
   var history = JSON.parse(localStorage.getItem('settleHistory')||'[]');
