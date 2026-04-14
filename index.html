@@ -22,7 +22,7 @@
   header h1{font-size:18px;font-weight:700;}
   header p{font-size:11px;opacity:0.8;margin-top:1px;}
   .status-bar{display:flex;align-items:center;gap:6px;font-size:11px;margin-top:4px;opacity:0.9;}
-  .status-dot{width:7px;height:7px;border-radius:50%;background:#fbbf24;flex-shrink:0;}
+  .status-dot{width:7px;height:7px;border-radius:50%;background:#4ade80;flex-shrink:0;}
   .status-dot.connected{background:#4ade80;}
   .status-dot.error{background:#f87171;}
 
@@ -231,7 +231,10 @@
   <div class="card">
     <div class="field-label"><span class="req">*</span> 房號</div>
     <input class="room-input" type="number" id="roomInput" placeholder="輸入房號"
-           inputmode="numeric" autocomplete="off" oninput="lookupRoom(this.value)">
+           inputmode="numeric" autocomplete="off"
+           oninput="lookupRoom(this.value)"
+           onkeyup="lookupRoom(this.value)"
+           onchange="lookupRoom(this.value)">
     <div class="name-display empty" id="nameDisplay">
       <span>👤</span><span>輸入房號後自動顯示姓名</span>
     </div>
@@ -438,7 +441,8 @@ window.onload = function() {
   document.getElementById('dateInput').value = today;
   document.getElementById('dateInput').max = today;
 
-  setStatus('connected','已連線・資料將自動存入試算表');
+  document.getElementById('statusDot').className='status-dot connected';
+  document.getElementById('statusText').textContent='已連線・資料將自動存入試算表';
   loadTodayData();
   updateSubmit();
 };
