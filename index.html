@@ -80,8 +80,8 @@
   .toggle-btn{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--accent);cursor:pointer;padding:4px 0;font-weight:500;background:none;border:none;font-family:'Noto Sans TC',sans-serif;}
   .toggle-btn .arrow{font-size:10px;transition:transform 0.2s;}
   .toggle-btn.open .arrow{transform:rotate(180deg);}
-  .collapsible{display:none;}
-  .collapsible.show{display:block;}
+  .collapsible{visibility:hidden;height:0;overflow:hidden;margin:0;padding:0;}
+  .collapsible.show{visibility:visible;height:auto;overflow:visible;}
   .note-input{width:100%;font-size:14px;font-family:'Noto Sans TC',sans-serif;color:var(--text);background:var(--bg);border:2px solid var(--border);border-radius:10px;padding:9px 14px;outline:none;resize:none;transition:border-color 0.2s;margin-top:8px;}
   .note-input:focus{border-color:var(--accent);}
 
