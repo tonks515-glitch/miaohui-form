@@ -441,7 +441,7 @@ window.onload = function() {
   if (scriptUrl) {
     document.getElementById('scriptUrlInput').value = scriptUrl;
     document.getElementById('setupCard').style.display = 'none';
-    checkConnection();
+    setStatus('connected','已連線・資料將自動存入試算表');
     loadTodayData();
   } else {
     setStatus('yellow','尚未設定 Apps Script 網址');
