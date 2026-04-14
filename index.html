@@ -6,158 +6,181 @@
 <title>管理費繳交登記</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap');
-
   :root {
-    --bg: #f5f4f0;
-    --card: #ffffff;
-    --accent: #2563eb;
-    --accent-light: #eff6ff;
-    --accent-mid: #bfdbfe;
-    --text: #1e293b;
-    --muted: #64748b;
-    --border: #e2e8f0;
-    --success: #16a34a;
-    --success-light: #f0fdf4;
-    --danger: #dc2626;
-    --danger-light: #fef2f2;
-    --warn: #d97706;
-    --warn-light: #fffbeb;
-    --minus: #dc2626;
-    --minus-light: #fef2f2;
-    --radius: 14px;
-    --shadow: 0 2px 12px rgba(0,0,0,0.07);
+    --bg:#f5f4f0;--card:#fff;--accent:#2563eb;--accent-light:#eff6ff;--accent-mid:#bfdbfe;
+    --text:#1e293b;--muted:#64748b;--border:#e2e8f0;
+    --success:#16a34a;--success-light:#f0fdf4;
+    --danger:#dc2626;--danger-light:#fef2f2;
+    --warn:#d97706;--warn-light:#fffbeb;
+    --radius:14px;--shadow:0 2px 12px rgba(0,0,0,0.07);
   }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+  body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:40px;}
 
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-  body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 40px; }
+  /* Header */
+  header{background:var(--accent);color:#fff;padding:16px 20px 14px;position:sticky;top:0;z-index:10;box-shadow:0 2px 8px rgba(37,99,235,0.3);}
+  header h1{font-size:18px;font-weight:700;}
+  header p{font-size:11px;opacity:0.8;margin-top:1px;}
+  .status-bar{display:flex;align-items:center;gap:6px;font-size:11px;margin-top:4px;opacity:0.9;}
+  .status-dot{width:7px;height:7px;border-radius:50%;background:#fbbf24;flex-shrink:0;}
+  .status-dot.connected{background:#4ade80;}
+  .status-dot.error{background:#f87171;}
 
-  /* ── Header ── */
-  header { background: var(--accent); color: #fff; padding: 20px 20px 16px; position: sticky; top: 0; z-index: 10; box-shadow: 0 2px 8px rgba(37,99,235,0.3); }
-  header h1 { font-size: 18px; font-weight: 700; }
-  header p { font-size: 12px; opacity: 0.8; margin-top: 2px; }
-  .status-bar { display: flex; align-items: center; gap: 6px; font-size: 11px; margin-top: 6px; opacity: 0.9; }
-  .status-dot { width: 7px; height: 7px; border-radius: 50%; background: #fbbf24; flex-shrink: 0; }
-  .status-dot.connected { background: #4ade80; }
-  .status-dot.error { background: #f87171; }
+  /* Tabs */
+  .tab-bar{display:flex;background:#fff;border-bottom:1px solid var(--border);position:sticky;top:72px;z-index:9;}
+  .tab{flex:1;padding:10px 4px;text-align:center;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;border-bottom:2.5px solid transparent;transition:all 0.15s;}
+  .tab.active{color:var(--accent);border-bottom-color:var(--accent);}
+  .page{display:none;}
+  .page.active{display:block;}
 
-  /* ── Tab bar ── */
-  .tab-bar { display: flex; background: #fff; border-bottom: 1px solid var(--border); position: sticky; top: 80px; z-index: 9; }
-  .tab { flex: 1; padding: 12px 4px; text-align: center; font-size: 13px; font-weight: 500; color: var(--muted); cursor: pointer; border-bottom: 2.5px solid transparent; transition: all 0.15s; }
-  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+  /* Form */
+  .form-wrap{padding:12px 16px;max-width:480px;margin:0 auto;display:flex;flex-direction:column;gap:10px;}
+  .card{background:var(--card);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow);}
+  .field-label{font-size:12px;font-weight:700;color:var(--muted);letter-spacing:0.8px;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+  .field-label .req{color:var(--danger);font-size:14px;}
 
-  .page { display: none; }
-  .page.active { display: block; }
+  /* 房號 */
+  .room-input{width:100%;font-size:30px;font-weight:700;font-family:'Noto Sans TC',sans-serif;color:var(--text);background:var(--bg);border:2px solid var(--border);border-radius:10px;padding:10px 16px;outline:none;letter-spacing:8px;transition:border-color 0.2s,background 0.2s;-webkit-appearance:none;}
+  .room-input:focus{border-color:var(--accent);background:var(--accent-light);}
+  .room-input.valid{border-color:var(--success);background:var(--success-light);}
+  .room-input.invalid{border-color:var(--danger);background:var(--danger-light);}
+  .name-display{margin-top:8px;padding:10px 14px;border-radius:10px;font-size:16px;font-weight:500;min-height:44px;display:flex;align-items:center;gap:10px;transition:all 0.2s;}
+  .name-display.empty{background:var(--border);color:var(--muted);font-size:13px;}
+  .name-display.found{background:var(--success-light);color:var(--success);border:1.5px solid #bbf7d0;}
+  .name-display.not-found{background:var(--danger-light);color:var(--danger);border:1.5px solid #fecaca;font-size:13px;}
 
-  /* ── Form ── */
-  .form-wrap { padding: 16px; max-width: 480px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
-  .card { background: var(--card); border-radius: var(--radius); padding: 16px; box-shadow: var(--shadow); }
-  .field-label { font-size: 12px; font-weight: 700; color: var(--muted); letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
-  .field-label .req { color: var(--danger); font-size: 14px; }
+  /* 日期 */
+  .date-row{display:flex;gap:8px;}
+  .date-chip{padding:7px 14px;border-radius:20px;border:1.5px solid var(--border);background:var(--bg);font-size:13px;font-weight:500;cursor:pointer;color:var(--text);transition:all 0.15s;font-family:'Noto Sans TC',sans-serif;}
+  .date-chip.active{background:var(--accent);border-color:var(--accent);color:#fff;}
+  .date-input-wrap{display:none;margin-top:8px;}
+  .date-input-wrap.show{display:block;}
+  .date-input{width:100%;font-size:16px;font-family:'Noto Sans TC',sans-serif;color:var(--text);background:var(--bg);border:2px solid var(--accent);border-radius:10px;padding:9px 14px;outline:none;-webkit-appearance:none;}
+  .backdate-note{font-size:11px;color:var(--warn);margin-top:4px;font-weight:500;}
 
-  /* ── 房號 ── */
-  .room-input { width: 100%; font-size: 32px; font-weight: 700; font-family: 'Noto Sans TC', sans-serif; color: var(--text); background: var(--bg); border: 2px solid var(--border); border-radius: 10px; padding: 12px 16px; outline: none; letter-spacing: 8px; transition: border-color 0.2s, background 0.2s; -webkit-appearance: none; }
-  .room-input:focus { border-color: var(--accent); background: var(--accent-light); }
-  .room-input.valid { border-color: var(--success); background: var(--success-light); }
-  .room-input.invalid { border-color: var(--danger); background: var(--danger-light); }
-  .name-display { margin-top: 10px; padding: 12px 14px; border-radius: 10px; font-size: 16px; font-weight: 500; min-height: 48px; display: flex; align-items: center; gap: 10px; transition: all 0.2s; }
-  .name-display.empty { background: var(--border); color: var(--muted); font-size: 13px; }
-  .name-display.found { background: var(--success-light); color: var(--success); border: 1.5px solid #bbf7d0; }
-  .name-display.not-found { background: var(--danger-light); color: var(--danger); border: 1.5px solid #fecaca; font-size: 13px; }
+  /* 金額 */
+  .amount-row{display:flex;gap:7px;flex-wrap:wrap;}
+  .amount-chip{padding:8px 14px;border-radius:20px;border:1.5px solid var(--border);background:var(--bg);font-size:14px;font-weight:700;cursor:pointer;color:var(--text);transition:all 0.15s;font-family:'Noto Sans TC',sans-serif;}
+  .amount-chip.active{background:var(--accent);border-color:var(--accent);color:#fff;}
+  .amount-chip:active{transform:scale(0.95);}
+  .amount-custom-wrap{margin-top:8px;display:none;}
+  .amount-custom-wrap.show{display:block;}
+  .amount-input{width:100%;font-size:20px;font-weight:700;font-family:'Noto Sans TC',sans-serif;color:var(--text);background:var(--bg);border:2px solid var(--accent);border-radius:10px;padding:9px 16px;outline:none;-webkit-appearance:none;}
+  .amount-hint{font-size:11px;color:var(--muted);margin-top:6px;line-height:1.7;}
 
-  /* ── 日期 ── */
-  .date-row { display: flex; gap: 8px; }
-  .date-chip { padding: 8px 14px; border-radius: 20px; border: 1.5px solid var(--border); background: var(--bg); font-size: 14px; font-weight: 500; cursor: pointer; color: var(--text); transition: all 0.15s; font-family: 'Noto Sans TC', sans-serif; white-space: nowrap; }
-  .date-chip.active { background: var(--accent); border-color: var(--accent); color: #fff; }
-  .date-input-wrap { display: none; margin-top: 8px; }
-  .date-input-wrap.show { display: block; }
-  .date-input { width: 100%; font-size: 16px; font-family: 'Noto Sans TC', sans-serif; color: var(--text); background: var(--bg); border: 2px solid var(--accent); border-radius: 10px; padding: 10px 14px; outline: none; -webkit-appearance: none; }
-  .backdate-note { font-size: 11px; color: var(--warn); margin-top: 5px; font-weight: 500; }
+  /* 繳費性質 - 橫排按鈕 */
+  .type-row{display:flex;gap:6px;flex-wrap:wrap;}
+  .type-chip{padding:7px 12px;border-radius:20px;border:1.5px solid var(--border);background:var(--bg);font-size:13px;font-weight:500;cursor:pointer;color:var(--text);transition:all 0.15s;font-family:'Noto Sans TC',sans-serif;white-space:nowrap;}
+  .type-chip.active{background:var(--accent);border-color:var(--accent);color:#fff;}
+  .type-chip.minus-chip{border-color:#fca5a5;}
+  .type-chip.minus-chip.active{background:var(--danger);border-color:var(--danger);color:#fff;}
+  .minus-label{font-size:10px;background:#fef2f2;color:var(--danger);padding:1px 5px;border-radius:6px;margin-left:3px;font-weight:700;}
 
-  /* ── 金額 ── */
-  .amount-row { display: flex; gap: 8px; flex-wrap: wrap; }
-  .amount-chip { padding: 10px 16px; border-radius: 20px; border: 1.5px solid var(--border); background: var(--bg); font-size: 15px; font-weight: 700; cursor: pointer; color: var(--text); transition: all 0.15s; font-family: 'Noto Sans TC', sans-serif; }
-  .amount-chip.active { background: var(--accent); border-color: var(--accent); color: #fff; }
-  .amount-chip:active { transform: scale(0.95); }
-  .amount-custom-wrap { margin-top: 10px; display: none; }
-  .amount-custom-wrap.show { display: block; }
-  .amount-input { width: 100%; font-size: 22px; font-weight: 700; font-family: 'Noto Sans TC', sans-serif; color: var(--text); background: var(--bg); border: 2px solid var(--accent); border-radius: 10px; padding: 10px 16px; outline: none; -webkit-appearance: none; }
+  /* 備註（收起/展開） */
+  .toggle-btn{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--accent);cursor:pointer;padding:4px 0;font-weight:500;background:none;border:none;font-family:'Noto Sans TC',sans-serif;}
+  .toggle-btn .arrow{font-size:10px;transition:transform 0.2s;}
+  .toggle-btn.open .arrow{transform:rotate(180deg);}
+  .collapsible{display:none;}
+  .collapsible.show{display:block;}
+  .note-input{width:100%;font-size:14px;font-family:'Noto Sans TC',sans-serif;color:var(--text);background:var(--bg);border:2px solid var(--border);border-radius:10px;padding:9px 14px;outline:none;resize:none;transition:border-color 0.2s;margin-top:8px;}
+  .note-input:focus{border-color:var(--accent);}
 
-  /* ── 繳費性質 ── */
-  .type-list { display: flex; flex-direction: column; gap: 8px; }
-  .type-item { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 10px; border: 1.5px solid var(--border); cursor: pointer; transition: all 0.15s; font-size: 15px; }
-  .type-item.active { border-color: var(--accent); background: var(--accent-light); }
-  .type-item.minus-type { border-color: #fca5a5; }
-  .type-item.minus-type.active { border-color: var(--danger); background: var(--danger-light); }
-  .type-item:active { transform: scale(0.98); }
-  .type-dot { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--border); flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
-  .type-item.active .type-dot { border-color: var(--accent); background: var(--accent); }
-  .type-item.minus-type.active .type-dot { border-color: var(--danger); background: var(--danger); }
-  .type-item.active .type-dot::after { content: ''; width: 8px; height: 8px; border-radius: 50%; background: #fff; }
-  .minus-badge { font-size: 10px; background: #fef2f2; color: var(--danger); padding: 1px 6px; border-radius: 6px; margin-left: 4px; font-weight: 700; }
+  /* 現金核對（收起/展開） */
+  .cash-card{border:1.5px solid #fca5a5;}
+  .last-badge{display:inline-block;background:#fef2f2;color:var(--danger);font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;margin-bottom:6px;}
+  .cash-summary{margin-top:10px;padding:10px 12px;background:var(--bg);border-radius:8px;display:flex;flex-direction:column;gap:6px;}
+  .cash-row{display:flex;justify-content:space-between;align-items:center;font-size:13px;}
+  .cash-row b{font-size:16px;font-weight:700;}
+  .cash-divider{border:none;border-top:1px dashed var(--border);}
+  .check-result{margin-top:6px;font-size:13px;font-weight:700;text-align:center;padding:6px 10px;border-radius:8px;display:none;}
 
-  /* ── 備註 ── */
-  .note-input { width: 100%; font-size: 15px; font-family: 'Noto Sans TC', sans-serif; color: var(--text); background: var(--bg); border: 2px solid var(--border); border-radius: 10px; padding: 10px 14px; outline: none; resize: none; transition: border-color 0.2s; }
-  .note-input:focus { border-color: var(--accent); }
-  .hint-text { font-size: 11px; color: var(--muted); margin-top: 5px; }
+  /* 送出 */
+  .submit-btn{width:100%;padding:14px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius);font-size:16px;font-weight:700;font-family:'Noto Sans TC',sans-serif;cursor:pointer;letter-spacing:1px;transition:all 0.15s;box-shadow:0 4px 14px rgba(37,99,235,0.35);display:flex;align-items:center;justify-content:center;gap:8px;}
+  .submit-btn:active{transform:scale(0.98);opacity:0.9;}
+  .submit-btn:disabled{background:var(--border);color:var(--muted);box-shadow:none;cursor:not-allowed;}
+  .spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,0.4);border-top-color:#fff;border-radius:50%;animation:spin 0.7s linear infinite;display:none;}
+  @keyframes spin{to{transform:rotate(360deg);}}
 
-  /* ── 現金核對 ── */
-  .cash-card { border: 1.5px solid #fca5a5; }
-  .last-badge { display: inline-block; background: #fef2f2; color: var(--danger); font-size: 11px; font-weight: 700; padding: 2px 10px; border-radius: 10px; margin-bottom: 8px; }
-  .cash-summary { margin-top: 12px; padding: 12px; background: var(--bg); border-radius: 8px; display: flex; flex-direction: column; gap: 8px; }
-  .cash-row { display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
-  .cash-row b { font-size: 18px; font-weight: 700; }
-  .cash-divider { border: none; border-top: 1px dashed var(--border); }
-  .check-result { margin-top: 6px; font-size: 13px; font-weight: 700; text-align: center; padding: 7px 10px; border-radius: 8px; display: none; }
+  /* 累計列 */
+  .counter-bar{background:var(--accent-light);border:1px solid var(--accent-mid);border-radius:10px;padding:9px 14px;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--accent);}
+  .counter-bar b{font-size:16px;font-weight:700;}
 
-  /* ── 送出按鈕 ── */
-  .submit-btn { width: 100%; padding: 16px; background: var(--accent); color: #fff; border: none; border-radius: var(--radius); font-size: 17px; font-weight: 700; font-family: 'Noto Sans TC', sans-serif; cursor: pointer; letter-spacing: 1px; transition: all 0.15s; box-shadow: 0 4px 14px rgba(37,99,235,0.35); display: flex; align-items: center; justify-content: center; gap: 8px; }
-  .submit-btn:active { transform: scale(0.98); opacity: 0.9; }
-  .submit-btn:disabled { background: var(--border); color: var(--muted); box-shadow: none; cursor: not-allowed; }
-  .spinner { width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.4); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; display: none; }
-  @keyframes spin { to { transform: rotate(360deg); } }
+  /* 設定區 */
+  .setup-card{background:#fffbeb;border:1.5px solid #fcd34d;border-radius:var(--radius);padding:14px;}
+  .setup-card h3{font-size:13px;font-weight:700;color:#92400e;margin-bottom:8px;}
+  .setup-input{width:100%;font-size:13px;font-family:'Noto Sans TC',sans-serif;color:var(--text);background:#fff;border:1.5px solid #fcd34d;border-radius:8px;padding:7px 10px;outline:none;margin-bottom:8px;}
+  .save-btn{padding:7px 14px;background:var(--warn);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;font-family:'Noto Sans TC',sans-serif;cursor:pointer;}
 
-  /* ── 累計列 ── */
-  .counter-bar { background: var(--accent-light); border: 1px solid var(--accent-mid); border-radius: 10px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: var(--accent); }
-  .counter-bar b { font-size: 18px; font-weight: 700; }
+  /* ── 本日紀錄頁 ── */
+  .log-wrap{padding:12px 16px;max-width:480px;margin:0 auto;}
 
-  /* ── 紀錄頁 ── */
-  .log-wrap { padding: 16px; max-width: 480px; margin: 0 auto; }
-  .log-empty { text-align: center; color: var(--muted); font-size: 14px; padding: 60px 20px; }
-  .log-summary { background: var(--accent-light); border: 1px solid var(--accent-mid); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 12px; }
-  .log-summary-title { font-size: 12px; font-weight: 700; color: var(--muted); letter-spacing: 0.8px; margin-bottom: 8px; }
-  .log-summary-row { display: flex; justify-content: space-between; font-size: 13px; color: var(--accent); margin-bottom: 4px; }
-  .log-summary-row b { font-weight: 700; }
-  .log-summary-net { display: flex; justify-content: space-between; font-size: 15px; font-weight: 700; color: var(--text); border-top: 1px solid var(--accent-mid); padding-top: 8px; margin-top: 4px; }
-  .log-item { background: var(--card); border-radius: var(--radius); padding: 14px 16px; box-shadow: var(--shadow); margin-bottom: 10px; }
-  .log-item.minus { border-left: 4px solid var(--danger); }
-  .log-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; }
-  .log-room { font-size: 20px; font-weight: 700; color: var(--text); }
-  .log-name { font-size: 16px; font-weight: 500; color: var(--accent); margin-left: 6px; }
-  .log-amount-plus { font-size: 18px; font-weight: 700; color: var(--success); }
-  .log-amount-minus { font-size: 18px; font-weight: 700; color: var(--danger); }
-  .log-meta { font-size: 12px; color: var(--muted); display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
-  .log-type-badge { display: inline-block; background: var(--accent-light); color: var(--accent); font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 8px; }
-  .log-type-badge.minus { background: var(--danger-light); color: var(--danger); }
-  .log-backdate { display: inline-block; background: var(--warn-light); color: var(--warn); font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 8px; }
-  .log-note { font-size: 12px; color: var(--muted); margin-top: 4px; }
+  /* 區塊標題 */
+  .section-title{font-size:12px;font-weight:700;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin:12px 0 8px;display:flex;align-items:center;gap:8px;}
+  .section-title::after{content:'';flex:1;height:1px;background:var(--border);}
 
-  /* ── 彈窗 ── */
-  .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 100; align-items: center; justify-content: center; padding: 20px; }
-  .overlay.show { display: flex; }
-  .success-card { background: #fff; border-radius: 20px; padding: 28px 24px; text-align: center; max-width: 320px; width: 100%; box-shadow: 0 8px 40px rgba(0,0,0,0.2); }
-  .success-icon { font-size: 48px; margin-bottom: 10px; }
-  .success-title { font-size: 20px; font-weight: 700; color: var(--success); margin-bottom: 8px; }
-  .success-title.err { color: var(--danger); }
-  .success-detail { font-size: 14px; color: var(--muted); line-height: 1.8; margin-bottom: 20px; }
-  .success-detail b { color: var(--text); }
-  .next-btn { width: 100%; padding: 13px; background: var(--accent); color: #fff; border: none; border-radius: 10px; font-size: 15px; font-weight: 700; font-family: 'Noto Sans TC', sans-serif; cursor: pointer; }
+  /* 今日收支摘要 */
+  .today-summary{background:var(--accent-light);border:1px solid var(--accent-mid);border-radius:var(--radius);padding:14px 16px;margin-bottom:4px;}
+  .summary-row{display:flex;justify-content:space-between;font-size:13px;color:var(--accent);margin-bottom:4px;}
+  .summary-row b{font-weight:700;}
+  .summary-net{display:flex;justify-content:space-between;font-size:15px;font-weight:700;color:var(--text);border-top:1px solid var(--accent-mid);padding-top:8px;margin-top:4px;}
 
-  /* ── 設定區 ── */
-  .setup-card { background: #fffbeb; border: 1.5px solid #fcd34d; border-radius: var(--radius); padding: 16px; }
-  .setup-card h3 { font-size: 14px; font-weight: 700; color: #92400e; margin-bottom: 8px; }
-  .setup-input { width: 100%; font-size: 13px; font-family: 'Noto Sans TC', sans-serif; color: var(--text); background: #fff; border: 1.5px solid #fcd34d; border-radius: 8px; padding: 8px 10px; outline: none; margin-bottom: 8px; }
-  .save-btn { padding: 8px 16px; background: var(--warn); color: #fff; border: none; border-radius: 8px; font-size: 13px; font-weight: 700; font-family: 'Noto Sans TC', sans-serif; cursor: pointer; }
-  .setup-hint { font-size: 11px; color: #92400e; margin-top: 6px; line-height: 1.5; }
+  /* 補登摘要 */
+  .backdate-summary{background:var(--warn-light);border:1px solid #fcd34d;border-radius:var(--radius);padding:14px 16px;margin-bottom:4px;}
+  .backdate-date-row{display:flex;justify-content:space-between;font-size:13px;color:var(--warn);margin-bottom:4px;}
+  .backdate-date-row b{font-weight:700;}
+  .backdate-total{display:flex;justify-content:space-between;font-size:14px;font-weight:700;color:#92400e;border-top:1px solid #fcd34d;padding-top:8px;margin-top:4px;}
+
+  /* 本期累計 */
+  .period-summary{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:var(--radius);padding:14px 16px;margin-bottom:4px;}
+  .period-row{display:flex;justify-content:space-between;font-size:13px;color:var(--success);margin-bottom:4px;}
+  .period-row b{font-weight:700;}
+  .period-net{display:flex;justify-content:space-between;font-size:15px;font-weight:700;color:var(--text);border-top:1px solid #bbf7d0;padding-top:8px;margin-top:4px;}
+
+  /* 紀錄卡片 */
+  .log-item{background:var(--card);border-radius:var(--radius);padding:12px 16px;box-shadow:var(--shadow);margin-bottom:8px;}
+  .log-item.minus{border-left:4px solid var(--danger);}
+  .log-item.backdate-item{border-left:4px solid var(--warn);}
+  .log-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px;}
+  .log-room{font-size:18px;font-weight:700;color:var(--text);}
+  .log-name{font-size:15px;font-weight:500;color:var(--accent);margin-left:6px;}
+  .log-amount-plus{font-size:16px;font-weight:700;color:var(--success);}
+  .log-amount-minus{font-size:16px;font-weight:700;color:var(--danger);}
+  .log-meta{font-size:12px;color:var(--muted);display:flex;gap:8px;flex-wrap:wrap;margin-top:3px;}
+  .log-type-badge{display:inline-block;background:var(--accent-light);color:var(--accent);font-size:11px;font-weight:500;padding:2px 7px;border-radius:8px;}
+  .log-type-badge.minus{background:var(--danger-light);color:var(--danger);}
+  .log-type-badge.backdate{background:var(--warn-light);color:var(--warn);}
+  .log-note{font-size:12px;color:var(--muted);margin-top:3px;}
+  .log-empty{text-align:center;color:var(--muted);font-size:14px;padding:40px 20px;}
+
+  /* 結帳區（只有桌機才顯示） */
+  .settle-section{display:none;}
+  @media(min-width:768px){.settle-section{display:block;}}
+  .settle-card{background:#fff;border:2px solid var(--success);border-radius:var(--radius);padding:16px;margin-top:8px;}
+  .settle-card h3{font-size:15px;font-weight:700;color:var(--success);margin-bottom:8px;}
+  .settle-btn{padding:10px 20px;background:var(--success);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;font-family:'Noto Sans TC',sans-serif;cursor:pointer;margin-right:8px;}
+  .history-btn{padding:10px 20px;background:var(--bg);color:var(--text);border:1.5px solid var(--border);border-radius:10px;font-size:14px;font-weight:500;font-family:'Noto Sans TC',sans-serif;cursor:pointer;}
+
+  /* 歷史紀錄彈窗 */
+  .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:100;align-items:center;justify-content:center;padding:20px;}
+  .overlay.show{display:flex;}
+  .modal{background:#fff;border-radius:20px;padding:24px;max-width:480px;width:100%;max-height:80vh;overflow-y:auto;box-shadow:0 8px 40px rgba(0,0,0,0.2);}
+  .modal h2{font-size:18px;font-weight:700;margin-bottom:16px;color:var(--text);}
+  .history-item{background:var(--bg);border-radius:10px;padding:12px 14px;margin-bottom:8px;}
+  .history-period{font-size:13px;font-weight:700;color:var(--accent);margin-bottom:4px;}
+  .history-amount{font-size:16px;font-weight:700;color:var(--success);}
+  .history-detail{font-size:12px;color:var(--muted);margin-top:2px;}
+  .modal-close{width:100%;padding:12px;background:var(--bg);border:none;border-radius:10px;font-size:14px;font-weight:500;font-family:'Noto Sans TC',sans-serif;cursor:pointer;margin-top:8px;}
+
+  /* 送出成功彈窗 */
+  .success-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:100;align-items:center;justify-content:center;padding:20px;}
+  .success-overlay.show{display:flex;}
+  .success-card{background:#fff;border-radius:20px;padding:24px;text-align:center;max-width:320px;width:100%;box-shadow:0 8px 40px rgba(0,0,0,0.2);}
+  .success-icon{font-size:44px;margin-bottom:8px;}
+  .success-title{font-size:18px;font-weight:700;color:var(--success);margin-bottom:6px;}
+  .success-title.err{color:var(--danger);}
+  .success-detail{font-size:13px;color:var(--muted);line-height:1.8;margin-bottom:16px;}
+  .success-detail b{color:var(--text);}
+  .next-btn{width:100%;padding:12px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;font-family:'Noto Sans TC',sans-serif;cursor:pointer;}
 </style>
 </head>
 <body>
@@ -180,18 +203,15 @@
 <div class="page active" id="page-form">
 <div class="form-wrap">
 
-  <!-- 設定區 -->
   <div class="setup-card" id="setupCard">
     <h3>⚙️ 第一次使用請先設定 Apps Script 網址</h3>
     <input class="setup-input" type="url" id="scriptUrlInput" placeholder="貼上 Apps Script 網頁應用程式 URL">
     <button class="save-btn" onclick="saveScriptUrl()">儲存並連線</button>
-    <div class="setup-hint">部署 Apps Script 後，點「部署」→「管理部署作業」→ 複製「網頁應用程式 URL」貼上</div>
   </div>
 
-  <!-- 累計列 -->
   <div class="counter-bar">
     <span>今日已登記 <b id="countNum">0</b> 筆</span>
-    <span>累計淨額 <b id="totalNum">0</b> 元</span>
+    <span>今日淨額 <b id="totalNum">0</b> 元</span>
   </div>
 
   <!-- 繳費日期 -->
@@ -203,16 +223,15 @@
     </div>
     <div class="date-input-wrap" id="dateInputWrap">
       <input class="date-input" type="date" id="dateInput">
-      <div class="backdate-note">⚠️ 補登模式：日期將記錄為所選日期</div>
+      <div class="backdate-note">⚠️ 補登模式：補登資料不計入今日金額</div>
     </div>
   </div>
 
   <!-- 房號 -->
   <div class="card">
     <div class="field-label"><span class="req">*</span> 房號</div>
-    <input class="room-input" type="number" id="roomInput"
-           placeholder="輸入房號" inputmode="numeric"
-           autocomplete="off" oninput="lookupRoom(this.value)">
+    <input class="room-input" type="number" id="roomInput" placeholder="輸入房號"
+           inputmode="numeric" autocomplete="off" oninput="lookupRoom(this.value)">
     <div class="name-display empty" id="nameDisplay">
       <span>👤</span><span>輸入房號後自動顯示姓名</span>
     </div>
@@ -225,9 +244,9 @@
       <button class="amount-chip active" onclick="selectAmount(2500,this)">2500 元</button>
       <button class="amount-chip" onclick="selectAmount(1000,this)">1000 元</button>
       <button class="amount-chip" onclick="selectAmount(2000,this)">2000 元</button>
-      <button class="amount-chip" onclick="selectAmount('custom',this)">其他金額</button>
+      <button class="amount-chip" onclick="selectAmount('custom',this)">其他</button>
     </div>
-    <div style="font-size:11px;color:var(--muted);margin-top:8px;line-height:1.8;">
+    <div class="amount-hint">
       整月 2500：1～15日入住 / 16日～月底退房<br>
       半月 1000：16日～月底入住 / 1～15日退房<br>
       保證金 2000：入住收 / 退房退
@@ -238,61 +257,52 @@
     </div>
   </div>
 
-  <!-- 繳費性質 -->
+  <!-- 繳費性質（橫排） -->
   <div class="card">
     <div class="field-label"><span class="req">*</span> 繳費性質</div>
-    <div class="type-list">
-      <div class="type-item active" onclick="selectType(this,false)">
-        <div class="type-dot"></div><span>本月正常繳交</span>
-      </div>
-      <div class="type-item" onclick="selectType(this,false)">
-        <div class="type-dot"></div><span>補繳</span>
-      </div>
-      <div class="type-item" onclick="selectType(this,false)">
-        <div class="type-dot"></div><span>預繳</span>
-      </div>
-      <div class="type-item" onclick="selectType(this,false)">
-        <div class="type-dot"></div><span>收保證金</span>
-      </div>
-      <div class="type-item minus-type" onclick="selectType(this,true)">
-        <div class="type-dot"></div>
-        <span>退保證金</span><span class="minus-badge">支出</span>
-      </div>
-      <div class="type-item minus-type" onclick="selectType(this,true)">
-        <div class="type-dot"></div>
-        <span>歸還零用金</span><span class="minus-badge">支出</span>
-      </div>
+    <div class="type-row">
+      <button class="type-chip active" onclick="selectType(this,false)">本月正常繳交</button>
+      <button class="type-chip" onclick="selectType(this,false)">補繳</button>
+      <button class="type-chip" onclick="selectType(this,false)">預繳</button>
+      <button class="type-chip" onclick="selectType(this,false)">收保證金</button>
+      <button class="type-chip minus-chip" onclick="selectType(this,true)">退保證金<span class="minus-label">支出</span></button>
+      <button class="type-chip minus-chip" onclick="selectType(this,true)">歸還零用金<span class="minus-label">支出</span></button>
     </div>
   </div>
 
-  <!-- 備註 -->
+  <!-- 備註（收起） -->
   <div class="card">
-    <div class="field-label">備註（選填）</div>
-    <textarea class="note-input" id="noteInput" rows="2"
-              placeholder="特殊狀況才填，例：管理費待補、入住日期…"></textarea>
-    <div class="hint-text">一般不用填</div>
+    <button class="toggle-btn" id="noteToggle" onclick="toggleSection('noteBody','noteToggle')">
+      <span class="arrow">▼</span> 新增備註
+    </button>
+    <div class="collapsible" id="noteBody">
+      <textarea class="note-input" id="noteInput" rows="2"
+                placeholder="例：收5000元(3、4月)、退保證金2000…"></textarea>
+    </div>
   </div>
 
-  <!-- 現金核對 -->
+  <!-- 現金核對（收起） -->
   <div class="card cash-card">
-    <div class="last-badge">最後一筆才填</div>
-    <div class="field-label" style="margin-bottom:6px;">今天收現金總額（元）</div>
-    <input class="amount-input" type="number" id="cashInput"
-           placeholder="點算手上現金後填入" inputmode="numeric"
-           oninput="updateCashCheck()"
-           style="border-color:var(--border);">
-    <div style="font-size:11px;color:var(--danger);margin-top:5px;">收費結束後才填，用來核對現金有無短少</div>
-    <div class="cash-summary">
-      <div class="cash-row">
-        <span style="color:var(--muted);">表單累計淨額</span>
-        <b id="runningTotal" style="color:var(--accent);">0 元</b>
+    <button class="toggle-btn" id="cashToggle" onclick="toggleSection('cashBody','cashToggle')">
+      <span class="arrow">▼</span> <span class="last-badge">最後一筆才填</span> 現金核對
+    </button>
+    <div class="collapsible" id="cashBody">
+      <input class="amount-input" type="number" id="cashInput"
+             placeholder="點算手上現金後填入" inputmode="numeric"
+             oninput="updateCashCheck()" style="margin-top:10px;border-color:var(--border);">
+      <div style="font-size:11px;color:var(--danger);margin-top:4px;">收費結束後才填，核對現金有無短少</div>
+      <div class="cash-summary">
+        <div class="cash-row">
+          <span style="color:var(--muted);">今日累計淨額</span>
+          <b id="runningTotal" style="color:var(--accent);">0 元</b>
+        </div>
+        <hr class="cash-divider">
+        <div class="cash-row">
+          <span style="color:var(--muted);">手上現金</span>
+          <b id="cashDisplay" style="color:var(--muted);">— 元</b>
+        </div>
+        <div class="check-result" id="checkResult"></div>
       </div>
-      <hr class="cash-divider">
-      <div class="cash-row">
-        <span style="color:var(--muted);">手上現金</span>
-        <b id="cashDisplay" style="color:var(--muted);">— 元</b>
-      </div>
-      <div class="check-result" id="checkResult"></div>
     </div>
   </div>
 
@@ -307,12 +317,47 @@
 <!-- ══ 本日紀錄頁 ══ -->
 <div class="page" id="page-log">
   <div class="log-wrap" id="logWrap">
-    <div class="log-empty" id="logEmpty">尚未登記任何紀錄</div>
+
+    <!-- 今日收支摘要 -->
+    <div class="section-title">今日收費</div>
+    <div class="today-summary" id="todaySummary">
+      <div class="summary-row"><span>收入</span><b id="todayIn" style="color:var(--success);">+0 元</b></div>
+      <div class="summary-row"><span>支出</span><b id="todayOut" style="color:var(--danger);">0 元</b></div>
+      <div class="summary-net"><span>今日淨額</span><b id="todayNet">0 元</b></div>
+    </div>
+    <div id="todayItems"></div>
+
+    <!-- 補登紀錄 -->
+    <div id="backdateSection" style="display:none;">
+      <div class="section-title">補登紀錄</div>
+      <div class="backdate-summary" id="backdateSummary"></div>
+      <div id="backdateItems"></div>
+    </div>
+
+    <!-- 本期累計 -->
+    <div class="section-title">本期累計</div>
+    <div class="period-summary">
+      <div class="period-row"><span>本期收入</span><b id="periodIn" style="color:var(--success);">+0 元</b></div>
+      <div class="period-row"><span>本期支出</span><b id="periodOut" style="color:var(--danger);">0 元</b></div>
+      <div class="period-net"><span>本期淨額</span><b id="periodNet">0 元</b></div>
+    </div>
+
+    <!-- 結帳區（只有桌機顯示） -->
+    <div class="settle-section">
+      <div class="settle-card">
+        <h3>💰 結帳</h3>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:12px;">結帳後本期資料會存入歷史，下一期從零開始。</p>
+        <button class="settle-btn" onclick="confirmSettle()">執行結帳</button>
+        <button class="history-btn" onclick="showHistory()">查看歷史紀錄</button>
+      </div>
+    </div>
+
+    <div class="log-empty" id="logEmpty" style="display:none;">尚未登記任何紀錄</div>
   </div>
 </div>
 
-<!-- 彈窗 -->
-<div class="overlay" id="overlay">
+<!-- 送出成功彈窗 -->
+<div class="success-overlay" id="successOverlay">
   <div class="success-card">
     <div class="success-icon" id="overlayIcon">✅</div>
     <div class="success-title" id="overlayTitle"></div>
@@ -321,8 +366,17 @@
   </div>
 </div>
 
+<!-- 歷史紀錄彈窗 -->
+<div class="overlay" id="historyOverlay">
+  <div class="modal">
+    <h2>歷史結帳紀錄</h2>
+    <div id="historyList"></div>
+    <button class="modal-close" onclick="document.getElementById('historyOverlay').classList.remove('show')">關閉</button>
+  </div>
+</div>
+
 <script>
-// ── 房號姓名對照表 ─────────────────────────────────────────
+// ── 房號姓名對照表 ────────────────────────────────────────
 const roomData = {
   302:'林鎂伶',303:'李怡諠',307:'黃嘉盈',310:'許美娟',311:'黃桂蓉',
   312:'黃乙宸',315:'陳秀鳯',317:'張麗慧',318:'陳冠安',321:'林遜玲',
@@ -359,103 +413,62 @@ const roomData = {
   659:'匡婕',660:'劉書菡',661:'呂明霞',663:'陳映頤',664:'林郁婷'
 };
 
-// 支出性質（累計要扣除）
-const MINUS_TYPES = ['退保證金', '歸還零用金'];
+const MINUS_TYPES = ['退保證金','歸還零用金'];
 
 // ── 狀態 ──────────────────────────────────────────────────
 var selectedAmount = 2500;
 var selectedType = '本月正常繳交';
 var isMinusType = false;
-var sessionCount = 0;
-var sessionTotal = 0; // 淨額（收入-支出）
 var currentName = '';
 var scriptUrl = localStorage.getItem('scriptUrl') || '';
 var dateMode = 'today';
-var sessionLog = [];
+var sessionLog = []; // 今天的紀錄
+var backdateLog = []; // 補登的紀錄
+var periodStartDate = localStorage.getItem('periodStart') || '';
+
+// ── 今天日期字串 ─────────────────────────────────────────
+function getTodayStr() {
+  var now = new Date();
+  return now.getFullYear()+'/'+String(now.getMonth()+1).padStart(2,'0')+'/'+String(now.getDate()).padStart(2,'0');
+}
 
 // ── 初始化 ────────────────────────────────────────────────
 window.onload = function() {
-  var today = new Date();
-  var yyyy = today.getFullYear();
-  var mm = String(today.getMonth()+1).padStart(2,'0');
-  var dd = String(today.getDate()).padStart(2,'0');
-  document.getElementById('dateInput').value = yyyy+'-'+mm+'-'+dd;
-  document.getElementById('dateInput').max = yyyy+'-'+mm+'-'+dd;
+  var today = getTodayStr().replace(/\//g,'-');
+  document.getElementById('dateInput').value = today;
+  document.getElementById('dateInput').max = today;
+
   if (scriptUrl) {
     document.getElementById('scriptUrlInput').value = scriptUrl;
     document.getElementById('setupCard').style.display = 'none';
     checkConnection();
-    loadTodayData(); // 自動載入今日已登記資料
+    loadTodayData();
   } else {
-    setStatus('yellow', '尚未設定 Apps Script 網址');
+    setStatus('yellow','尚未設定 Apps Script 網址');
   }
   updateSubmit();
 };
 
-// ── 開啟時載入今日資料 ────────────────────────────────────
-function loadTodayData() {
-  var now = new Date();
-  var today = now.getFullYear() + '/' +
-    String(now.getMonth()+1).padStart(2,'0') + '/' +
-    String(now.getDate()).padStart(2,'0');
-
-  setStatus('yellow', '載入今日紀錄中…');
-
-  fetch(scriptUrl + '?action=today&date=' + encodeURIComponent(today))
-    .then(function(r){ return r.json(); })
-    .then(function(res) {
-      if (res.status === 'ok' && res.rows.length > 0) {
-        // 重建今日紀錄
-        sessionLog = [];
-        sessionCount = 0;
-        sessionTotal = 0;
-
-        // 依時間正序排列，再反轉（最新在上）
-        var sorted = res.rows.slice().sort(function(a,b){
-          return a.time > b.time ? 1 : -1;
-        });
-
-        sorted.forEach(function(r) {
-          var isMinus = (r.type === '退保證金' || r.type === '歸還零用金');
-          sessionCount++;
-          sessionTotal += r.amount; // 已是正負數
-          sessionLog.unshift({
-            time: r.time,
-            room: r.room,
-            name: r.name,
-            amount: r.amount,
-            type: r.type,
-            note: r.note,
-            backdate: false,
-            minus: isMinus
-          });
-        });
-
-        document.getElementById('countNum').textContent = sessionCount;
-        document.getElementById('totalNum').textContent = sessionTotal.toLocaleString();
-        updateRunningTotal();
-        updateLogPage();
-        setStatus('connected', '已連線・今日已載入 ' + sessionCount + ' 筆紀錄');
-      } else {
-        setStatus('connected', '已連線・資料將自動存入試算表');
-      }
-    })
-    .catch(function() {
-      setStatus('connected', '已連線・資料將自動存入試算表');
-    });
-}
-
 // ── Tab ───────────────────────────────────────────────────
 function switchTab(name, el) {
-  document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
-  document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
+  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
   el.classList.add('active');
   document.getElementById('page-'+name).classList.add('active');
 }
 
-// ── 日期 ──────────────────────────────────────────────────
+// ── 收起/展開 ──────────────────────────────────────────────
+function toggleSection(bodyId, btnId) {
+  var body = document.getElementById(bodyId);
+  var btn = document.getElementById(btnId);
+  var isOpen = body.classList.contains('show');
+  body.classList.toggle('show', !isOpen);
+  btn.classList.toggle('open', !isOpen);
+}
+
+// ── 日期模式 ──────────────────────────────────────────────
 function selectDateMode(mode, el) {
-  document.querySelectorAll('.date-chip').forEach(function(c){ c.classList.remove('active'); });
+  document.querySelectorAll('.date-chip').forEach(function(c){c.classList.remove('active');});
   el.classList.add('active');
   dateMode = mode;
   document.getElementById('dateInputWrap').classList.toggle('show', mode==='backdate');
@@ -464,11 +477,7 @@ function selectDateMode(mode, el) {
 function getSelectedDate() {
   if (dateMode === 'today') {
     var now = new Date();
-    return now.getFullYear()+'/'+
-      String(now.getMonth()+1).padStart(2,'0')+'/'+
-      String(now.getDate()).padStart(2,'0')+' '+
-      String(now.getHours()).padStart(2,'0')+':'+
-      String(now.getMinutes()).padStart(2,'0');
+    return now.getFullYear()+'/'+String(now.getMonth()+1).padStart(2,'0')+'/'+String(now.getDate()).padStart(2,'0')+' '+String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
   } else {
     return document.getElementById('dateInput').value.replace(/-/g,'/') + ' 00:00';
   }
@@ -477,19 +486,20 @@ function getSelectedDate() {
 // ── Script URL ────────────────────────────────────────────
 function saveScriptUrl() {
   var val = document.getElementById('scriptUrlInput').value.trim();
-  if (!val || !val.startsWith('https://')) { alert('請貼上正確的 Apps Script 網址'); return; }
+  if (!val || !val.startsWith('https://')) { alert('請貼上正確的網址'); return; }
   scriptUrl = val;
   localStorage.setItem('scriptUrl', scriptUrl);
   document.getElementById('setupCard').style.display = 'none';
   checkConnection();
+  loadTodayData();
 }
 
 function checkConnection() {
-  setStatus('yellow', '連線中…');
+  setStatus('yellow','連線中…');
   fetch(scriptUrl)
-    .then(function(r){ return r.text(); })
-    .then(function(t){ setStatus('connected', t.includes('運作正常') ? '已連線・資料將自動存入試算表' : '已連線'); })
-    .catch(function(){ setStatus('error', '連線失敗，請確認網址'); });
+    .then(function(r){return r.text();})
+    .then(function(t){setStatus('connected', t.includes('運作正常')?'已連線・資料將自動存入試算表':'已連線');})
+    .catch(function(){setStatus('error','連線失敗，請確認網址');});
 }
 
 function setStatus(state, text) {
@@ -498,57 +508,78 @@ function setStatus(state, text) {
   document.getElementById('statusText').textContent = text;
 }
 
+// ── 載入今日資料 ──────────────────────────────────────────
+function loadTodayData() {
+  var today = getTodayStr();
+  setStatus('yellow','載入今日紀錄中…');
+
+  fetch(scriptUrl+'?action=today&date='+encodeURIComponent(today))
+    .then(function(r){return r.json();})
+    .then(function(res){
+      if (res.status==='ok' && res.rows.length>0) {
+        sessionLog = [];
+        backdateLog = [];
+
+        var sorted = res.rows.slice().sort(function(a,b){return a.time>b.time?1:-1;});
+        sorted.forEach(function(r){
+          var isMinus = MINUS_TYPES.indexOf(r.type)>=0;
+          var isBackdate = r.time.substring(0,10) !== today;
+          var entry = {time:r.time,room:r.room,name:r.name,amount:r.amount,type:r.type,note:r.note,minus:isMinus,backdate:isBackdate};
+          if (isBackdate) backdateLog.unshift(entry);
+          else sessionLog.unshift(entry);
+        });
+
+        updateCounters();
+        updateLogPage();
+        setStatus('connected','已連線・今日已載入 '+sessionLog.length+' 筆紀錄');
+      } else {
+        setStatus('connected','已連線・資料將自動存入試算表');
+      }
+    })
+    .catch(function(){setStatus('connected','已連線・資料將自動存入試算表');});
+}
+
 // ── 房號查詢 ──────────────────────────────────────────────
 function lookupRoom(val) {
   var input = document.getElementById('roomInput');
   var display = document.getElementById('nameDisplay');
   var num = parseInt(val);
-  if (!val || val.length < 3) {
-    input.className = 'room-input';
-    display.className = 'name-display empty';
-    display.innerHTML = '<span>👤</span><span>輸入房號後自動顯示姓名</span>';
-    currentName = ''; updateSubmit(); return;
+  if (!val || val.length<3) {
+    input.className='room-input';
+    display.className='name-display empty';
+    display.innerHTML='<span>👤</span><span>輸入房號後自動顯示姓名</span>';
+    currentName=''; updateSubmit(); return;
   }
   if (roomData[num]) {
-    currentName = roomData[num];
-    input.className = 'room-input valid';
-    display.className = 'name-display found';
-    display.innerHTML = '<span>✓</span><b style="font-size:22px;letter-spacing:2px">'+currentName+'</b>';
+    currentName=roomData[num];
+    input.className='room-input valid';
+    display.className='name-display found';
+    display.innerHTML='<span>✓</span><b style="font-size:20px;letter-spacing:2px">'+currentName+'</b>';
   } else {
-    currentName = '';
-    input.className = 'room-input invalid';
-    display.className = 'name-display not-found';
-    display.innerHTML = '<span>✗</span><span>查無此房號，請確認</span>';
+    currentName='';
+    input.className='room-input invalid';
+    display.className='name-display not-found';
+    display.innerHTML='<span>✗</span><span>查無此房號，請確認</span>';
   }
   updateSubmit();
 }
 
 // ── 金額 ──────────────────────────────────────────────────
 function selectAmount(val, el) {
-  document.querySelectorAll('.amount-chip').forEach(function(c){ c.classList.remove('active'); });
+  document.querySelectorAll('.amount-chip').forEach(function(c){c.classList.remove('active');});
   el.classList.add('active');
   var wrap = document.getElementById('customWrap');
-  if (val === 'custom') {
-    wrap.classList.add('show');
-    selectedAmount = 0;
-    document.getElementById('customAmount').focus();
-  } else {
-    wrap.classList.remove('show');
-    selectedAmount = val;
-  }
+  if (val==='custom') { wrap.classList.add('show'); selectedAmount=0; document.getElementById('customAmount').focus(); }
+  else { wrap.classList.remove('show'); selectedAmount=val; }
   updateSubmit();
 }
-
-function onCustomAmount() {
-  selectedAmount = parseInt(document.getElementById('customAmount').value) || 0;
-  updateSubmit();
-}
+function onCustomAmount() { selectedAmount=parseInt(document.getElementById('customAmount').value)||0; updateSubmit(); }
 
 // ── 繳費性質 ──────────────────────────────────────────────
 function selectType(el, isMinus) {
-  document.querySelectorAll('.type-item').forEach(function(t){ t.classList.remove('active'); });
+  document.querySelectorAll('.type-chip').forEach(function(t){t.classList.remove('active');});
   el.classList.add('active');
-  selectedType = el.querySelector('span').textContent;
+  selectedType = el.textContent.replace('支出','').trim();
   isMinusType = isMinus;
 }
 
@@ -564,181 +595,296 @@ function updateCashCheck() {
   var cashDisplay = document.getElementById('cashDisplay');
   var result = document.getElementById('checkResult');
   var cash = parseInt(cashVal);
+  // 今日淨額（不含補登）
+  var todayNet = 0;
+  sessionLog.forEach(function(r){ todayNet += r.amount; });
+
   if (!cashVal || isNaN(cash)) {
-    cashDisplay.textContent = '— 元';
-    cashDisplay.style.color = 'var(--muted)';
-    result.style.display = 'none';
-    return;
+    cashDisplay.textContent='— 元'; cashDisplay.style.color='var(--muted)';
+    result.style.display='none'; return;
   }
-  cashDisplay.textContent = cash.toLocaleString() + ' 元';
-  cashDisplay.style.color = 'var(--text)';
-  result.style.display = 'block';
-  if (cash === sessionTotal) {
-    result.textContent = '✅ 金額相符，核對正確！';
-    result.style.color = 'var(--success)';
-    result.style.background = 'var(--success-light)';
+  cashDisplay.textContent=cash.toLocaleString()+' 元'; cashDisplay.style.color='var(--text)';
+  result.style.display='block';
+  if (cash===todayNet) {
+    result.textContent='✅ 金額相符，核對正確！'; result.style.color='var(--success)'; result.style.background='var(--success-light)';
   } else {
-    var diff = cash - sessionTotal;
-    result.textContent = '⚠️ 差異 '+(diff>0?'+':'')+diff.toLocaleString()+' 元，請重新確認';
-    result.style.color = 'var(--warn)';
-    result.style.background = 'var(--warn-light)';
+    var diff=cash-todayNet;
+    result.textContent='⚠️ 差異 '+(diff>0?'+':'')+diff.toLocaleString()+' 元，請重新確認';
+    result.style.color='var(--warn)'; result.style.background='var(--warn-light)';
   }
 }
 
 function updateRunningTotal() {
+  var todayNet = 0;
+  sessionLog.forEach(function(r){ todayNet += r.amount; });
   var el = document.getElementById('runningTotal');
-  el.textContent = sessionTotal.toLocaleString() + ' 元';
-  el.style.color = sessionTotal < 0 ? 'var(--danger)' : 'var(--accent)';
-  var cashVal = document.getElementById('cashInput').value;
-  if (cashVal) updateCashCheck();
+  el.textContent = todayNet.toLocaleString()+' 元';
+  el.style.color = todayNet<0?'var(--danger)':'var(--accent)';
+  if (document.getElementById('cashInput').value) updateCashCheck();
+}
+
+// ── 更新累計列 ────────────────────────────────────────────
+function updateCounters() {
+  var todayNet = 0;
+  sessionLog.forEach(function(r){ todayNet += r.amount; });
+  document.getElementById('countNum').textContent = sessionLog.length;
+  document.getElementById('totalNum').textContent = todayNet.toLocaleString();
+  updateRunningTotal();
 }
 
 // ── 送出 ──────────────────────────────────────────────────
 function submitForm() {
-  if (!scriptUrl) { alert('請先設定 Apps Script 網址！'); document.getElementById('setupCard').style.display='block'; return; }
+  if (!scriptUrl) { alert('請先設定 Apps Script 網址！'); return; }
   var room = document.getElementById('roomInput').value;
   var note = document.getElementById('noteInput').value.trim();
   var timeStr = getSelectedDate();
-  var isBackdate = dateMode === 'backdate';
-  // 支出性質金額存負數
+  var isBackdate = dateMode==='backdate';
   var signedAmount = isMinusType ? -selectedAmount : selectedAmount;
 
-  document.getElementById('submitBtn').disabled = true;
-  document.getElementById('spinner').style.display = 'block';
-  document.getElementById('submitText').textContent = '送出中…';
+  document.getElementById('submitBtn').disabled=true;
+  document.getElementById('spinner').style.display='block';
+  document.getElementById('submitText').textContent='送出中…';
 
-  var payload = {
-    time: timeStr,
-    room: room,
-    name: currentName,
-    amount: signedAmount, // 負數直接存入試算表
-    type: selectedType,
-    note: note
-  };
+  var payload={time:timeStr,room:room,name:currentName,amount:signedAmount,type:selectedType,note:note};
 
-  fetch(scriptUrl, { method: 'POST', body: JSON.stringify(payload) })
-    .then(function(r){ return r.json(); })
-    .then(function(res) {
-      document.getElementById('spinner').style.display = 'none';
-      document.getElementById('submitText').textContent = '送出這筆紀錄';
-      if (res.status === 'ok') {
-        sessionCount++;
-        sessionTotal += signedAmount;
-        document.getElementById('countNum').textContent = sessionCount;
-        document.getElementById('totalNum').textContent = sessionTotal.toLocaleString();
-        updateRunningTotal();
-        sessionLog.unshift({
-          time: timeStr, room: room, name: currentName,
-          amount: signedAmount, type: selectedType,
-          note: note, backdate: isBackdate, minus: isMinusType
-        });
+  fetch(scriptUrl,{method:'POST',body:JSON.stringify(payload)})
+    .then(function(r){return r.json();})
+    .then(function(res){
+      document.getElementById('spinner').style.display='none';
+      document.getElementById('submitText').textContent='送出這筆紀錄';
+      if (res.status==='ok') {
+        var entry={time:timeStr,room:room,name:currentName,amount:signedAmount,type:selectedType,note:note,minus:isMinusType,backdate:isBackdate};
+        if (isBackdate) backdateLog.unshift(entry);
+        else sessionLog.unshift(entry);
+
+        // 更新本期開始日期
+        if (!periodStartDate) {
+          periodStartDate = timeStr.substring(0,10);
+          localStorage.setItem('periodStart', periodStartDate);
+        }
+
+        updateCounters();
         updateLogPage();
-        showOverlay(true, room, note, timeStr, isBackdate, signedAmount);
-      } else { showOverlay(false); }
+        showSuccess(true, room, note, timeStr, isBackdate, signedAmount);
+      } else { showSuccess(false); }
     })
-    .catch(function() {
-      document.getElementById('spinner').style.display = 'none';
-      document.getElementById('submitText').textContent = '送出這筆紀錄';
-      showOverlay(false);
+    .catch(function(){
+      document.getElementById('spinner').style.display='none';
+      document.getElementById('submitText').textContent='送出這筆紀錄';
+      showSuccess(false);
     });
 }
 
-// ── 本日紀錄頁 ────────────────────────────────────────────
+// ── 本日紀錄頁更新 ────────────────────────────────────────
 function updateLogPage() {
-  var wrap = document.getElementById('logWrap');
-  var empty = document.getElementById('logEmpty');
-  document.getElementById('logBadge').textContent = sessionLog.length > 0 ? '('+sessionLog.length+')' : '';
-  if (sessionLog.length === 0) { empty.style.display='block'; return; }
-  empty.style.display = 'none';
+  var today = getTodayStr();
 
-  // 計算收入、支出、淨額
-  var totalIn = 0, totalOut = 0;
-  sessionLog.forEach(function(r){
-    if (r.amount > 0) totalIn += r.amount;
-    else totalOut += r.amount;
-  });
-  var net = totalIn + totalOut;
+  // Badge
+  var total = sessionLog.length + backdateLog.length;
+  document.getElementById('logBadge').textContent = total>0?'('+total+')':'';
 
-  // 清除舊項目
-  wrap.querySelectorAll('.log-item, .log-summary').forEach(function(el){ el.remove(); });
+  // 今日收支
+  var todayIn=0, todayOut=0;
+  sessionLog.forEach(function(r){ if(r.amount>0) todayIn+=r.amount; else todayOut+=r.amount; });
+  var todayNet = todayIn+todayOut;
+  document.getElementById('todayIn').textContent = '+'+todayIn.toLocaleString()+' 元';
+  document.getElementById('todayOut').textContent = todayOut.toLocaleString()+' 元';
+  var tn = document.getElementById('todayNet');
+  tn.textContent = todayNet.toLocaleString()+' 元';
+  tn.style.color = todayNet<0?'var(--danger)':'var(--accent)';
 
-  // 摘要卡
-  var summary = document.createElement('div');
-  summary.className = 'log-summary';
-  summary.innerHTML =
-    '<div class="log-summary-title">TODAY  本日收支摘要</div>'+
-    '<div class="log-summary-row"><span>收入（管理費＋保證金）</span><b style="color:var(--success)">+'+totalIn.toLocaleString()+' 元</b></div>'+
-    '<div class="log-summary-row"><span>支出（退款＋零用金）</span><b style="color:var(--danger)">'+totalOut.toLocaleString()+' 元</b></div>'+
-    '<div class="log-summary-net"><span>當日淨額</span><b style="color:'+(net<0?'var(--danger)':'var(--accent)')+'">'+net.toLocaleString()+' 元</b></div>';
-  wrap.insertBefore(summary, empty);
+  // 今日紀錄卡片
+  var todayContainer = document.getElementById('todayItems');
+  todayContainer.innerHTML = '';
+  if (sessionLog.length===0) {
+    todayContainer.innerHTML = '<div style="text-align:center;color:var(--muted);font-size:13px;padding:16px 0;">今日尚無收費紀錄</div>';
+  } else {
+    sessionLog.forEach(function(r){ todayContainer.appendChild(makeLogCard(r)); });
+  }
 
-  // 各筆紀錄
-  sessionLog.forEach(function(r) {
-    var div = document.createElement('div');
-    div.className = 'log-item' + (r.minus ? ' minus' : '');
-    var amtHtml = r.minus
-      ? '<span class="log-amount-minus">'+r.amount.toLocaleString()+' 元</span>'
-      : '<span class="log-amount-plus">+'+r.amount.toLocaleString()+' 元</span>';
-    div.innerHTML =
-      '<div class="log-top">'+
-        '<div><span class="log-room">'+r.room+'</span><span class="log-name">'+r.name+'</span></div>'+
-        amtHtml+
-      '</div>'+
-      '<div class="log-meta">'+
-        '<span class="log-type-badge'+(r.minus?' minus':'')+'">'+r.type+'</span>'+
-        (r.backdate ? '<span class="log-backdate">補登 '+r.time.split(' ')[0]+'</span>' : '<span>'+r.time+'</span>')+
-      '</div>'+
-      (r.note ? '<div class="log-note">備註：'+r.note+'</div>' : '');
-    wrap.insertBefore(div, empty);
-  });
+  // 補登紀錄
+  var backdateSection = document.getElementById('backdateSection');
+  var backdateItems = document.getElementById('backdateItems');
+  var backdateSummary = document.getElementById('backdateSummary');
+  backdateItems.innerHTML = '';
+
+  if (backdateLog.length>0) {
+    backdateSection.style.display='block';
+    // 依日期分組
+    var groups = {};
+    backdateLog.forEach(function(r){
+      var d = r.time.substring(0,10);
+      if (!groups[d]) groups[d]={in:0,out:0,items:[]};
+      if (r.amount>0) groups[d].in+=r.amount; else groups[d].out+=r.amount;
+      groups[d].items.push(r);
+    });
+    var summaryHtml = '';
+    var totalBackIn=0, totalBackOut=0;
+    Object.keys(groups).sort().forEach(function(d){
+      var g=groups[d]; var net=g.in+g.out;
+      totalBackIn+=g.in; totalBackOut+=g.out;
+      var parts=d.split('/'); var shortDate=parseInt(parts[1])+'/'+parseInt(parts[2]);
+      summaryHtml+='<div class="backdate-date-row"><span>'+shortDate+'</span><b>'+net.toLocaleString()+' 元</b></div>';
+      g.items.forEach(function(r){ backdateItems.appendChild(makeLogCard(r)); });
+    });
+    var totalNet=totalBackIn+totalBackOut;
+    summaryHtml+='<div class="backdate-total"><span>補登合計</span><b>'+totalNet.toLocaleString()+' 元</b></div>';
+    backdateSummary.innerHTML=summaryHtml;
+  } else {
+    backdateSection.style.display='none';
+  }
+
+  // 本期累計（今日+補登全部）
+  var allLogs = sessionLog.concat(backdateLog);
+  var periodIn=0, periodOut=0;
+  allLogs.forEach(function(r){ if(r.amount>0) periodIn+=r.amount; else periodOut+=r.amount; });
+  var periodNet=periodIn+periodOut;
+  document.getElementById('periodIn').textContent='+'+periodIn.toLocaleString()+' 元';
+  document.getElementById('periodOut').textContent=periodOut.toLocaleString()+' 元';
+  var pn=document.getElementById('periodNet');
+  pn.textContent=periodNet.toLocaleString()+' 元';
+  pn.style.color=periodNet<0?'var(--danger)':'var(--success)';
+
+  // 空狀態
+  document.getElementById('logEmpty').style.display = total===0?'block':'none';
+}
+
+function makeLogCard(r) {
+  var div = document.createElement('div');
+  div.className = 'log-item'+(r.minus?' minus':r.backdate?' backdate-item':'');
+  var amtHtml = r.minus
+    ? '<span class="log-amount-minus">'+r.amount.toLocaleString()+' 元</span>'
+    : '<span class="log-amount-plus">+'+r.amount.toLocaleString()+' 元</span>';
+  var badgeClass = r.minus?'minus':r.backdate?'backdate':'';
+  var dateLabel = r.backdate ? '補登 '+r.time.substring(0,10) : r.time;
+  div.innerHTML =
+    '<div class="log-top">'+
+      '<div><span class="log-room">'+r.room+'</span><span class="log-name">'+r.name+'</span></div>'+
+      amtHtml+
+    '</div>'+
+    '<div class="log-meta">'+
+      '<span class="log-type-badge '+badgeClass+'">'+r.type+'</span>'+
+      '<span>'+dateLabel+'</span>'+
+    '</div>'+
+    (r.note?'<div class="log-note">備註：'+r.note+'</div>':'');
+  return div;
 }
 
 // ── 成功彈窗 ──────────────────────────────────────────────
-function showOverlay(success, room, note, timeStr, isBackdate, signedAmount) {
-  var icon = document.getElementById('overlayIcon');
-  var title = document.getElementById('overlayTitle');
-  var detail = document.getElementById('overlayDetail');
-  var nextBtn = document.getElementById('nextBtn');
-  if (success) {
-    icon.textContent = isMinusType ? '💸' : '✅';
-    title.className = 'success-title';
-    title.textContent = isBackdate ? '已補登入試算表！' : '已存入試算表！';
-    var amtStr = (signedAmount > 0 ? '+' : '') + signedAmount.toLocaleString();
-    detail.innerHTML =
+function showSuccess(ok, room, note, timeStr, isBackdate, signedAmount) {
+  var icon=document.getElementById('overlayIcon');
+  var title=document.getElementById('overlayTitle');
+  var detail=document.getElementById('overlayDetail');
+  var nextBtn=document.getElementById('nextBtn');
+  if (ok) {
+    icon.textContent = isMinusType?'💸':'✅';
+    title.className='success-title';
+    title.textContent = isBackdate?'已補登入試算表！':'已存入試算表！';
+    var todayNet=0; sessionLog.forEach(function(r){todayNet+=r.amount;});
+    detail.innerHTML=
       '<b>'+room+' '+currentName+'</b><br>'+
-      '金額：<b>'+amtStr+' 元</b><br>'+
+      '金額：<b>'+(signedAmount>0?'+':'')+signedAmount.toLocaleString()+' 元</b><br>'+
       '性質：'+selectedType+'<br>'+
-      (note ? '備註：'+note+'<br>' : '')+
-      '日期：'+timeStr+
-      '<br><br>今日淨額 <b style="color:'+(sessionTotal<0?'var(--danger)':'var(--accent)')+'">'+sessionTotal.toLocaleString()+'</b> 元';
-    nextBtn.textContent = '登記下一筆';
+      (note?'備註：'+note+'<br>':'')+
+      '時間：'+timeStr+
+      (isBackdate?'':'<br><br>今日淨額 <b style="color:'+(todayNet<0?'var(--danger)':'var(--accent)')+'">'+todayNet.toLocaleString()+'</b> 元');
+    nextBtn.textContent='登記下一筆';
   } else {
-    icon.textContent = '❌';
-    title.className = 'success-title err';
-    title.textContent = '送出失敗';
-    detail.innerHTML = '資料未能存入試算表。<br>請確認網路連線後重新送出。';
-    nextBtn.textContent = '重試';
+    icon.textContent='❌'; title.className='success-title err'; title.textContent='送出失敗';
+    detail.innerHTML='資料未能存入試算表。<br>請確認網路連線後重新送出。';
+    nextBtn.textContent='重試';
   }
-  document.getElementById('overlay').classList.add('show');
+  document.getElementById('successOverlay').classList.add('show');
 }
 
 // ── 下一筆 ────────────────────────────────────────────────
 function nextRecord() {
-  document.getElementById('overlay').classList.remove('show');
-  if (document.getElementById('overlayTitle').textContent !== '送出失敗') {
-    document.getElementById('roomInput').value = '';
-    document.getElementById('noteInput').value = '';
-    document.getElementById('customAmount').value = '';
+  document.getElementById('successOverlay').classList.remove('show');
+  if (document.getElementById('overlayTitle').textContent!=='送出失敗') {
+    document.getElementById('roomInput').value='';
+    document.getElementById('noteInput').value='';
+    document.getElementById('customAmount').value='';
     document.getElementById('customWrap').classList.remove('show');
+    // 備註收起
+    document.getElementById('noteBody').classList.remove('show');
+    document.getElementById('noteToggle').classList.remove('open');
     lookupRoom('');
-    document.querySelectorAll('.amount-chip').forEach(function(c,i){ c.classList.toggle('active', i===0); });
-    selectedAmount = 2500;
-    document.querySelectorAll('.type-item').forEach(function(t,i){ t.classList.toggle('active', i===0); });
-    selectedType = '本月正常繳交';
-    isMinusType = false;
+    document.querySelectorAll('.amount-chip').forEach(function(c,i){c.classList.toggle('active',i===0);});
+    selectedAmount=2500;
+    document.querySelectorAll('.type-chip').forEach(function(t,i){t.classList.toggle('active',i===0);});
+    selectedType='本月正常繳交'; isMinusType=false;
     document.getElementById('roomInput').focus();
   }
   updateSubmit();
+}
+
+// ── 結帳 ──────────────────────────────────────────────────
+function confirmSettle() {
+  var allLogs = sessionLog.concat(backdateLog);
+  if (allLogs.length===0) { alert('目前沒有任何紀錄可以結帳！'); return; }
+
+  var periodIn=0, periodOut=0;
+  allLogs.forEach(function(r){ if(r.amount>0) periodIn+=r.amount; else periodOut+=r.amount; });
+  var net = periodIn+periodOut;
+
+  if (!confirm('確認結帳？\n本期收入：'+periodIn.toLocaleString()+' 元\n本期支出：Math.abs(periodOut).toLocaleString()+' 元\n本期淨額：'+net.toLocaleString()+' 元\n\n結帳後將清零，資料存入歷史。')) return;
+
+  // 存入歷史
+  var history = JSON.parse(localStorage.getItem('settleHistory')||'[]');
+  var now = new Date();
+  var settleDate = now.getFullYear()+'/'+String(now.getMonth()+1).padStart(2,'0')+'/'+String(now.getDate()).padStart(2,'0');
+  history.unshift({
+    settleDate: settleDate,
+    periodStart: periodStartDate || allLogs[allLogs.length-1].time.substring(0,10),
+    periodEnd: settleDate,
+    income: periodIn,
+    expense: periodOut,
+    net: net,
+    records: allLogs
+  });
+  localStorage.setItem('settleHistory', JSON.stringify(history));
+
+  // 清零
+  sessionLog = [];
+  backdateLog = [];
+  periodStartDate = '';
+  localStorage.removeItem('periodStart');
+  updateCounters();
+  updateLogPage();
+  alert('✅ 結帳完成！本期淨額：'+net.toLocaleString()+' 元');
+}
+
+// ── 查看歷史 ──────────────────────────────────────────────
+function showHistory() {
+  var history = JSON.parse(localStorage.getItem('settleHistory')||'[]');
+  var list = document.getElementById('historyList');
+  list.innerHTML = '';
+  if (history.length===0) {
+    list.innerHTML='<p style="color:var(--muted);text-align:center;padding:20px;">尚無歷史紀錄</p>'; 
+  } else {
+    history.forEach(function(h,idx){
+      var div=document.createElement('div');
+      div.className='history-item';
+      div.innerHTML=
+        '<div class="history-period">第'+(history.length-idx)+'期・'+h.periodStart+' ～ '+h.periodEnd+'</div>'+
+        '<div class="history-amount">淨額：'+h.net.toLocaleString()+' 元</div>'+
+        '<div class="history-detail">收入 '+h.income.toLocaleString()+' 元 / 支出 '+Math.abs(h.expense).toLocaleString()+' 元・共 '+h.records.length+' 筆</div>'+
+        '<button onclick="showHistoryDetail('+idx+')" style="font-size:12px;color:var(--accent);background:none;border:none;cursor:pointer;padding:4px 0;">查看明細 →</button>';
+      list.appendChild(div);
+    });
+  }
+  document.getElementById('historyOverlay').classList.add('show');
+}
+
+function showHistoryDetail(idx) {
+  var history = JSON.parse(localStorage.getItem('settleHistory')||'[]');
+  var h = history[idx];
+  var list = document.getElementById('historyList');
+  list.innerHTML = '<button onclick="showHistory()" style="font-size:13px;color:var(--accent);background:none;border:none;cursor:pointer;padding:4px 0 12px;">← 返回列表</button>';
+  h.records.forEach(function(r){
+    var div = makeLogCard(r);
+    list.appendChild(div);
+  });
 }
 </script>
 </body>
