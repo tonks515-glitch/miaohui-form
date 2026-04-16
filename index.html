@@ -615,13 +615,54 @@ function lookupRoom(val) {
     b.textContent = currentName;
     display.innerHTML = '<span>✓</span>';
     display.appendChild(b);
+    updateSubmit();
+  } else if (String(val).length === 3) {
+    // 兩個名單都找不到，嘗試即時從 API 查詢（處理剛新增的住戶）
+    input.className = 'room-input';
+    display.className = 'name-display empty';
+    display.innerHTML = '<span>🔍</span><span>查詢中…</span>';
+    currentName = ''; updateSubmit();
+    fetch(scriptUrl+'?action=roomlist')
+      .then(function(r){return r.json();})
+      .then(function(res){
+        if(res.status==='ok' && res.rooms){
+          res.rooms.forEach(function(r){
+            if(r.room && r.name) dynamicRoomData[parseInt(r.room)] = r.name;
+          });
+        }
+        var freshName = dynamicRoomData[num];
+        if(freshName){
+          currentName = freshName;
+          input.className = 'room-input valid';
+          display.className = 'name-display found';
+          var b = document.createElement('b');
+          b.style.fontSize = '20px';
+          b.style.letterSpacing = '2px';
+          b.textContent = currentName;
+          display.innerHTML = '<span>✓</span>';
+          display.appendChild(b);
+        } else {
+          currentName = '';
+          input.className = 'room-input invalid';
+          display.className = 'name-display not-found';
+          display.innerHTML = '<span>✗</span><span>查無此房號，請確認</span>';
+        }
+        updateSubmit();
+      })
+      .catch(function(){
+        currentName = '';
+        input.className = 'room-input invalid';
+        display.className = 'name-display not-found';
+        display.innerHTML = '<span>✗</span><span>查無此房號，請確認</span>';
+        updateSubmit();
+      });
   } else {
     currentName = '';
     input.className = 'room-input invalid';
     display.className = 'name-display not-found';
     display.innerHTML = '<span>✗</span><span>查無此房號，請確認</span>';
+    updateSubmit();
   }
-  updateSubmit();
 }
 
 // ── 金額 ──────────────────────────────────────────────────
