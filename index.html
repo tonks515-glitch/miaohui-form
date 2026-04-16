@@ -465,9 +465,10 @@ var isMinusType = false;
 var currentName = '';
 var scriptUrl = 'https://script.google.com/macros/s/AKfycbyrMqk9BUoBUmpH1NOGt7GkXjjeDGf9vT5J8YxO6pI1tYSPXYo10xWD_8OFwebaJ8hUvA/exec';
 var dateMode = 'today';
-var sessionLog = []; // 今天的紀錄
-var backdateLog = []; // 補登的紀錄
+var sessionLog = [];
+var backdateLog = [];
 var periodStartDate = localStorage.getItem('periodStart') || '';
+var dynamicRoomData = {}; // 從試算表動態載入的住戶名單
 
 // ── 今天日期字串 ─────────────────────────────────────────
 function getTodayStr() {
@@ -529,6 +530,7 @@ function saveScriptUrl() {
   localStorage.setItem('scriptUrl', scriptUrl);
   document.getElementById('setupCard').style.display = 'none';
   setStatus('connected','已連線・資料將自動存入試算表');
+  loadRoomData();
   loadTodayData();
 }
 
@@ -543,6 +545,20 @@ function setStatus(state, text) {
   var dot = document.getElementById('statusDot');
   dot.className = 'status-dot'+(state==='connected'?' connected':state==='error'?' error':'');
   document.getElementById('statusText').textContent = text;
+}
+
+// ── 載入住戶名單 ─────────────────────────────────────────
+function loadRoomData() {
+  fetch(scriptUrl+'?action=roomlist')
+    .then(function(r){return r.json();})
+    .then(function(res){
+      if(res.status==='ok' && res.rooms){
+        res.rooms.forEach(function(r){
+          if(r.room && r.name) dynamicRoomData[parseInt(r.room)] = r.name;
+        });
+      }
+    })
+    .catch(function(){});
 }
 
 // ── 載入今日及最近7天補登資料 ────────────────────────────
@@ -587,7 +603,8 @@ function lookupRoom(val) {
     display.innerHTML = '<span>👤</span><span>輸入房號後自動顯示姓名</span>';
     currentName = ''; updateSubmit(); return;
   }
-  var name = roomData[num];
+  // 優先用動態名單，fallback 到靜態名單
+  var name = dynamicRoomData[num] || roomData[num];
   if (name) {
     currentName = name;
     input.className = 'room-input valid';
