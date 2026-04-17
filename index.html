@@ -329,6 +329,10 @@
       <div style="text-align:center;color:var(--muted);font-size:13px;padding:10px 0;">載入中…</div>
     </div>
 
+    <!-- 每筆明細 -->
+    <div class="section-title">每筆明細</div>
+    <div id="allItems"></div>
+
     <!-- 本期累計 -->
     <div class="section-title">本期累計</div>
     <div class="period-summary">
@@ -555,7 +559,7 @@ function loadTodayData() {
   var today = getTodayStr();
   setStatus('yellow','載入紀錄中…');
 
-  fetch(scriptUrl+'?action=recent&date='+encodeURIComponent(today))
+  fetch(scriptUrl+'?action=all&date='+encodeURIComponent(today))
     .then(function(r){return r.json();})
     .then(function(res){
       if (res.status==='ok' && res.rows.length>0) {
@@ -824,6 +828,23 @@ function updateLogPage() {
   var pn=document.getElementById('periodNet');
   pn.textContent=periodNet.toLocaleString()+' 元';
   pn.style.color=periodNet<0?'var(--danger)':'var(--success)';
+
+  // 每筆明細（依日期由新到舊，每筆有刪除按鈕）
+  var allItems = document.getElementById('allItems');
+  allItems.innerHTML = '';
+  if (total === 0) {
+    allItems.innerHTML = '<div style="text-align:center;color:var(--muted);font-size:13px;padding:16px 0;">尚無收費紀錄</div>';
+  } else {
+    // 依日期由新到舊排序
+    var sortedLogs = allLogs.slice().sort(function(a,b){ return b.time > a.time ? 1 : -1; });
+    sortedLogs.forEach(function(r){
+      var isBackdate = r.time.substring(0,10) !== today;
+      var idxInSession = sessionLog.indexOf(r);
+      var idxInBackdate = backdateLog.indexOf(r);
+      var idx = idxInSession >= 0 ? idxInSession : idxInBackdate;
+      allItems.appendChild(makeLogCard(r, idx, isBackdate));
+    });
+  }
 
   // 空狀態
   document.getElementById('logEmpty').style.display = total===0?'block':'none';
