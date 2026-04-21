@@ -601,7 +601,29 @@ function lookupRoom(val) {
   }
   // 找出所有符合此房號的住戶
   var matches = dynamicRoomList.filter(function(r){ return parseInt(r.room)===num; });
-  if(matches.length === 0 && roomData[num]) matches = [{room:String(num), name:roomData[num]}];
+
+  // 如果動態名單還沒載入或只有靜態名單，重新載入後再查
+  if(matches.length === 0 && String(val).length === 3) {
+    // 先用靜態名單
+    if(roomData[num]) matches = [{room:String(num), name:roomData[num]}];
+    // 同時重新載入動態名單
+    if(dynamicRoomList.length === 0) {
+      fetch(scriptUrl+'?action=roomlist')
+        .then(function(r){return r.json();})
+        .then(function(res){
+          if(res.status==='ok' && res.rooms){
+            dynamicRoomList = res.rooms;
+            res.rooms.forEach(function(r){
+              if(r.room && r.name) dynamicRoomData[parseInt(r.room)] = r.name;
+            });
+            // 重新執行查詢
+            lookupRoom(val);
+          }
+        })
+        .catch(function(){});
+      return;
+    }
+  }
 
   if (matches.length === 1) {
     // 只有一個人，直接顯示
