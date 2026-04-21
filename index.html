@@ -463,6 +463,7 @@ var backdateLog = [];
 var periodStartDate = localStorage.getItem('periodStart') || '';
 var dynamicRoomData = {}; // 房號→姓名（單筆）
 var dynamicRoomList = []; // 完整住戶名單（支援同房號多人）
+var roomDataLoaded = false; // 住戶名單是否已載入完成
 
 // ── 今天日期字串 ─────────────────────────────────────────
 function getTodayStr() {
@@ -552,6 +553,10 @@ function loadRoomData() {
         res.rooms.forEach(function(r){
           if(r.room && r.name) dynamicRoomData[parseInt(r.room)] = r.name;
         });
+        roomDataLoaded = true;
+        // 如果房號欄已有值，重新觸發查詢
+        var roomVal = document.getElementById('roomInput').value;
+        if(roomVal && roomVal.length >= 3) lookupRoom(roomVal);
       }
     })
     .catch(function(){});
@@ -599,30 +604,13 @@ function lookupRoom(val) {
     display.innerHTML = '<span>👤</span><span>輸入房號後自動顯示姓名</span>';
     currentName = ''; updateSubmit(); return;
   }
-  // 找出所有符合此房號的住戶
-  var matches = dynamicRoomList.filter(function(r){ return parseInt(r.room)===num; });
-
-  // 如果動態名單還沒載入或只有靜態名單，重新載入後再查
-  if(matches.length === 0 && String(val).length === 3) {
-    // 先用靜態名單
+  // 如果住戶名單還沒載入完，先顯示靜態名單結果，載入完後自動更新
+  var matches = [];
+  if(roomDataLoaded) {
+    matches = dynamicRoomList.filter(function(r){ return parseInt(r.room)===num; });
+  }
+  if(matches.length === 0) {
     if(roomData[num]) matches = [{room:String(num), name:roomData[num]}];
-    // 同時重新載入動態名單
-    if(dynamicRoomList.length === 0) {
-      fetch(scriptUrl+'?action=roomlist')
-        .then(function(r){return r.json();})
-        .then(function(res){
-          if(res.status==='ok' && res.rooms){
-            dynamicRoomList = res.rooms;
-            res.rooms.forEach(function(r){
-              if(r.room && r.name) dynamicRoomData[parseInt(r.room)] = r.name;
-            });
-            // 重新執行查詢
-            lookupRoom(val);
-          }
-        })
-        .catch(function(){});
-      return;
-    }
   }
 
   if (matches.length === 1) {
