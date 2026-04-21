@@ -461,7 +461,8 @@ var dateMode = 'today';
 var sessionLog = [];
 var backdateLog = [];
 var periodStartDate = localStorage.getItem('periodStart') || '';
-var dynamicRoomData = {}; // 從試算表動態載入的住戶名單
+var dynamicRoomData = {}; // 房號→姓名（單筆）
+var dynamicRoomList = []; // 完整住戶名單（支援同房號多人）
 
 // ── 今天日期字串 ─────────────────────────────────────────
 function getTodayStr() {
@@ -546,6 +547,8 @@ function loadRoomData() {
     .then(function(r){return r.json();})
     .then(function(res){
       if(res.status==='ok' && res.rooms){
+        dynamicRoomList = res.rooms;
+        dynamicRoomData = {};
         res.rooms.forEach(function(r){
           if(r.room && r.name) dynamicRoomData[parseInt(r.room)] = r.name;
         });
@@ -596,10 +599,13 @@ function lookupRoom(val) {
     display.innerHTML = '<span>👤</span><span>輸入房號後自動顯示姓名</span>';
     currentName = ''; updateSubmit(); return;
   }
-  // 優先用動態名單，fallback 到靜態名單
-  var name = dynamicRoomData[num] || roomData[num];
-  if (name) {
-    currentName = name;
+  // 找出所有符合此房號的住戶
+  var matches = dynamicRoomList.filter(function(r){ return parseInt(r.room)===num; });
+  if(matches.length === 0 && roomData[num]) matches = [{room:String(num), name:roomData[num]}];
+
+  if (matches.length === 1) {
+    // 只有一個人，直接顯示
+    currentName = matches[0].name;
     input.className = 'room-input valid';
     display.className = 'name-display found';
     var b = document.createElement('b');
@@ -608,6 +614,30 @@ function lookupRoom(val) {
     b.textContent = currentName;
     display.innerHTML = '<span>✓</span>';
     display.appendChild(b);
+    updateSubmit();
+  } else if (matches.length > 1) {
+    // 同房號多人，顯示選擇按鈕
+    currentName = '';
+    input.className = 'room-input valid';
+    display.className = 'name-display found';
+    display.innerHTML = '<span style="font-size:13px;color:var(--warn);font-weight:700;">⚠️ 此房號有多位住戶，請選擇：</span>';
+    matches.forEach(function(m){
+      var btn = document.createElement('button');
+      btn.style.cssText = 'display:block;width:100%;margin-top:6px;padding:8px 12px;background:var(--bg);border:1.5px solid var(--accent);border-radius:8px;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer;color:var(--accent);text-align:left;';
+      btn.textContent = m.name;
+      btn.onclick = function(){
+        currentName = m.name;
+        display.className = 'name-display found';
+        var b2 = document.createElement('b');
+        b2.style.fontSize = '20px';
+        b2.style.letterSpacing = '2px';
+        b2.textContent = currentName;
+        display.innerHTML = '<span>✓</span>';
+        display.appendChild(b2);
+        updateSubmit();
+      };
+      display.appendChild(btn);
+    });
     updateSubmit();
   } else if (String(val).length === 3) {
     // 兩個名單都找不到，嘗試即時從 API 查詢（處理剛新增的住戶）
