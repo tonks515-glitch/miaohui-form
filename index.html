@@ -189,7 +189,7 @@
 
 <header>
   <h1>管理費繳交登記</h1>
-  <p>妙慧樓 — 收費員專用・115年4月</p>
+  <p>妙慧樓 — 收費員專用・<span id='periodLabel'>115年5月</span></p>
   <div class="status-bar">
     <div class="status-dot" id="statusDot"></div>
     <span id="statusText">檢查連線中…</span>
@@ -554,6 +554,10 @@ function loadRoomData() {
           if(r.room && r.name) dynamicRoomData[parseInt(r.room)] = r.name;
         });
         roomDataLoaded = true;
+        // 更新標題月份
+        if(res.period) {
+          document.getElementById('periodLabel').textContent = res.period;
+        }
         // 如果房號欄已有值，重新觸發查詢
         var roomVal = document.getElementById('roomInput').value;
         if(roomVal && roomVal.length >= 3) lookupRoom(roomVal);
