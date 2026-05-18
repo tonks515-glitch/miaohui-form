@@ -719,6 +719,14 @@ function selectType(el, isMinus) {
   el.classList.add('active');
   selectedType = el.textContent.replace('支出','').trim();
   isMinusType = isMinus;
+  // 選預繳才顯示預繳至月份
+  var prepayCard = document.getElementById('prepayMonthCard');
+  if (selectedType === '預繳') {
+    prepayCard.style.display = 'block';
+  } else {
+    prepayCard.style.display = 'none';
+    document.getElementById('prepayUntilMonth').value = '';
+  }
 }
 
 // ── 送出按鈕狀態 ──────────────────────────────────────────
@@ -787,7 +795,15 @@ function submitForm() {
   document.getElementById('spinner').style.display='block';
   document.getElementById('submitText').textContent='送出中…';
 
-  var payload={time:timeStr,room:room,name:currentName,amount:signedAmount,type:selectedType,note:note};
+  // 預繳至月份
+  var prepayUntil = '';
+  if (selectedType === '預繳') {
+    var prepayMonth = document.getElementById('prepayUntilMonth').value;
+    if (!prepayMonth) { alert('請填入預繳至月份！'); return; }
+    prepayUntil = '2026/' + prepayMonth;
+  }
+
+  var payload={time:timeStr,room:room,name:currentName,amount:signedAmount,type:selectedType,note:note,prepayUntil:prepayUntil};
 
   fetch(scriptUrl,{method:'POST',body:JSON.stringify(payload)})
     .then(function(r){return r.json();})
@@ -950,6 +966,8 @@ function nextRecord() {
     document.getElementById('roomInput').value='';
     document.getElementById('noteInput').value='';
     document.getElementById('customAmount').value='';
+    document.getElementById('prepayUntilMonth').value='';
+    document.getElementById('prepayMonthCard').style.display='none';
     document.getElementById('customWrap').classList.remove('show');
     // 備註收起
     document.getElementById('noteBody').classList.remove('show');
