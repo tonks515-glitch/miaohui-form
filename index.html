@@ -1,1088 +1,1827 @@
-<!DOCTYPE html>
-<html lang="zh-TW">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>管理費繳交登記</title>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap');
-  :root {
-    --bg:#f5f4f0;--card:#fff;--accent:#2563eb;--accent-light:#eff6ff;--accent-mid:#bfdbfe;
-    --text:#1e293b;--muted:#64748b;--border:#e2e8f0;
-    --success:#16a34a;--success-light:#f0fdf4;
-    --danger:#dc2626;--danger-light:#fef2f2;
-    --warn:#d97706;--warn-light:#fffbeb;
-    --radius:14px;--shadow:0 2px 12px rgba(0,0,0,0.07);
+const RECORD_SHEET = '收費紀錄';
+const TYPE_TO_COL = {'本月正常繳交':4,'補繳':7,'預繳':8,'收保證金':5,'退保證金':6};
+
+function setup3F() { buildSheet('3F_清冊', get3F()); }
+function setup4F() { buildSheet('4F_清冊', get4F()); }
+function setup5F() { buildSheet('5F_清冊', get5F()); }
+function setup6F() { buildSheet('6F_清冊', get6F()); }
+
+function buildSheet(name, rows) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var s = ss.getSheetByName(name);
+  if (s) ss.deleteSheet(s);
+  s = ss.insertSheet(name);
+  s.getRange(1,1,1,10).setValues([['寮號','姓名','應繳','實際繳','保證金','退保證金','補繳','預繳','繳交日期','備註']]);
+  s.getRange(2,1,rows.length,10).setValues(rows);
+  SpreadsheetApp.getUi().alert(name + ' 完成！');
+}
+
+function get3F() { return [
+  [301,'許芳瑜',0,'','','','','','',''],
+  [302,'林鎂伶',2500,'','','','','','',''],
+  [303,'李怡諠',2500,'','','','','','',''],
+  [304,'黃彩羚',0,'','','','','','',''],
+  [305,'',0,'','','','','','',''],
+  [306,'高桂存',0,'','','','','','',''],
+  [307,'黃嘉盈',2500,'','','','','','',''],
+  [308,'潘素鳳',0,'','','','','','',''],
+  [309,'李沅螢',0,'','','','','','',''],
+  [310,'許美娟',2500,'','','','','','',''],
+  [311,'黃桂蓉',2500,'','','','','','',''],
+  [312,'黃乙宸',2500,'','','','','','',''],
+  [313,'范馨亞',0,'','','','','','',''],
+  [314,'',0,'','','','','','',''],
+  [315,'陳秀鳯',2500,'','','','','','',''],
+  [316,'陳泠璇',2500,'','','','','','',''],
+  [317,'張麗慧',2500,'','','','','','',''],
+  [318,'陳冠安',2500,'','','','','','',''],
+  [319,'黃金珠',0,'','','','','','',''],
+  [320,'陳育青',0,'','','','','','',''],
+  [321,'林遜玲',2500,'','','','','','',''],
+  [322,'謝春綢',2500,'','','','','','',''],
+  [323,'',0,'','','','','','',''],
+  [324,'林惠敏',2500,'','','','','','',''],
+  [325,'李法伯',2500,'','','','','','',''],
+  [326,'趙宥惠',2500,'','','','','','',''],
+  [327,'林秋妙',2500,'','','','','','',''],
+  [328,'李尉慈',2500,'','','','','','',''],
+  [329,'陳虹熹',2500,'','','','','','',''],
+  [330,'黃金英',2500,'','','','','','',''],
+  [331,'陳慧如',2500,'','','','','','',''],
+  [332,'',0,'','','','','','',''],
+  [333,'',0,'','','','','','',''],
+  [334,'',0,'','','','','','',''],
+  [335,'',0,'','','','','','',''],
+  [336,'許純瑞',2500,'','','','','','',''],
+  [337,'謝瑞燕',2500,'','','','','','',''],
+  [338,'蔡美慧',2500,'','','','','','',''],
+  [339,'潘心怡',0,'','','','','','',''],
+  [340,'柯培今',2500,'','','','','','',''],
+  [341,'曾芝蘭',2500,'','','','','','',''],
+  [342,'張毓晏',2500,'','','','','','',''],
+  [343,'張秋月',2500,'','','','','','',''],
+  [344,'林素卿',2500,'','','','','','',''],
+  [345,'尤惠萱',2500,'','','','','','',''],
+  [346,'毛如瑩',2500,'','','','','','',''],
+  [347,'張麗惠',0,'','','','','','',''],
+  [348,'胡詠綺',2500,'','','','','','',''],
+  [349,'林姿伶',2500,'','','','','','',''],
+  [350,'張伯嬌師姑',0,'','','','','','',''],
+  [351,'葉秋甄',2500,'','','','','','',''],
+  [352,'李帆葳',2500,'','','','','','',''],
+  [353,'',0,'','','','','','',''],
+  [354,'',0,'','','','','','',''],
+  [355,'',0,'','','','','','',''],
+  [356,'陳貞妤',2500,'','','','','','',''],
+  [357,'賴采璿',2500,'','','','','','',''],
+  [358,'顏婉如',2500,'','','','','','',''],
+  [359,'',0,'','','','','','',''],
+  [360,'林彩秀',2500,'','','','','','',''],
+  [361,'廖美華',2500,'','','','','','',''],
+  [362,'曾歐麗玉',2500,'','','','','','',''],
+  [363,'杜珮合',2500,'','','','','','',''],
+  [364,'陳玥蓁',2500,'','','','','','',''],
+  [365,'',0,'','','','','','',''],
+  [366,'曾獻儀',2500,'','','','','','',''],
+  [367,'',0,'','','','','','',''],
+  [368,'蔡佩蓉',2500,'','','','','','',''],
+  [369,'劉珮瑤',2500,'','','','','','',''],
+  [370,'張玉燕',2500,'','','','','','',''],
+  [371,'馬偉群',2500,'','','','','','',''],
+  [372,'',0,'','','','','','',''],
+  [373,'',0,'','','','','','',''],
+  [374,'吳仲芳',2500,'','','','','','','']
+
+];}
+
+function get4F() { return [
+  [401,'趙梓臣',2500,'','','','','','',''],
+  [402,'洪秀華',2500,'','','','','','',''],
+  [403,'王莉茹',2500,'','','','','','',''],
+  [404,'陳心瀅',2500,'','','','','','',''],
+  [405,'于美鳳',0,'','','','','','',''],
+  [406,'',0,'','','','','','',''],
+  [407,'黃雅文',2500,'','','','','','',''],
+  [408,'吳瓊霞',2500,'','','','','','',''],
+  [409,'陳心怡',2500,'','','','','','',''],
+  [410,'',0,'','','','','','',''],
+  [411,'王梃萱',0,'','','','','','',''],
+  [412,'鍾孟岑',2500,'','','','','','',''],
+  [413,'陳玟婷',2500,'','','','','','',''],
+  [414,'江婉瑜',2500,'','','','','','',''],
+  [415,'黃宣珮',2500,'','','','','','',''],
+  [416,'莊琇鈞',2500,'','','','','','',''],
+  [417,'陳巧晴',2500,'','','','','','',''],
+  [418,'',0,'','','','','','',''],
+  [419,'蕭彩云',2500,'','','','','','',''],
+  [420,'張瑜庭',2500,'','','','','','',''],
+  [421,'',0,'','','','','','',''],
+  [422,'王敏純',2500,'','','','','','',''],
+  [423,'',0,'','','','','','',''],
+  [424,'王俊婷',2500,'','','','','','',''],
+  [425,'朱燕孺',2500,'','','','','','',''],
+  [426,'李生鳳',2500,'','','','','','',''],
+  [427,'郎筱玲',0,'','','','','','',''],
+  [428,'郭秋君',2500,'','','','','','',''],
+  [429,'緣固',2500,'','','','','','',''],
+  [430,'緣光',2500,'','','','','','',''],
+  [431,'緣端',2500,'','','','','','',''],
+  [432,'蔡麗玉',0,'','','','','','',''],
+  [433,'李麗明',2500,'','','','','','',''],
+  [434,'黃婉怡',2500,'','','','','','',''],
+  [435,'林國金',2500,'','','','','','',''],
+  [436,'',0,'','','','','','',''],
+  [437,'陳雅婷',2500,'','','','','','',''],
+  [438,'蔡依蓉',2500,'','','','','','',''],
+  [439,'張雅茵',2500,'','','','','','',''],
+  [440,'',0,'','','','','','',''],
+  [441,'',0,'','','','','','',''],
+  [442,'賴淑真',2500,'','','','','','',''],
+  [443,'陳怡君',2500,'','','','','','',''],
+  [444,'',0,'','','','','','',''],
+  [445,'林淯立',0,'','','','','','',''],
+  [446,'楊維竹',2500,'','','','','','',''],
+  [447,'郭姿妙',2500,'','','','','','',''],
+  [448,'黃譓娗',2500,'','','','','','',''],
+  [449,'戴鈺珊',2500,'','','','','','',''],
+  [450,'王秀珍',2500,'','','','','','',''],
+  [451,'李美朱',2500,'','','','','','',''],
+  [452,'林琇鴦',2500,'','','','','','',''],
+  [453,'趙怡婷',0,'','','','','','',''],
+  [454,'鄭心佩',2500,'','','','','','',''],
+  [455,'',0,'','','','','','',''],
+  [456,'陳慧穎',0,'','','','','','',''],
+  [457,'李佳紜',0,'','','','','','',''],
+  [458,'',0,'','','','','','',''],
+  [459,'李苑嫣',2500,'','','','','','',''],
+  [460,'鄭淳云',0,'','','','','','',''],
+  [461,'胡馨方',2500,'','','','','','',''],
+  [462,'黃如敏',2500,'','','','','','',''],
+  [463,'蘇孟賢',0,'','','','','','',''],
+  [464,'',0,'','','','','','',''],
+  [465,'陳盈均',2500,'','','','','','',''],
+  [466,'劉佳苑',0,'','','','','','',''],
+  [467,'黃馨玉',2500,'','','','','','',''],
+  [468,'蔡品涵',2500,'','','','','','',''],
+  [469,'柯惠玲',2500,'','','','','','',''],
+  [470,'林梅芳',0,'','','','','','',''],
+  [471,'',0,'','','','','','',''],
+  [472,'于定萱',2500,'','','','','','',''],
+  [473,'陳怡孜',2500,'','','','','','',''],
+  [474,'凃依芬',2500,'','','','','','','']
+
+];}
+
+function get5F() { return [
+  [517,'許文君',2500,'','','','','','',''],
+  [518,'單薰潁',2500,'','','','','','',''],
+  [519,'',0,'','','','','','',''],
+  [520,'楊亞琳',2500,'','','','','','',''],
+  [521,'黃麗蓉',2500,'','','','','','',''],
+  [522,'温秀珍',2500,'','','','','','',''],
+  [523,'王貞婷',2500,'','','','','','',''],
+  [524,'莊雅嵐',2500,'','','','','','',''],
+  [525,'蔡淑芳',0,'','','','','','',''],
+  [526,'葉道欣',2500,'','','','','','',''],
+  [527,'林玫汝',2500,'','','','','','',''],
+  [528,'鄭媄嬬',2500,'','','','','','',''],
+  [529,'蔡麗芬師姑',0,'','','','','','',''],
+  [530,'洪錦媖',2500,'','','','','','',''],
+  [531,'黃歆淳',2500,'','','','','','',''],
+  [532,'',0,'','','','','','',''],
+  [533,'李蘊詩',0,'','','','','','',''],
+  [534,'',0,'','','','','','',''],
+  [535,'高菁眉',0,'','','','','','',''],
+  [536,'',0,'','','','','','',''],
+  [537,'高觀妙',2500,'','','','','','',''],
+  [538,'洪佳綺',2500,'','','','','','',''],
+  [539,'王靖涵',2500,'','','','','','',''],
+  [540,'',0,'','','','','','',''],
+  [541,'黃怡禎',2500,'','','','','','',''],
+  [542,'段繼慧',2500,'','','','','','',''],
+  [543,'',0,'','','','','','',''],
+  [544,'許文貞',0,'','','','','','',''],
+  [545,'張瑛玲',2500,'','','','','','',''],
+  [546,'伍雅嵐',0,'','','','','','',''],
+  [547,'張睿潔',2500,'','','','','','',''],
+  [548,'江麗雅',2500,'','','','','','',''],
+  [549,'盧姿伶',0,'','','','','','',''],
+  [550,'林美麗',2500,'','','','','','',''],
+  [551,'陳素芬',2500,'','','','','','',''],
+  [552,'劉秀桃',2500,'','','','','','',''],
+  [553,'戴佳勳',2500,'','','','','','',''],
+  [554,'黃柏雅',2500,'','','','','','',''],
+  [555,'呂家妤',2500,'','','','','','',''],
+  [556,'李素卿',2500,'','','','','','',''],
+  [557,'陳秀月',2500,'','','','','','',''],
+  [558,'周筱靜',2500,'','','','','','',''],
+  [559,'彭金玉',2500,'','','','','','',''],
+  [560,'陳金菊',0,'','','','','','',''],
+  [561,'李慧琳',2500,'','','','','','',''],
+  [562,'陳怜君',2500,'','','','','','',''],
+  [563,'謝于寧',0,'','','','','','',''],
+  [564,'謝秀娟',0,'','','','','','',''],
+  [565,'簡一修',2500,'','','','','','',''],
+  [566,'',0,'','','','','','',''],
+  [567,'周媛',0,'','','','','','',''],
+  [568,'羅竹君',2500,'','','','','','','']
+
+];}
+
+function get6F() { return [
+  [617,'王夢愉',2500,'','','','','','',''],
+  [618,'何倩馨',2500,'','','','','','',''],
+  [619,'曾晴鈺',2500,'','','','','','',''],
+  [620,'蔡孟蓉',2500,'','','','','','',''],
+  [621,'曾綉芳',2500,'','','','','','',''],
+  [622,'鄭綸霈',2500,'','','','','','',''],
+  [623,'郭珮緹',2500,'','','','','','',''],
+  [624,'',0,'','','','','','',''],
+  [625,'吳姿儀',2500,'','','','','','',''],
+  [626,'鄭安安',2500,'','','','','','',''],
+  [627,'鄧文琪',2500,'','','','','','',''],
+  [628,'',0,'','','','','','',''],
+  [629,'',0,'','','','','','',''],
+  [630,'何翊嘉',0,'','','','','','',''],
+  [631,'三人房',0,'','','','','','',''],
+  [632,'三人房',0,'','','','','','',''],
+  [633,'三人房',0,'','','','','','',''],
+  [634,'侯妙璇',2500,'','','','','','',''],
+  [635,'',0,'','','','','','',''],
+  [636,'孫佩貝',2500,'','','','','','',''],
+  [637,'陳怡君',2500,'','','','','','',''],
+  [638,'蘇郁鈞',2500,'','','','','','',''],
+  [639,'王薏菁',2500,'','','','','','',''],
+  [640,'王麗君',2500,'','','','','','',''],
+  [641,'劉姿佑',2500,'','','','','','',''],
+  [642,'龔品蓉',2500,'','','','','','',''],
+  [643,'劉芷妤',2500,'','','','','','',''],
+  [644,'李敏瑜',2500,'','','','','','',''],
+  [645,'戴雅琪',2500,'','','','','','',''],
+  [646,'李家儀',2500,'','','','','','',''],
+  [647,'許瀞文',2500,'','','','','','',''],
+  [648,'江承澂',2500,'','','','','','',''],
+  [649,'黃亭穎',2500,'','','','','','',''],
+  [650,'許庭禎',2500,'','','','','','',''],
+  [651,'',0,'','','','','','',''],
+  [652,'林佳臻',2500,'','','','','','',''],
+  [653,'徐采伶',2500,'','','','','','',''],
+  [654,'周裘語',2500,'','','','','','',''],
+  [655,'黃宜婷',2500,'','','','','','',''],
+  [656,'三人房',0,'','','','','','',''],
+  [657,'三人房',0,'','','','','','',''],
+  [658,'三人房',0,'','','','','','',''],
+  [659,'匡婕',2500,'','','','','','',''],
+  [660,'劉書菡',2500,'','','','','','',''],
+  [661,'呂明霞',2500,'','','','','','',''],
+  [662,'',0,'','','','','','',''],
+  [663,'陳映頤',2500,'','','','','','',''],
+  [664,'林郁婷',2500,'','','','','','','']
+
+];}
+
+function monthEndSettle() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var settled = 0;
+  ['3F','4F','5F','6F'].forEach(function(f){
+    var s = ss.getSheetByName(f+'_清冊');
+    if (!s) return;
+    var d = s.getDataRange().getValues();
+    for (var i=1;i<d.length;i++){
+      if (d[i][1]&&d[i][1]!==''&&d[i][1]!=='三人房'&&d[i][2]>0&&(d[i][3]===''||d[i][3]===null)){
+        var c=s.getRange(i+1,4);c.setValue(0);c.setFontColor('#dc2626');settled++;
+      }
+    }
+  });
+  SpreadsheetApp.getUi().alert('月底結算完成！'+settled+' 間未繳標記紅色0');
+}
+
+function findRoomRow(s, r, name){
+  var d=s.getDataRange().getValues();
+  // 如果有提供姓名，優先用房號+姓名比對
+  if(name){
+    for(var i=1;i<d.length;i++){
+      if(String(d[i][0])===String(r) && String(d[i][1])===String(name)) return i+1;
+    }
   }
-  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-  body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:40px;}
-
-  /* Header */
-  header{background:var(--accent);color:#fff;padding:16px 20px 14px;position:sticky;top:0;z-index:10;box-shadow:0 2px 8px rgba(37,99,235,0.3);}
-  header h1{font-size:18px;font-weight:700;}
-  header p{font-size:11px;opacity:0.8;margin-top:1px;}
-  .status-bar{display:flex;align-items:center;gap:6px;font-size:11px;margin-top:4px;opacity:0.9;}
-  .status-dot{width:7px;height:7px;border-radius:50%;background:#4ade80;flex-shrink:0;}
-  .status-dot.connected{background:#4ade80;}
-  .status-dot.error{background:#f87171;}
-
-  /* Tabs */
-  .tab-bar{display:flex;background:#fff;border-bottom:1px solid var(--border);position:sticky;top:72px;z-index:9;}
-  .tab{flex:1;padding:10px 4px;text-align:center;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;border-bottom:2.5px solid transparent;transition:all 0.15s;}
-  .tab.active{color:var(--accent);border-bottom-color:var(--accent);}
-  .page{display:none;}
-  .page.active{display:block;}
-
-  /* Form */
-  .form-wrap{padding:12px 16px;max-width:480px;margin:0 auto;display:flex;flex-direction:column;gap:10px;}
-  .card{background:var(--card);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow);}
-  .field-label{font-size:12px;font-weight:700;color:var(--muted);letter-spacing:0.8px;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:6px;}
-  .field-label .req{color:var(--danger);font-size:14px;}
-
-  /* 房號 */
-  .room-input{width:100%;font-size:30px;font-weight:700;font-family:'Noto Sans TC',sans-serif;color:var(--text);background:var(--bg);border:2px solid var(--border);border-radius:10px;padding:10px 16px;outline:none;letter-spacing:8px;transition:border-color 0.2s,background 0.2s;-webkit-appearance:none;}
-  .room-input:focus{border-color:var(--accent);background:var(--accent-light);}
-  .room-input.valid{border-color:var(--success);background:var(--success-light);}
-  .room-input.invalid{border-color:var(--danger);background:var(--danger-light);}
-  .name-display{margin-top:8px;padding:10px 14px;border-radius:10px;font-size:16px;font-weight:500;min-height:44px;display:flex;align-items:center;gap:10px;transition:all 0.2s;}
-  .name-display.empty{background:var(--border);color:var(--muted);font-size:13px;}
-  .name-display.found{background:var(--success-light);color:var(--success);border:1.5px solid #bbf7d0;}
-  .name-display.not-found{background:var(--danger-light);color:var(--danger);border:1.5px solid #fecaca;font-size:13px;}
-
-  /* 日期 */
-  .date-row{display:flex;gap:8px;}
-  .date-chip{padding:7px 14px;border-radius:20px;border:1.5px solid var(--border);background:var(--bg);font-size:13px;font-weight:500;cursor:pointer;color:var(--text);transition:all 0.15s;font-family:'Noto Sans TC',sans-serif;}
-  .date-chip.active{background:var(--accent);border-color:var(--accent);color:#fff;}
-  .date-input-wrap{display:none;margin-top:8px;}
-  .date-input-wrap.show{display:block;}
-  .date-input{width:100%;font-size:16px;font-family:'Noto Sans TC',sans-serif;color:var(--text);background:var(--bg);border:2px solid var(--accent);border-radius:10px;padding:9px 14px;outline:none;-webkit-appearance:none;}
-  .backdate-note{font-size:11px;color:var(--warn);margin-top:4px;font-weight:500;}
-
-  /* 金額 */
-  .amount-row{display:flex;gap:7px;flex-wrap:wrap;}
-  .amount-chip{padding:8px 14px;border-radius:20px;border:1.5px solid var(--border);background:var(--bg);font-size:14px;font-weight:700;cursor:pointer;color:var(--text);transition:all 0.15s;font-family:'Noto Sans TC',sans-serif;}
-  .amount-chip.active{background:var(--accent);border-color:var(--accent);color:#fff;}
-  .amount-chip:active{transform:scale(0.95);}
-  .amount-custom-wrap{margin-top:8px;display:none;}
-  .amount-custom-wrap.show{display:block;}
-  .amount-input{width:100%;font-size:20px;font-weight:700;font-family:'Noto Sans TC',sans-serif;color:var(--text);background:var(--bg);border:2px solid var(--accent);border-radius:10px;padding:9px 16px;outline:none;-webkit-appearance:none;}
-  .amount-hint{font-size:11px;color:var(--muted);margin-top:6px;line-height:1.7;}
-
-  /* 繳費性質 - 橫排按鈕 */
-  .type-row{display:flex;gap:6px;flex-wrap:wrap;}
-  .type-chip{padding:7px 12px;border-radius:20px;border:1.5px solid var(--border);background:var(--bg);font-size:13px;font-weight:500;cursor:pointer;color:var(--text);transition:all 0.15s;font-family:'Noto Sans TC',sans-serif;white-space:nowrap;}
-  .type-chip.active{background:var(--accent);border-color:var(--accent);color:#fff;}
-  .type-chip.minus-chip{border-color:#fca5a5;}
-  .type-chip.minus-chip.active{background:var(--danger);border-color:var(--danger);color:#fff;}
-  .minus-label{font-size:10px;background:#fef2f2;color:var(--danger);padding:1px 5px;border-radius:6px;margin-left:3px;font-weight:700;}
-
-  /* 備註（收起/展開） */
-  .toggle-btn{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--accent);cursor:pointer;padding:4px 0;font-weight:500;background:none;border:none;font-family:'Noto Sans TC',sans-serif;}
-  .toggle-btn .arrow{font-size:10px;transition:transform 0.2s;}
-  .toggle-btn.open .arrow{transform:rotate(180deg);}
-  .collapsible{visibility:hidden;height:0;overflow:hidden;margin:0;padding:0;}
-  .collapsible.show{visibility:visible;height:auto;overflow:visible;}
-  .note-input{width:100%;font-size:14px;font-family:'Noto Sans TC',sans-serif;color:var(--text);background:var(--bg);border:2px solid var(--border);border-radius:10px;padding:9px 14px;outline:none;resize:none;transition:border-color 0.2s;margin-top:8px;}
-  .note-input:focus{border-color:var(--accent);}
-
-  /* 現金核對（收起/展開） */
-  .cash-card{border:1.5px solid #fca5a5;}
-  .last-badge{display:inline-block;background:#fef2f2;color:var(--danger);font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;margin-bottom:6px;}
-  .cash-summary{margin-top:10px;padding:10px 12px;background:var(--bg);border-radius:8px;display:flex;flex-direction:column;gap:6px;}
-  .cash-row{display:flex;justify-content:space-between;align-items:center;font-size:13px;}
-  .cash-row b{font-size:16px;font-weight:700;}
-  .cash-divider{border:none;border-top:1px dashed var(--border);}
-  .check-result{margin-top:6px;font-size:13px;font-weight:700;text-align:center;padding:6px 10px;border-radius:8px;display:none;}
-
-  /* 送出 */
-  .submit-btn{width:100%;padding:14px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius);font-size:16px;font-weight:700;font-family:'Noto Sans TC',sans-serif;cursor:pointer;letter-spacing:1px;transition:all 0.15s;box-shadow:0 4px 14px rgba(37,99,235,0.35);display:flex;align-items:center;justify-content:center;gap:8px;}
-  .submit-btn:active{transform:scale(0.98);opacity:0.9;}
-  .submit-btn:disabled{background:var(--border);color:var(--muted);box-shadow:none;cursor:not-allowed;}
-  .spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,0.4);border-top-color:#fff;border-radius:50%;animation:spin 0.7s linear infinite;display:none;}
-  @keyframes spin{to{transform:rotate(360deg);}}
-
-  /* 累計列 */
-  .counter-bar{background:var(--accent-light);border:1px solid var(--accent-mid);border-radius:10px;padding:9px 14px;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--accent);}
-  .counter-bar b{font-size:16px;font-weight:700;}
-
-  /* 設定區 */
-  .setup-card{background:#fffbeb;border:1.5px solid #fcd34d;border-radius:var(--radius);padding:14px;}
-  .setup-card h3{font-size:13px;font-weight:700;color:#92400e;margin-bottom:8px;}
-  .setup-input{width:100%;font-size:13px;font-family:'Noto Sans TC',sans-serif;color:var(--text);background:#fff;border:1.5px solid #fcd34d;border-radius:8px;padding:7px 10px;outline:none;margin-bottom:8px;}
-  .save-btn{padding:7px 14px;background:var(--warn);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;font-family:'Noto Sans TC',sans-serif;cursor:pointer;}
-
-  /* ── 本日紀錄頁 ── */
-  .log-wrap{padding:12px 16px;max-width:480px;margin:0 auto;}
-
-  /* 區塊標題 */
-  .section-title{font-size:12px;font-weight:700;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin:12px 0 8px;display:flex;align-items:center;gap:8px;}
-  .section-title::after{content:'';flex:1;height:1px;background:var(--border);}
-
-  /* 每日收費統計 */
-  .daily-stats{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:4px;}
-  .daily-row{display:flex;justify-content:space-between;align-items:center;font-size:14px;padding:6px 0;border-bottom:1px solid var(--border);}
-  .daily-row:last-child{border-bottom:none;}
-  .daily-date{font-weight:700;color:var(--text);}
-  .daily-date.today{color:var(--accent);}
-  .daily-amount{font-weight:700;}
-  .daily-amount.plus{color:var(--success);}
-  .daily-amount.minus{color:var(--danger);}
-  .daily-total{display:flex;justify-content:space-between;font-size:15px;font-weight:700;color:var(--text);border-top:2px solid var(--border);padding-top:10px;margin-top:4px;}
-
-  /* 本期累計 */
-  .period-summary{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:var(--radius);padding:14px 16px;margin-bottom:4px;}
-  .period-row{display:flex;justify-content:space-between;font-size:13px;color:var(--success);margin-bottom:4px;}
-  .period-row b{font-weight:700;}
-  .period-net{display:flex;justify-content:space-between;font-size:15px;font-weight:700;color:var(--text);border-top:1px solid #bbf7d0;padding-top:8px;margin-top:4px;}
-
-  /* 紀錄卡片 */
-  .log-item{background:var(--card);border-radius:var(--radius);padding:12px 16px;box-shadow:var(--shadow);margin-bottom:8px;}
-  .log-item.minus{border-left:4px solid var(--danger);}
-  .log-item.backdate-item{border-left:4px solid var(--warn);}
-  .log-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px;}
-  .log-room{font-size:18px;font-weight:700;color:var(--text);}
-  .log-name{font-size:15px;font-weight:500;color:var(--accent);margin-left:6px;}
-  .log-amount-plus{font-size:16px;font-weight:700;color:var(--success);}
-  .log-amount-minus{font-size:16px;font-weight:700;color:var(--danger);}
-  .log-meta{font-size:12px;color:var(--muted);display:flex;gap:8px;flex-wrap:wrap;margin-top:3px;}
-  .log-type-badge{display:inline-block;background:var(--accent-light);color:var(--accent);font-size:11px;font-weight:500;padding:2px 7px;border-radius:8px;}
-  .log-type-badge.minus{background:var(--danger-light);color:var(--danger);}
-  .log-type-badge.backdate{background:var(--warn-light);color:var(--warn);}
-  .log-note{font-size:12px;color:var(--muted);margin-top:3px;}
-  .log-delete-btn{display:flex;align-items:center;justify-content:flex-end;margin-top:8px;}
-  .delete-btn{padding:4px 10px;background:none;border:1px solid #fca5a5;border-radius:8px;color:var(--danger);font-size:12px;cursor:pointer;font-family:'Noto Sans TC',sans-serif;}
-  .delete-btn:active{background:var(--danger-light);}
-  .log-empty{text-align:center;color:var(--muted);font-size:14px;padding:40px 20px;}
-
-  /* 結帳區（只有桌機才顯示） */
-  .settle-section{display:none;}
-  @media(min-width:768px){.settle-section{display:block;}}
-  .settle-card{background:#fff;border:2px solid var(--success);border-radius:var(--radius);padding:16px;margin-top:8px;}
-  .settle-card h3{font-size:15px;font-weight:700;color:var(--success);margin-bottom:8px;}
-  .settle-btn{padding:10px 20px;background:var(--success);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;font-family:'Noto Sans TC',sans-serif;cursor:pointer;margin-right:8px;}
-  .history-btn{padding:10px 20px;background:var(--bg);color:var(--text);border:1.5px solid var(--border);border-radius:10px;font-size:14px;font-weight:500;font-family:'Noto Sans TC',sans-serif;cursor:pointer;}
-
-  /* 歷史紀錄彈窗 */
-  .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:100;align-items:center;justify-content:center;padding:20px;}
-  .overlay.show{display:flex;}
-  .modal{background:#fff;border-radius:20px;padding:24px;max-width:480px;width:100%;max-height:80vh;overflow-y:auto;box-shadow:0 8px 40px rgba(0,0,0,0.2);}
-  .modal h2{font-size:18px;font-weight:700;margin-bottom:16px;color:var(--text);}
-  .history-item{background:var(--bg);border-radius:10px;padding:12px 14px;margin-bottom:8px;}
-  .history-period{font-size:13px;font-weight:700;color:var(--accent);margin-bottom:4px;}
-  .history-amount{font-size:16px;font-weight:700;color:var(--success);}
-  .history-detail{font-size:12px;color:var(--muted);margin-top:2px;}
-  .modal-close{width:100%;padding:12px;background:var(--bg);border:none;border-radius:10px;font-size:14px;font-weight:500;font-family:'Noto Sans TC',sans-serif;cursor:pointer;margin-top:8px;}
-
-  /* 送出成功彈窗 */
-  .success-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:100;align-items:center;justify-content:center;padding:20px;}
-  .success-overlay.show{display:flex;}
-  .success-card{background:#fff;border-radius:20px;padding:24px;text-align:center;max-width:320px;width:100%;box-shadow:0 8px 40px rgba(0,0,0,0.2);}
-  .success-icon{font-size:44px;margin-bottom:8px;}
-  .success-title{font-size:18px;font-weight:700;color:var(--success);margin-bottom:6px;}
-  .success-title.err{color:var(--danger);}
-  .success-detail{font-size:13px;color:var(--muted);line-height:1.8;margin-bottom:16px;}
-  .success-detail b{color:var(--text);}
-  .next-btn{width:100%;padding:12px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;font-family:'Noto Sans TC',sans-serif;cursor:pointer;}
-</style>
-</head>
-<body>
-
-<header>
-  <h1>管理費繳交登記</h1>
-  <p>妙慧樓 — 收費員專用・<span id='periodLabel'>載入中…</span></p>
-  <div class="status-bar">
-    <div class="status-dot" id="statusDot"></div>
-    <span id="statusText">檢查連線中…</span>
-  </div>
-</header>
-
-<div class="tab-bar">
-  <div class="tab active" onclick="switchTab('form',this)">登記繳費</div>
-  <div class="tab" onclick="switchTab('log',this)">本日紀錄 <span id="logBadge"></span></div>
-</div>
-
-<!-- ══ 登記繳費頁 ══ -->
-<div class="page active" id="page-form">
-<div class="form-wrap">
-
-  <div class="setup-card" id="setupCard" style="display:none;">
-    <h3>⚙️ 第一次使用請先設定 Apps Script 網址</h3>
-    <input class="setup-input" type="url" id="scriptUrlInput" placeholder="貼上 Apps Script 網頁應用程式 URL">
-    <button class="save-btn" onclick="saveScriptUrl()">儲存並連線</button>
-  </div>
-
-  <div class="counter-bar">
-    <span>今日已登記 <b id="countNum">0</b> 筆</span>
-    <span>今日淨額 <b id="totalNum">0</b> 元</span>
-  </div>
-
-  <!-- 繳費日期 -->
-  <div class="card">
-    <div class="field-label"><span class="req">*</span> 繳費日期</div>
-    <div class="date-row">
-      <button class="date-chip active" onclick="selectDateMode('today',this)">今天</button>
-      <button class="date-chip" onclick="selectDateMode('backdate',this)">補登過去日期</button>
-    </div>
-    <div class="date-input-wrap" id="dateInputWrap">
-      <input class="date-input" type="date" id="dateInput">
-      <div class="backdate-note">⚠️ 補登模式：補登資料不計入今日金額</div>
-    </div>
-  </div>
-
-  <!-- 房號 -->
-  <div class="card">
-    <div class="field-label"><span class="req">*</span> 房號</div>
-    <input class="room-input" type="number" id="roomInput" placeholder="輸入房號"
-           inputmode="numeric" autocomplete="off"
-           oninput="lookupRoom(this.value)"
-           onkeyup="lookupRoom(this.value)"
-           onchange="lookupRoom(this.value)">
-    <div class="name-display empty" id="nameDisplay">
-      <span>👤</span><span>輸入房號後自動顯示姓名</span>
-    </div>
-  </div>
-
-  <!-- 金額 -->
-  <div class="card">
-    <div class="field-label"><span class="req">*</span> 繳交金額</div>
-    <div class="amount-row">
-      <button class="amount-chip active" onclick="selectAmount(2500,this)">2500 元</button>
-      <button class="amount-chip" onclick="selectAmount(1000,this)">1000 元</button>
-      <button class="amount-chip" onclick="selectAmount(2000,this)">2000 元</button>
-      <button class="amount-chip" onclick="selectAmount('custom',this)">其他</button>
-    </div>
-    <div class="amount-hint">
-      整月 2500：1～15日入住 / 16日～月底退房<br>
-      半月 1000：16日～月底入住 / 1～15日退房<br>
-      保證金 2000：入住收 / 退房退
-    </div>
-    <div class="amount-custom-wrap" id="customWrap">
-      <input class="amount-input" type="number" id="customAmount"
-             placeholder="輸入金額" inputmode="numeric" oninput="onCustomAmount()">
-    </div>
-  </div>
-
-  <!-- 繳費性質（橫排） -->
-  <div class="card">
-    <div class="field-label"><span class="req">*</span> 繳費性質</div>
-    <div class="type-row">
-      <button class="type-chip active" onclick="selectType(this,false)">本月正常繳交</button>
-      <button class="type-chip" onclick="selectType(this,false)">補繳</button>
-      <button class="type-chip" onclick="selectType(this,false)">預繳</button>
-      <button class="type-chip" onclick="selectType(this,false)">收保證金</button>
-      <button class="type-chip minus-chip" onclick="selectType(this,true)">退保證金<span class="minus-label">支出</span></button>
-      <button class="type-chip minus-chip" onclick="selectType(this,true)">歸還零用金<span class="minus-label">支出</span></button>
-    </div>
-  </div>
-
-  <!-- 備註（收起） -->
-  <div class="card">
-    <button class="toggle-btn" id="noteToggle" onclick="toggleSection('noteBody','noteToggle')">
-      <span class="arrow">▼</span> 新增備註
-    </button>
-    <div class="collapsible" id="noteBody">
-      <textarea class="note-input" id="noteInput" rows="2"
-                placeholder="例：收5000元(3、4月)、退保證金2000…"></textarea>
-    </div>
-  </div>
-
-  <!-- 現金核對（收起） -->
-  <div class="card cash-card">
-    <button class="toggle-btn" id="cashToggle" onclick="toggleSection('cashBody','cashToggle')">
-      <span class="arrow">▼</span> <span class="last-badge">最後一筆才填</span> 現金核對
-    </button>
-    <div class="collapsible" id="cashBody">
-      <input class="amount-input" type="number" id="cashInput"
-             placeholder="點算手上現金後填入" inputmode="numeric"
-             oninput="updateCashCheck()" style="margin-top:10px;border-color:var(--border);">
-      <div style="font-size:11px;color:var(--danger);margin-top:4px;">收費結束後才填，核對現金有無短少</div>
-      <div class="cash-summary">
-        <div class="cash-row">
-          <span style="color:var(--muted);">今日累計淨額</span>
-          <b id="runningTotal" style="color:var(--accent);">0 元</b>
-        </div>
-        <hr class="cash-divider">
-        <div class="cash-row">
-          <span style="color:var(--muted);">手上現金</span>
-          <b id="cashDisplay" style="color:var(--muted);">— 元</b>
-        </div>
-        <div class="check-result" id="checkResult"></div>
-      </div>
-    </div>
-  </div>
-
-  <button class="submit-btn" id="submitBtn" onclick="submitForm()" disabled>
-    <div class="spinner" id="spinner"></div>
-    <span id="submitText">送出這筆紀錄</span>
-  </button>
-
-</div>
-</div>
-
-<!-- ══ 本日紀錄頁 ══ -->
-<div class="page" id="page-log">
-  <div class="log-wrap" id="logWrap">
-
-    <!-- 每日收費統計 -->
-    <div class="section-title">每日收費統計</div>
-    <div class="daily-stats" id="dailyStats">
-      <div style="text-align:center;color:var(--muted);font-size:13px;padding:10px 0;">載入中…</div>
-    </div>
-
-    <!-- 每筆明細 -->
-    <div class="section-title">每筆明細</div>
-    <div id="allItems"></div>
-
-    <!-- 本期累計 -->
-    <div class="section-title">本期累計</div>
-    <div class="period-summary">
-      <div class="period-row"><span>本期收入</span><b id="periodIn" style="color:var(--success);">+0 元</b></div>
-      <div class="period-row"><span>本期支出</span><b id="periodOut" style="color:var(--danger);">0 元</b></div>
-      <div class="period-net"><span>本期淨額</span><b id="periodNet">0 元</b></div>
-    </div>
-
-    <!-- 結帳區（只有桌機顯示） -->
-    <div class="settle-section">
-      <div class="settle-card">
-        <h3>💰 結帳</h3>
-        <p style="font-size:13px;color:var(--muted);margin-bottom:12px;">結帳後本期資料會存入歷史，下一期從零開始。</p>
-        <button class="settle-btn" onclick="confirmSettle()">執行結帳</button>
-        <button class="history-btn" onclick="showHistory()">查看歷史紀錄</button>
-      </div>
-    </div>
-
-    <div class="log-empty" id="logEmpty" style="display:none;">尚未登記任何紀錄</div>
-  </div>
-</div>
-
-<!-- 送出成功彈窗 -->
-<div class="success-overlay" id="successOverlay">
-  <div class="success-card">
-    <div class="success-icon" id="overlayIcon">✅</div>
-    <div class="success-title" id="overlayTitle"></div>
-    <div class="success-detail" id="overlayDetail"></div>
-    <button class="next-btn" onclick="nextRecord()" id="nextBtn">登記下一筆</button>
-  </div>
-</div>
-
-<!-- 歷史紀錄彈窗 -->
-<div class="overlay" id="historyOverlay">
-  <div class="modal">
-    <h2>歷史結帳紀錄</h2>
-    <div id="historyList"></div>
-    <button class="modal-close" onclick="document.getElementById('historyOverlay').classList.remove('show')">關閉</button>
-  </div>
-</div>
-
-<script>
-// ── 房號姓名對照表 ────────────────────────────────────────
-const roomData = {
-  302:'林鎂伶',303:'李怡諠',307:'黃嘉盈',310:'許美娟',311:'黃桂蓉',
-  312:'黃乙宸',315:'陳秀鳯',317:'張麗慧',318:'陳冠安',321:'林遜玲',
-  322:'謝春綢',324:'林惠敏',325:'李法伯',326:'趙宥惠',327:'林秋妙',
-  328:'李尉慈',329:'陳虹熹',330:'黃金英',331:'陳慧如',336:'許純瑞',
-  337:'謝瑞燕',338:'蔡美慧',340:'柯培今',341:'曾芝蘭',342:'張毓晏',
-  343:'張秋月',344:'林素卿',346:'毛如瑩',348:'胡詠綺',349:'林姿伶',
-  351:'葉秋甄',352:'李帆葳',356:'陳貞妤',357:'賴采璿',358:'顏婉如',
-  360:'林彩秀',361:'廖美華',362:'曾歐麗玉',363:'杜珮合',366:'曾獻儀',
-  368:'蔡佩蓉',369:'劉珮瑤',370:'張玉燕',371:'馬偉群',374:'吳仲芳',
-  401:'趙梓臣',402:'洪秀華',403:'王莉茹',404:'陳心瀅',407:'黃雅文',
-  408:'吳瓊霞',409:'陳心怡',412:'鍾孟岑',413:'陳玟婷',414:'江婉瑜',
-  415:'黃宣珮',416:'莊琇鈞',417:'陳巧晴',419:'蕭彩云',420:'張瑜庭',
-  422:'王敏純',424:'王俊婷',425:'朱燕孺',426:'李生鳳',428:'郭秋君',
-  429:'緣固',430:'緣光',431:'緣端',433:'李麗明',434:'黃婉怡',
-  435:'林國金',437:'陳雅婷',439:'張雅茵',442:'賴淑真',443:'陳怡君',
-  446:'楊維竹',447:'郭姿妙',448:'黃譓娗',449:'戴鈺珊',450:'王秀珍',
-  451:'李美朱',452:'林琇鴦',454:'鄭心佩',459:'李苑嫣',461:'胡馨方',
-  462:'黃如敏',465:'陳盈均',467:'黃馨玉',468:'蔡品涵',469:'柯惠玲',
-  472:'于定萱',473:'陳怡孜',474:'凃依芬',
-  517:'許文君',518:'單薰潁',520:'楊亞琳',521:'黃麗蓉',522:'温秀珍',
-  523:'王貞婷',524:'莊雅嵐',526:'葉道欣',527:'林玫汝',528:'鄭媄嬬',
-  530:'洪錦媖',531:'黃歆淳',537:'高觀妙',538:'洪佳綺',539:'王靖涵',
-  541:'黃怡禎',542:'段繼慧',545:'張瑛玲',548:'江麗雅',550:'林美麗',
-  551:'陳素芬',552:'劉秀桃',553:'戴佳勳',554:'黃柏雅',555:'呂家妤',
-  556:'李素卿',557:'陳秀月',558:'周筱靜',559:'彭金玉',561:'李慧琳',
-  562:'陳怜君',565:'簡一修',568:'羅竹君',
-  617:'王夢愉',618:'何倩馨',619:'曾晴鈺',620:'蔡孟蓉',621:'曾綉芳',
-  622:'鄭綸霈',623:'郭珮緹',625:'吳姿儀',626:'鄭安安',627:'鄧文琪',
-  634:'侯妙璇',636:'孫佩貝',637:'陳怡君',639:'王薏菁',640:'王麗君',
-  641:'劉姿佑',642:'龔品蓉',643:'劉芷妤',644:'洪榛妤',645:'戴雅琪',
-  646:'李家儀',647:'許瀞文',648:'江承澂',649:'黃亭穎',650:'許庭禎',
-  651:'楊木真',652:'林佳臻',653:'徐采伶',654:'周裘語',655:'黃宜婷',
-  301:'許芳瑜',
-  304:'黃彩羚',
-  306:'高桂存',
-  308:'潘素鳳',
-  309:'李沅螢',
-  313:'范馨亞',
-  316:'陳泠璇',
-  319:'黃金珠',
-  320:'陳育青',
-  339:'潘心怡',
-  347:'張麗惠',
-  350:'張伯嬌師姑',
-  405:'于美鳳',
-  411:'王梃萱',
-  421:'蕭巧雯',
-  427:'郎筱玲',
-  432:'蔡麗玉',
-  445:'林淯立',
-  453:'趙怡婷',
-  456:'陳慧穎',
-  457:'李佳紜',
-  460:'鄭淳云',
-  463:'蘇孟賢',
-  466:'劉佳苑',
-  470:'林梅芳',
-  525:'蔡淑芳',
-  529:'蔡麗芬師姑',
-  533:'李蘊詩',
-  535:'高菁眉',
-  544:'許文貞',
-  546:'伍雅嵐',
-  549:'盧姿伶',
-  560:'陳金菊',
-  563:'謝于寧',
-  564:'謝秀娟',
-  567:'周媛',
-  630:'何翊嘉',
-  659:'匡婕',660:'劉書菡',661:'呂明霞',663:'陳映頤',664:'林郁婷'
-};
-
-const MINUS_TYPES = ['退保證金','歸還零用金'];
-
-// ── 狀態 ──────────────────────────────────────────────────
-var selectedAmount = 2500;
-var selectedType = '本月正常繳交';
-var isMinusType = false;
-var currentName = '';
-var scriptUrl = 'https://script.google.com/macros/s/AKfycbxecn2fyM4GDT4JjmD6LIl8G7zPiGjBnnaD4ilitiiBDu5q-GojS1RUYtC7fYzrZ6wP/exec';
-var dateMode = 'today';
-var sessionLog = [];
-var backdateLog = [];
-var periodStartDate = localStorage.getItem('periodStart') || '';
-var dynamicRoomData = {}; // 房號→姓名（單筆）
-var dynamicRoomList = []; // 完整住戶名單（支援同房號多人）
-var roomDataLoaded = false; // 住戶名單是否已載入完成
-
-// ── 今天日期字串 ─────────────────────────────────────────
-function getTodayStr() {
-  var now = new Date();
-  return now.getFullYear()+'/'+String(now.getMonth()+1).padStart(2,'0')+'/'+String(now.getDate()).padStart(2,'0');
+  // fallback：只用房號比對（找第一個符合的）
+  for(var i=1;i<d.length;i++){
+    if(String(d[i][0])===String(r)) return i+1;
+  }
+  return -1;
 }
 
-// ── 初始化 ────────────────────────────────────────────────
-window.onload = function() {
-  var today = getTodayStr().replace(/\//g,'-');
-  document.getElementById('dateInput').value = today;
-  document.getElementById('dateInput').max = today;
-
-  document.getElementById('statusDot').className='status-dot connected';
-  document.getElementById('statusText').textContent='已連線・資料將自動存入試算表';
-  loadTodayData();
-  updateSubmit();
-};
-
-// ── Tab ───────────────────────────────────────────────────
-function switchTab(name, el) {
-  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
-  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
-  el.classList.add('active');
-  document.getElementById('page-'+name).classList.add('active');
+function getFloor(r){
+  var n=parseInt(r);
+  if(n>=300&&n<400)return '3F';
+  if(n>=400&&n<500)return '4F';
+  if(n>=500&&n<600)return '5F';
+  if(n>=600&&n<700)return '6F';
+  return null;
 }
 
-// ── 收起/展開 ──────────────────────────────────────────────
-function toggleSection(bodyId, btnId) {
-  var body = document.getElementById(bodyId);
-  var btn = document.getElementById(btnId);
-  var isOpen = body.classList.contains('show');
-  body.classList.toggle('show', !isOpen);
-  btn.classList.toggle('open', !isOpen);
+function writeLedger(data){
+  var floor=getFloor(data.room);
+  if(!floor||data.type==='歸還零用金')return;
+  var ss=SpreadsheetApp.getActiveSpreadsheet();
+  var s=ss.getSheetByName(floor+'_清冊');
+  if(!s)return;
+  var row=findRoomRow(s, data.room, data.name);
+
+  // 如果清冊裡找到了但姓名是空的（空房變有人），從住戶名單補填姓名和應繳
+  if(row>0){
+    var existingName=s.getRange(row,2).getValue();
+    if(existingName===''||existingName===null){
+      var nameSheet2=ss.getSheetByName('住戶名單');
+      if(nameSheet2){
+        var nd2=nameSheet2.getDataRange().getValues();
+        for(var ni2=1;ni2<nd2.length;ni2++){
+          if(parseInt(nd2[ni2][0])===parseInt(data.room)){
+            s.getRange(row,2).setValue(String(nd2[ni2][1]));
+            s.getRange(row,3).setValue(Number(nd2[ni2][2]||0));
+            break;
+          }
+        }
+      }
+    }
+  }
+
+  // 如果清冊裡找不到這個房號+姓名的組合，插入新列
+  // （包含換住戶的情況：同房號但姓名不同）
+  if(row<0){
+    var roomNum=parseInt(data.room);
+    // 從住戶名單取得資料
+    var nameSheet=ss.getSheetByName('住戶名單');
+    var roomName=data.name||'';
+    var shouldPay=0;
+    if(nameSheet){
+      var nd=nameSheet.getDataRange().getValues();
+      for(var ni=1;ni<nd.length;ni++){
+        if(parseInt(nd[ni][0])===parseInt(data.room)){
+          roomName=String(nd[ni][1]);
+          shouldPay=Number(nd[ni][2]||0);
+          break;
+        }
+      }
+    }
+    // 找到正確的插入位置（依房號排序）
+    var d=s.getDataRange().getValues();
+    var insertRow=s.getLastRow(); // 預設插入最後一列（合計列前）
+    for(var i=1;i<d.length-1;i++){ // 跳過標題和合計列
+      var cellRoom=parseInt(d[i][0]);
+      if(!isNaN(cellRoom)&&cellRoom>roomNum){
+        insertRow=i+1; // 在這列前面插入
+        break;
+      }
+    }
+    s.insertRowBefore(insertRow);
+    s.getRange(insertRow,1,1,10).setValues([[roomNum,roomName,shouldPay,'','','','','','','']]);
+    row=insertRow;
+  }
+  var col=TYPE_TO_COL[data.type];if(!col)return;
+
+  // 金額累加
+  var amountCell=s.getRange(row,col);
+  var existing=amountCell.getValue();
+  var newAmount=(existing===''||existing===null||isNaN(Number(existing)))?Math.abs(data.amount):Number(existing)+Math.abs(data.amount);
+  amountCell.setValue(newAmount);
+  amountCell.setFontColor(data.type==='退保證金'?'#d97706':'#16a34a');
+
+  // 日期累加
+  var dc=s.getRange(row,9);
+  var p=data.time.substring(0,10).split('/');
+  var sd=parseInt(p[1])+'/'+parseInt(p[2]);
+  var ex=String(dc.getValue());
+  if(ex===''||ex==='null')dc.setValue(sd);
+  else if(ex.indexOf(sd)<0)dc.setValue(ex+'、'+sd);
+
+  // 備註寫入（有備註才寫）
+  if(data.note && data.note.trim()!==''){
+    var nc=s.getRange(row,10);
+    var existingNote=String(nc.getValue());
+    if(existingNote===''||existingNote==='null'){
+      nc.setValue(data.note.trim());
+    } else if(existingNote.indexOf(data.note.trim())<0){
+      nc.setValue(existingNote+'；'+data.note.trim());
+    }
+  }
+
+  // 預繳：自動寫入預繳追蹤工作表
+  if(data.type==='預繳' && data.prepayUntil){
+    _addToPrepayTracking(data);
+  }
 }
 
-// ── 日期模式 ──────────────────────────────────────────────
-function selectDateMode(mode, el) {
-  document.querySelectorAll('.date-chip').forEach(function(c){c.classList.remove('active');});
-  el.classList.add('active');
-  dateMode = mode;
-  document.getElementById('dateInputWrap').classList.toggle('show', mode==='backdate');
+// ── 自動寫入預繳追蹤 ─────────────────────────────────────
+function _addToPrepayTracking(data){
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var prepaySheet = ss.getSheetByName('預繳追蹤');
+  if (!prepaySheet) return;
+
+  // 取得繳費年月（從時間欄位取）
+  var timeParts = data.time.substring(0,7); // 2026/05
+  var yearMonth = timeParts.replace('/0','/').replace(/\/0/,'/'); // 2026/5
+
+  // 檢查是否已存在相同記錄
+  var pd = prepaySheet.getDataRange().getValues();
+  for (var i=1; i<pd.length; i++){
+    if(String(pd[i][0])===String(data.room) &&
+       String(pd[i][1])===String(data.name) &&
+       String(pd[i][2])===yearMonth &&
+       String(pd[i][3])===data.prepayUntil){
+      return; // 已存在，不重複新增
+    }
+  }
+
+  // 新增一列
+  prepaySheet.appendRow([
+    parseInt(data.room),
+    data.name,
+    yearMonth,
+    data.prepayUntil
+  ]);
 }
 
-function getSelectedDate() {
-  if (dateMode === 'today') {
+function reprocessAll(silent) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+
+  // 先清空四個樓層清冊的 D~J 欄（包含備註欄）
+  ['3F','4F','5F','6F'].forEach(function(f){
+    var s = ss.getSheetByName(f+'_清冊');
+    if (!s) return;
+    var lastRow = s.getLastRow();
+    if (lastRow > 1) {
+      s.getRange(2,4,lastRow-1,7).clearContent().setFontColor('#000000');
+    }
+  });
+
+  // 重新跑所有收費紀錄
+  var sheet = ss.getSheetByName(RECORD_SHEET);
+  if (!sheet) { SpreadsheetApp.getUi().alert('找不到收費紀錄工作表！'); return; }
+
+  var data = sheet.getDataRange().getValues();
+  var count = 0;
+
+  for (var i=1; i<data.length; i++){
+    var cellVal=data[i][0];
+    var rowTime='';
+    if(cellVal instanceof Date){
+      rowTime=cellVal.getFullYear()+'/'+String(cellVal.getMonth()+1).padStart(2,'0')+'/'+String(cellVal.getDate()).padStart(2,'0')+' '+String(cellVal.getHours()).padStart(2,'0')+':'+String(cellVal.getMinutes()).padStart(2,'0');
+    } else { rowTime=String(cellVal); }
+
+    var record={time:rowTime,room:String(data[i][1]),name:String(data[i][2]),amount:Number(data[i][3]),type:String(data[i][4]),note:String(data[i][5]||'')};
+    writeLedger(record);
+    count++;
+  }
+  // 重跑完後自動補回預繳備註
+  var prepaySheet = ss.getSheetByName('預繳追蹤');
+  if (prepaySheet) {
+    // 取得本月年月（從試算表標題或用當前月份）
     var now = new Date();
-    return now.getFullYear()+'/'+String(now.getMonth()+1).padStart(2,'0')+'/'+String(now.getDate()).padStart(2,'0')+' '+String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
-  } else {
-    return document.getElementById('dateInput').value.replace(/-/g,'/') + ' 00:00';
+    var thisMonthStr = now.getFullYear()+'/'+(now.getMonth()+1);
+    _applyPrepay(thisMonthStr);
   }
+
+  if(!silent) SpreadsheetApp.getUi().alert('✅ 補跑完成！共處理 '+count+' 筆資料');
 }
 
-// ── Script URL ────────────────────────────────────────────
-function saveScriptUrl() {
-  var val = document.getElementById('scriptUrlInput').value.trim();
-  if (!val || !val.startsWith('https://')) { alert('請貼上正確的網址'); return; }
-  scriptUrl = val;
-  localStorage.setItem('scriptUrl', scriptUrl);
-  document.getElementById('setupCard').style.display = 'none';
-  setStatus('connected','已連線・資料將自動存入試算表');
-  loadRoomData();
-  loadTodayData();
-}
+function doPost(e){
+  try{
+    var data=JSON.parse(e.postData.contents);
+    var ss=SpreadsheetApp.getActiveSpreadsheet();
 
-function checkConnection() {
-  setStatus('yellow','連線中…');
-  fetch(scriptUrl, {mode:'no-cors'})
-    .then(function(){setStatus('connected','已連線・資料將自動存入試算表');})
-    .catch(function(){setStatus('error','連線失敗，請確認網址');});
-}
-
-function setStatus(state, text) {
-  var dot = document.getElementById('statusDot');
-  dot.className = 'status-dot'+(state==='connected'?' connected':state==='error'?' error':'');
-  document.getElementById('statusText').textContent = text;
-}
-
-// ── 載入住戶名單 ─────────────────────────────────────────
-function loadRoomData() {
-  fetch(scriptUrl+'?action=roomlist')
-    .then(function(r){return r.json();})
-    .then(function(res){
-      if(res.status==='ok' && res.rooms){
-        dynamicRoomList = res.rooms;
-        dynamicRoomData = {};
-        res.rooms.forEach(function(r){
-          if(r.room && r.name) dynamicRoomData[parseInt(r.room)] = r.name;
-        });
-        roomDataLoaded = true;
-        // 更新標題月份
-        if(res.period) {
-          document.getElementById('periodLabel').textContent = res.period;
+    // 刪除功能
+    if(data.action==='delete'){
+      var s=ss.getSheetByName(RECORD_SHEET);
+      if(!s) return ContentService.createTextOutput(JSON.stringify({status:'error',message:'找不到收費紀錄'})).setMimeType(ContentService.MimeType.JSON);
+      
+      var rows=s.getDataRange().getValues();
+      var deleteRow=-1;
+      for(var i=1;i<rows.length;i++){
+        var cellVal=rows[i][0];
+        var rowTime='';
+        if(cellVal instanceof Date){
+          rowTime=cellVal.getFullYear()+'/'+String(cellVal.getMonth()+1).padStart(2,'0')+'/'+String(cellVal.getDate()).padStart(2,'0')+' '+String(cellVal.getHours()).padStart(2,'0')+':'+String(cellVal.getMinutes()).padStart(2,'0');
+        } else { rowTime=String(cellVal); }
+        if(rowTime===data.time && String(rows[i][1])===String(data.room) && Number(rows[i][3])===Number(data.amount) && String(rows[i][4])===String(data.type)){
+          deleteRow=i+1; break;
         }
-        // 如果房號欄已有值，重新觸發查詢
-        var roomVal = document.getElementById('roomInput').value;
-        if(roomVal && roomVal.length >= 3) lookupRoom(roomVal);
       }
-    })
-    .catch(function(){});
-}
-
-// ── 載入今日及最近7天補登資料 ────────────────────────────
-function loadTodayData() {
-  var today = getTodayStr();
-  setStatus('yellow','載入紀錄中…');
-
-  fetch(scriptUrl+'?action=all&date='+encodeURIComponent(today))
-    .then(function(r){return r.json();})
-    .then(function(res){
-      if (res.status==='ok' && res.rows.length>0) {
-        sessionLog = [];
-        backdateLog = [];
-
-        var sorted = res.rows.slice().sort(function(a,b){return a.time>b.time?1:-1;});
-        sorted.forEach(function(r){
-          var isMinus = MINUS_TYPES.indexOf(r.type)>=0;
-          var isBackdate = r.time.substring(0,10) !== today;
-          var entry = {time:r.time,room:r.room,name:r.name,amount:r.amount,type:r.type,note:r.note,minus:isMinus,backdate:isBackdate};
-          if (isBackdate) backdateLog.unshift(entry);
-          else sessionLog.unshift(entry);
-        });
-
-        updateCounters();
-        updateLogPage();
-        setStatus('connected','已連線・今日 '+sessionLog.length+' 筆・補登 '+backdateLog.length+' 筆');
+      if(deleteRow>0){
+        s.deleteRow(deleteRow);
+        // 重跑清冊
+        reprocessAll(true);
+        return ContentService.createTextOutput(JSON.stringify({status:'ok'})).setMimeType(ContentService.MimeType.JSON);
       } else {
-        setStatus('connected','已連線・資料將自動存入試算表');
+        return ContentService.createTextOutput(JSON.stringify({status:'error',message:'找不到該筆資料'})).setMimeType(ContentService.MimeType.JSON);
       }
-    })
-    .catch(function(){setStatus('connected','已連線・資料將自動存入試算表');});
+    }
+
+    // 新增功能
+    var s=ss.getSheetByName(RECORD_SHEET);
+    if(!s){
+      s=ss.insertSheet(RECORD_SHEET);
+      s.appendRow(['時間','房號','姓名','金額（元）','繳費性質','備註']);
+      s.setFrozenRows(1);
+      s.getRange(1,1,1,6).setBackground('#2563eb').setFontColor('#fff').setFontWeight('bold').setFontSize(12);
+    }
+    s.appendRow([data.time,data.room,data.name,data.amount,data.type,data.note||'']);
+    // 確保 prepayUntil 傳入 writeLedger
+    if(!data.prepayUntil) data.prepayUntil = '';
+    writeLedger(data);
+    return ContentService.createTextOutput(JSON.stringify({status:'ok'})).setMimeType(ContentService.MimeType.JSON);
+  }catch(err){
+    return ContentService.createTextOutput(JSON.stringify({status:'error',message:err.toString()})).setMimeType(ContentService.MimeType.JSON);
+  }
 }
 
-// ── 房號查詢 ──────────────────────────────────────────────
-function lookupRoom(val) {
-  var input = document.getElementById('roomInput');
-  var display = document.getElementById('nameDisplay');
-  var num = parseInt(val);
-  if (!val || String(val).length < 3) {
-    input.className = 'room-input';
-    display.className = 'name-display empty';
-    display.innerHTML = '<span>👤</span><span>輸入房號後自動顯示姓名</span>';
-    currentName = ''; updateSubmit(); return;
+// ── 建立住戶名單工作表（第一次執行）────────────────────
+function setupRoomList() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var existing = ss.getSheetByName('住戶名單');
+  if (existing) {
+    SpreadsheetApp.getUi().alert('住戶名單工作表已存在！');
+    return;
   }
-  // 如果住戶名單還沒載入完，先顯示靜態名單結果，載入完後自動更新
-  var matches = [];
-  if(roomDataLoaded) {
-    matches = dynamicRoomList.filter(function(r){ return parseInt(r.room)===num; });
-  }
-  if(matches.length === 0) {
-    if(roomData[num]) matches = [{room:String(num), name:roomData[num]}];
-  }
+  var sheet = ss.insertSheet('住戶名單');
+  sheet.getRange(1,1,1,4).setValues([['房號','姓名','應繳金額','身份']]);
+  sheet.getRange(1,1,1,4).setBackground('#2563eb').setFontColor('#fff').setFontWeight('bold').setFontSize(12);
+  sheet.setFrozenRows(1);
+  sheet.setColumnWidth(1,70);
+  sheet.setColumnWidth(2,100);
+  sheet.setColumnWidth(3,90);
+  sheet.setColumnWidth(4,120);
 
-  if (matches.length === 1) {
-    // 只有一個人，直接顯示
-    currentName = matches[0].name;
-    input.className = 'room-input valid';
-    display.className = 'name-display found';
-    var b = document.createElement('b');
-    b.style.fontSize = '20px';
-    b.style.letterSpacing = '2px';
-    b.textContent = currentName;
-    display.innerHTML = '<span>✓</span>';
-    display.appendChild(b);
-    updateSubmit();
-  } else if (matches.length > 1) {
-    // 同房號多人，顯示選擇按鈕
-    currentName = '';
-    input.className = 'room-input valid';
-    display.className = 'name-display found';
-    display.innerHTML = '<span style="font-size:13px;color:var(--warn);font-weight:700;">⚠️ 此房號有多位住戶，請選擇：</span>';
-    matches.forEach(function(m){
-      var btn = document.createElement('button');
-      btn.style.cssText = 'display:block;width:100%;margin-top:6px;padding:8px 12px;background:var(--bg);border:1.5px solid var(--accent);border-radius:8px;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer;color:var(--accent);text-align:left;';
-      btn.textContent = m.name;
-      btn.onclick = function(){
-        currentName = m.name;
-        display.className = 'name-display found';
-        var b2 = document.createElement('b');
-        b2.style.fontSize = '20px';
-        b2.style.letterSpacing = '2px';
-        b2.textContent = currentName;
-        display.innerHTML = '<span>✓</span>';
-        display.appendChild(b2);
-        updateSubmit();
-      };
-      display.appendChild(btn);
-    });
-    updateSubmit();
-  } else if (String(val).length === 3) {
-    // 兩個名單都找不到，嘗試即時從 API 查詢（處理剛新增的住戶）
-    input.className = 'room-input';
-    display.className = 'name-display empty';
-    display.innerHTML = '<span>🔍</span><span>查詢中…</span>';
-    currentName = ''; updateSubmit();
-    fetch(scriptUrl+'?action=roomlist')
-      .then(function(r){return r.json();})
-      .then(function(res){
-        if(res.status==='ok' && res.rooms){
-          res.rooms.forEach(function(r){
-            if(r.room && r.name) dynamicRoomData[parseInt(r.room)] = r.name;
-          });
-        }
-        var freshName = dynamicRoomData[num];
-        if(freshName){
-          currentName = freshName;
-          input.className = 'room-input valid';
-          display.className = 'name-display found';
-          var b = document.createElement('b');
-          b.style.fontSize = '20px';
-          b.style.letterSpacing = '2px';
-          b.textContent = currentName;
-          display.innerHTML = '<span>✓</span>';
-          display.appendChild(b);
+  // 預先填入所有住戶資料
+  var rooms = [
+    [301,'許芳瑜',0],
+    [302,'林鎂伶',2500],
+    [303,'李怡諠',2500],
+    [304,'黃彩羚',0],
+    [306,'高桂存',0],
+    [307,'黃嘉盈',2500],
+    [308,'潘素鳳',0],
+    [309,'李沅螢',0],
+    [310,'許美娟',2500],
+    [311,'黃桂蓉',2500],
+    [312,'黃乙宸',2500],
+    [313,'范馨亞',0],
+    [315,'陳秀鳯',2500],
+    [316,'陳泠璇',2500],
+    [317,'張麗慧',2500],
+    [318,'陳冠安',2500],
+    [319,'黃金珠',0],
+    [320,'陳育青',0],
+    [321,'林遜玲',2500],
+    [322,'謝春綢',2500],
+    [324,'林惠敏',2500],
+    [325,'李法伯',2500],
+    [326,'趙宥惠',2500],
+    [327,'林秋妙',2500],
+    [328,'李尉慈',2500],
+    [329,'陳虹熹',2500],
+    [330,'黃金英',2500],
+    [331,'陳慧如',2500],
+    [336,'許純瑞',2500],
+    [337,'謝瑞燕',2500],
+    [338,'蔡美慧',2500],
+    [339,'潘心怡',0],
+    [340,'柯培今',2500],
+    [341,'曾芝蘭',2500],
+    [342,'張毓晏',2500],
+    [343,'張秋月',2500],
+    [344,'林素卿',2500],
+    [345,'尤惠萱',2500],
+    [346,'毛如瑩',2500],
+    [347,'張麗惠',0],
+    [348,'胡詠綺',2500],
+    [349,'林姿伶',2500],
+    [350,'張伯嬌師姑',0],
+    [351,'葉秋甄',2500],
+    [352,'李帆葳',2500],
+    [356,'陳貞妤',2500],
+    [357,'賴采璿',2500],
+    [358,'顏婉如',2500],
+    [360,'林彩秀',2500],
+    [361,'廖美華',2500],
+    [362,'曾歐麗玉',2500],
+    [363,'杜珮合',2500],
+    [364,'陳玥蓁',2500],
+    [366,'曾獻儀',2500],
+    [368,'蔡佩蓉',2500],
+    [369,'劉珮瑤',2500],
+    [370,'張玉燕',2500],
+    [371,'馬偉群',2500],
+    [374,'吳仲芳',2500],
+    [401,'趙梓臣',2500],
+    [402,'洪秀華',2500],
+    [403,'王莉茹',2500],
+    [404,'陳心瀅',2500],
+    [405,'于美鳳',0],
+    [407,'黃雅文',2500],
+    [408,'吳瓊霞',2500],
+    [409,'陳心怡',2500],
+    [411,'王梃萱',0],
+    [412,'鍾孟岑',2500],
+    [413,'陳玟婷',2500],
+    [414,'江婉瑜',2500],
+    [415,'黃宣珮',2500],
+    [416,'莊琇鈞',2500],
+    [417,'陳巧晴',2500],
+    [419,'蕭彩云',2500],
+    [420,'張瑜庭',2500],
+    [422,'王敏純',2500],
+    [424,'王俊婷',2500],
+    [425,'朱燕孺',2500],
+    [426,'李生鳳',2500],
+    [427,'郎筱玲',0],
+    [428,'郭秋君',2500],
+    [429,'緣固',2500],
+    [430,'緣光',2500],
+    [431,'緣端',2500],
+    [432,'蔡麗玉',0],
+    [433,'李麗明',2500],
+    [434,'黃婉怡',2500],
+    [435,'林國金',2500],
+    [437,'陳雅婷',2500],
+    [438,'蔡依蓉',2500],
+    [439,'張雅茵',2500],
+    [442,'賴淑真',2500],
+    [443,'陳怡君',2500],
+    [445,'林淯立',0],
+    [446,'楊維竹',2500],
+    [447,'郭姿妙',2500],
+    [448,'黃譓娗',2500],
+    [449,'戴鈺珊',2500],
+    [450,'王秀珍',2500],
+    [451,'李美朱',2500],
+    [452,'林琇鴦',2500],
+    [453,'趙怡婷',0],
+    [454,'鄭心佩',2500],
+    [456,'陳慧穎',0],
+    [457,'李佳紜',0],
+    [459,'李苑嫣',2500],
+    [460,'鄭淳云',0],
+    [461,'胡馨方',2500],
+    [462,'黃如敏',2500],
+    [463,'蘇孟賢',0],
+    [465,'陳盈均',2500],
+    [466,'劉佳苑',0],
+    [467,'黃馨玉',2500],
+    [468,'蔡品涵',2500],
+    [469,'柯惠玲',2500],
+    [470,'林梅芳',0],
+    [472,'于定萱',2500],
+    [473,'陳怡孜',2500],
+    [474,'凃依芬',2500],
+    [517,'許文君',2500],
+    [518,'單薰潁',2500],
+    [520,'楊亞琳',2500],
+    [521,'黃麗蓉',2500],
+    [522,'温秀珍',2500],
+    [523,'王貞婷',2500],
+    [524,'莊雅嵐',2500],
+    [525,'蔡淑芳',0],
+    [526,'葉道欣',2500],
+    [527,'林玫汝',2500],
+    [528,'鄭媄嬬',2500],
+    [529,'蔡麗芬師姑',0],
+    [530,'洪錦媖',2500],
+    [531,'黃歆淳',2500],
+    [533,'李蘊詩',0],
+    [535,'高菁眉',0],
+    [537,'高觀妙',2500],
+    [538,'洪佳綺',2500],
+    [539,'王靖涵',2500],
+    [541,'黃怡禎',2500],
+    [542,'段繼慧',2500],
+    [544,'許文貞',0],
+    [545,'張瑛玲',2500],
+    [546,'伍雅嵐',0],
+    [547,'張睿潔',2500],
+    [548,'江麗雅',2500],
+    [549,'盧姿伶',0],
+    [550,'林美麗',2500],
+    [551,'陳素芬',2500],
+    [552,'劉秀桃',2500],
+    [553,'戴佳勳',2500],
+    [554,'黃柏雅',2500],
+    [555,'呂家妤',2500],
+    [556,'李素卿',2500],
+    [557,'陳秀月',2500],
+    [558,'周筱靜',2500],
+    [559,'彭金玉',2500],
+    [560,'陳金菊',0],
+    [561,'李慧琳',2500],
+    [562,'陳怜君',2500],
+    [563,'謝于寧',0],
+    [564,'謝秀娟',0],
+    [565,'簡一修',2500],
+    [567,'周媛',0],
+    [568,'羅竹君',2500],
+    [617,'王夢愉',2500],
+    [618,'何倩馨',2500],
+    [619,'曾晴鈺',2500],
+    [620,'蔡孟蓉',2500],
+    [621,'曾綉芳',2500],
+    [622,'鄭綸霈',2500],
+    [623,'郭珮緹',2500],
+    [625,'吳姿儀',2500],
+    [626,'鄭安安',2500],
+    [627,'鄧文琪',2500],
+    [630,'何翊嘉',0],
+    [634,'侯妙璇',2500],
+    [636,'孫佩貝',2500],
+    [637,'陳怡君',2500],
+    [638,'蘇郁鈞',2500],
+    [639,'王薏菁',2500],
+    [640,'王麗君',2500],
+    [641,'劉姿佑',2500],
+    [642,'龔品蓉',2500],
+    [643,'劉芷妤',2500],
+    [644,'李敏瑜',2500],
+    [645,'戴雅琪',2500],
+    [646,'李家儀',2500],
+    [647,'許瀞文',2500],
+    [648,'江承澂',2500],
+    [649,'黃亭穎',2500],
+    [650,'許庭禎',2500],
+    [652,'林佳臻',2500],
+    [653,'徐采伶',2500],
+    [654,'周裘語',2500],
+    [655,'黃宜婷',2500],
+    [659,'匡婕',2500],
+    [660,'劉書菡',2500],
+    [661,'呂明霞',2500],
+    [663,'陳映頤',2500],
+    [664,'林郁婷',2500]
+  ];
+  sheet.getRange(2,1,rooms.length,3).setValues(rooms);
+  SpreadsheetApp.getUi().alert('✅ 住戶名單工作表建立完成！共 '+rooms.length+' 位住戶');
+}
+
+function doGet(e){
+  if(!e.parameter||!e.parameter.action)return ContentService.createTextOutput('✅ 妙慧樓管理費表單 API 運作正常').setMimeType(ContentService.MimeType.TEXT);
+
+  // 讀取住戶名單
+  if(e.parameter.action==='roomlist'){
+    try{
+      var ss=SpreadsheetApp.getActiveSpreadsheet();
+      var s=ss.getSheetByName('住戶名單');
+      if(!s)return ContentService.createTextOutput(JSON.stringify({status:'ok',rooms:[]})).setMimeType(ContentService.MimeType.JSON);
+      var d=s.getDataRange().getValues();
+      var rooms=[];
+      for(var i=1;i<d.length;i++){
+        if(d[i][0]&&d[i][1]) rooms.push({room:String(d[i][0]),name:String(d[i][1]),shouldPay:Number(d[i][2]||0)});
+      }
+      return ContentService.createTextOutput(JSON.stringify({status:'ok',rooms:rooms,period:'115年5月'})).setMimeType(ContentService.MimeType.JSON);
+    }catch(err){
+      return ContentService.createTextOutput(JSON.stringify({status:'error',message:err.toString()})).setMimeType(ContentService.MimeType.JSON);
+    }
+  }
+  if(e.parameter.action==='today'||e.parameter.action==='recent'||e.parameter.action==='all'){
+    try{
+      var today=e.parameter.date||'';
+      var s=SpreadsheetApp.getActiveSpreadsheet().getSheetByName(RECORD_SHEET);
+      if(!s)return ContentService.createTextOutput(JSON.stringify({status:'ok',rows:[]})).setMimeType(ContentService.MimeType.JSON);
+      var d=s.getDataRange().getValues();var rows=[];
+
+      // 計算7天前的日期（all模式不需要）
+      var todayDate = new Date();
+      var sevenDaysAgo = new Date(todayDate.getTime()-7*24*60*60*1000);
+      if(today){
+        var todayParts=today.split('/');
+        todayDate=new Date(parseInt(todayParts[0]),parseInt(todayParts[1])-1,parseInt(todayParts[2]));
+        sevenDaysAgo=new Date(todayDate.getTime()-7*24*60*60*1000);
+      }
+
+      for(var i=1;i<d.length;i++){
+        var cv=d[i][0];var rt='';
+        if(cv instanceof Date){rt=cv.getFullYear()+'/'+String(cv.getMonth()+1).padStart(2,'0')+'/'+String(cv.getDate()).padStart(2,'0')+' '+String(cv.getHours()).padStart(2,'0')+':'+String(cv.getMinutes()).padStart(2,'0');}
+        else{rt=String(cv);}
+        var rowDateStr=rt.substring(0,10);
+        var rowParts=rowDateStr.split('/');
+        var rowDate=new Date(parseInt(rowParts[0]),parseInt(rowParts[1])-1,parseInt(rowParts[2]));
+
+        // today模式：只取今天；recent模式：取今天+最近7天；all模式：取全部
+        var include=false;
+        if(e.parameter.action==='today'){
+          include=(rowDateStr===today);
+        } else if(e.parameter.action==='all'){
+          include=true; // 全部資料
         } else {
-          currentName = '';
-          input.className = 'room-input invalid';
-          display.className = 'name-display not-found';
-          display.innerHTML = '<span>✗</span><span>查無此房號，請確認</span>';
-        }
-        updateSubmit();
-      })
-      .catch(function(){
-        currentName = '';
-        input.className = 'room-input invalid';
-        display.className = 'name-display not-found';
-        display.innerHTML = '<span>✗</span><span>查無此房號，請確認</span>';
-        updateSubmit();
-      });
-  } else {
-    currentName = '';
-    input.className = 'room-input invalid';
-    display.className = 'name-display not-found';
-    display.innerHTML = '<span>✗</span><span>查無此房號，請確認</span>';
-    updateSubmit();
-  }
-}
-
-// ── 金額 ──────────────────────────────────────────────────
-function selectAmount(val, el) {
-  document.querySelectorAll('.amount-chip').forEach(function(c){c.classList.remove('active');});
-  el.classList.add('active');
-  var wrap = document.getElementById('customWrap');
-  if (val==='custom') { wrap.classList.add('show'); selectedAmount=0; document.getElementById('customAmount').focus(); }
-  else { wrap.classList.remove('show'); selectedAmount=val; }
-  updateSubmit();
-}
-function onCustomAmount() { selectedAmount=parseInt(document.getElementById('customAmount').value)||0; updateSubmit(); }
-
-// ── 繳費性質 ──────────────────────────────────────────────
-function selectType(el, isMinus) {
-  document.querySelectorAll('.type-chip').forEach(function(t){t.classList.remove('active');});
-  el.classList.add('active');
-  selectedType = el.textContent.replace('支出','').trim();
-  isMinusType = isMinus;
-  // 選預繳才顯示預繳至月份
-  var prepayCard = document.getElementById('prepayMonthCard');
-  if (selectedType === '預繳') {
-    prepayCard.style.display = 'block';
-  } else {
-    prepayCard.style.display = 'none';
-    document.getElementById('prepayUntilMonth').value = '';
-  }
-}
-
-// ── 送出按鈕狀態 ──────────────────────────────────────────
-function updateSubmit() {
-  var room = document.getElementById('roomInput').value;
-  document.getElementById('submitBtn').disabled = !(room.length===3 && currentName && selectedAmount>0);
-}
-
-// ── 現金核對 ──────────────────────────────────────────────
-function updateCashCheck() {
-  var cashVal = document.getElementById('cashInput').value;
-  var cashDisplay = document.getElementById('cashDisplay');
-  var result = document.getElementById('checkResult');
-  var cash = parseInt(cashVal);
-  // 今日淨額（不含補登）
-  var todayNet = 0;
-  sessionLog.forEach(function(r){ todayNet += r.amount; });
-
-  if (!cashVal || isNaN(cash)) {
-    cashDisplay.textContent='— 元'; cashDisplay.style.color='var(--muted)';
-    result.style.display='none'; return;
-  }
-  cashDisplay.textContent=cash.toLocaleString()+' 元'; cashDisplay.style.color='var(--text)';
-  result.style.display='block';
-  if (cash===todayNet) {
-    result.textContent='✅ 金額相符，核對正確！'; result.style.color='var(--success)'; result.style.background='var(--success-light)';
-  } else {
-    var diff=cash-todayNet;
-    result.textContent='⚠️ 差異 '+(diff>0?'+':'')+diff.toLocaleString()+' 元，請重新確認';
-    result.style.color='var(--warn)'; result.style.background='var(--warn-light)';
-  }
-}
-
-function updateRunningTotal() {
-  var todayNet = 0;
-  sessionLog.forEach(function(r){ todayNet += r.amount; });
-  var el = document.getElementById('runningTotal');
-  el.textContent = todayNet.toLocaleString()+' 元';
-  el.style.color = todayNet<0?'var(--danger)':'var(--accent)';
-  if (document.getElementById('cashInput').value) updateCashCheck();
-}
-
-// ── 更新累計列 ────────────────────────────────────────────
-function updateCounters() {
-  var today = getTodayStr();
-  var todayNet = 0;
-  var todayCount = 0;
-  sessionLog.forEach(function(r){
-    if(r.time.substring(0,10)===today){ todayNet+=r.amount; todayCount++; }
-  });
-  document.getElementById('countNum').textContent = todayCount;
-  document.getElementById('totalNum').textContent = todayNet.toLocaleString();
-  updateRunningTotal();
-}
-
-// ── 送出 ──────────────────────────────────────────────────
-function submitForm() {
-  if (!scriptUrl) { alert('請先設定 Apps Script 網址！'); return; }
-  var room = document.getElementById('roomInput').value;
-  var note = document.getElementById('noteInput').value.trim();
-  var timeStr = getSelectedDate();
-  var isBackdate = dateMode==='backdate';
-  var signedAmount = isMinusType ? -selectedAmount : selectedAmount;
-
-  document.getElementById('submitBtn').disabled=true;
-  document.getElementById('spinner').style.display='block';
-  document.getElementById('submitText').textContent='送出中…';
-
-  // 預繳至月份
-  var prepayUntil = '';
-  if (selectedType === '預繳') {
-    var prepayMonth = document.getElementById('prepayUntilMonth').value;
-    if (!prepayMonth) { alert('請填入預繳至月份！'); return; }
-    prepayUntil = '2026/' + prepayMonth;
-  }
-
-  var payload={time:timeStr,room:room,name:currentName,amount:signedAmount,type:selectedType,note:note,prepayUntil:prepayUntil};
-
-  fetch(scriptUrl,{method:'POST',body:JSON.stringify(payload)})
-    .then(function(r){return r.json();})
-    .then(function(res){
-      document.getElementById('spinner').style.display='none';
-      document.getElementById('submitText').textContent='送出這筆紀錄';
-      if (res.status==='ok') {
-        var entry={time:timeStr,room:room,name:currentName,amount:signedAmount,type:selectedType,note:note,minus:isMinusType,backdate:isBackdate};
-        if (isBackdate) backdateLog.unshift(entry);
-        else sessionLog.unshift(entry);
-
-        // 更新本期開始日期
-        if (!periodStartDate) {
-          periodStartDate = timeStr.substring(0,10);
-          localStorage.setItem('periodStart', periodStartDate);
+          // recent：今天的所有資料，或7天內的補登資料
+          include=(rowDateStr===today)||(rowDate>=sevenDaysAgo&&rowDate<todayDate);
         }
 
-        updateCounters();
-        updateLogPage();
-        showSuccess(true, room, note, timeStr, isBackdate, signedAmount);
-      } else { showSuccess(false); }
-    })
-    .catch(function(){
-      document.getElementById('spinner').style.display='none';
-      document.getElementById('submitText').textContent='送出這筆紀錄';
-      showSuccess(false);
+        if(include)rows.push({time:rt,room:String(d[i][1]),name:String(d[i][2]),amount:Number(d[i][3]),type:String(d[i][4]),note:String(d[i][5]||'')});
+      }
+      return ContentService.createTextOutput(JSON.stringify({status:'ok',rows:rows})).setMimeType(ContentService.MimeType.JSON);
+    }catch(err){
+      return ContentService.createTextOutput(JSON.stringify({status:'error',message:err.toString()})).setMimeType(ContentService.MimeType.JSON);
+    }
+  }
+}
+
+// ══════════════════════════════════════════════════════════
+// 預繳追蹤功能
+// ══════════════════════════════════════════════════════════
+
+// ── 建立預繳追蹤工作表（第一次執行）────────────────────
+function setupPrepaySheet() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var existing = ss.getSheetByName('預繳追蹤');
+  if (existing) {
+    SpreadsheetApp.getUi().alert('預繳追蹤工作表已存在！');
+    return;
+  }
+  var sheet = ss.insertSheet('預繳追蹤');
+  sheet.getRange(1,1,1,4).setValues([['房號','姓名','繳費年月','預繳至年月']]);
+  sheet.getRange(1,1,1,4).setBackground('#2563eb').setFontColor('#fff').setFontWeight('bold').setFontSize(12);
+  sheet.setFrozenRows(1);
+  sheet.setColumnWidth(1,70);
+  sheet.setColumnWidth(2,100);
+  sheet.setColumnWidth(3,100);
+  sheet.setColumnWidth(4,100);
+
+  // 填入本期（5月）已知的預繳資料
+  var prepayData = [
+    [317,'張麗慧','2026/4','2026/6'],
+    [351,'葉秋甄','2026/4','2026/5'],
+    [370,'張玉燕','2026/4','2026/6']
+  ];
+  sheet.getRange(2,1,prepayData.length,4).setValues(prepayData);
+  SpreadsheetApp.getUi().alert('✅ 5月預繳追蹤工作表建立完成！共 '+prepayData.length+' 筆預繳紀錄');
+}
+
+// ── 解析年月字串 → Date 物件 ──────────────────────────
+function parseYearMonth(val) {
+  // 處理 Google 試算表自動轉換成 Date 物件的情況
+  if (val instanceof Date) {
+    return new Date(val.getFullYear(), val.getMonth(), 1);
+  }
+  // 處理字串格式 2026/3 或 2026/03
+  var str = String(val).trim();
+  var parts = str.split('/');
+  if (parts.length >= 2) {
+    return new Date(parseInt(parts[0]), parseInt(parts[1])-1, 1);
+  }
+  return new Date();
+}
+
+// ── 月份加N個月 ───────────────────────────────────────
+function addMonths(date, n) {
+  return new Date(date.getFullYear(), date.getMonth()+n, 1);
+}
+
+// ── 格式化年月 → 2026/4 ───────────────────────────────
+function formatYearMonth(date) {
+  return date.getFullYear()+'/'+(date.getMonth()+1);
+}
+
+// ── 本月自動填入免繳名單 ──────────────────────────────
+// 輸入本月年月，例如執行時輸入 2026/4
+// 系統會找出預繳至年月 >= 本月 的人，自動填入清冊實際繳=0（黑色）+備註
+function applyPrepayThisMonth() {
+  var ui = SpreadsheetApp.getUi();
+  var response = ui.prompt('請輸入本月年月', '格式：2026/4', ui.ButtonSet.OK_CANCEL);
+  if (response.getSelectedButton() !== ui.Button.OK) return;
+  var thisMonth = response.getResponseText().trim();
+  _applyPrepay(thisMonth);
+}
+
+function _applyPrepay(thisMonthStr) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var prepaySheet = ss.getSheetByName('預繳追蹤');
+  if (!prepaySheet) {
+    SpreadsheetApp.getUi().alert('找不到預繳追蹤工作表！請先執行 setupPrepaySheet');
+    return;
+  }
+
+  var thisMonth = parseYearMonth(thisMonthStr);
+  var data = prepaySheet.getDataRange().getValues();
+  var applied = 0;
+
+  for (var i = 1; i < data.length; i++) {
+    var room = String(data[i][0]);
+    var name = String(data[i][1]);
+    var paidMonth = parseYearMonth(data[i][2]);
+    var prepaidUntil = parseYearMonth(data[i][3]);
+
+    // 檢查本月是否在免繳範圍內
+    // 免繳範圍：繳費月份的下一個月 到 預繳至月份
+    var freeFrom = addMonths(paidMonth, 1);
+
+    if (thisMonth >= freeFrom && thisMonth <= prepaidUntil) {
+      // 找到對應的清冊
+      var floor = getFloor(room);
+      if (!floor) continue;
+      var ledger = ss.getSheetByName(floor+'_清冊');
+      if (!ledger) continue;
+      var rowNum = findRoomRow(ledger, room);
+      if (rowNum < 0) continue;
+
+      // 填入實際繳=0（黑色）
+      var actualCell = ledger.getRange(rowNum, 4);
+      actualCell.setValue(0);
+      actualCell.setFontColor('#000000');
+
+      // 填入備註
+      var noteCell = ledger.getRange(rowNum, 10);
+      var noteText = formatYearMonth(paidMonth)+'月預繳管理費至'+formatYearMonth(prepaidUntil)+'月';
+      // 修正格式：去掉年份只留月份數字
+      var paidMonthNum = paidMonth.getMonth()+1;
+      var untilMonthNum = prepaidUntil.getMonth()+1;
+      noteText = paidMonthNum+'月預繳管理費至'+untilMonthNum+'月';
+      var existing = String(noteCell.getValue());
+      if (existing === '' || existing === 'null') {
+        noteCell.setValue(noteText);
+      } else if (existing.indexOf(noteText) < 0) {
+        noteCell.setValue(existing + '；' + noteText);
+      }
+      applied++;
+    }
+  }
+  SpreadsheetApp.getUi().alert('✅ 完成！共 '+applied+' 位住戶填入免繳資料');
+}
+
+// ── 匯出下個月預繳名單（供新月份試算表使用）────────────
+function exportNextMonthPrepay() {
+  var ui = SpreadsheetApp.getUi();
+  var response = ui.prompt('請輸入下個月年月', '格式：2026/5', ui.ButtonSet.OK_CANCEL);
+  if (response.getSelectedButton() !== ui.Button.OK) return;
+  var nextMonthStr = response.getResponseText().trim();
+  var nextMonth = parseYearMonth(nextMonthStr);
+
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var prepaySheet = ss.getSheetByName('預繳追蹤');
+  if (!prepaySheet) {
+    ui.alert('找不到預繳追蹤工作表！');
+    return;
+  }
+
+  var data = prepaySheet.getDataRange().getValues();
+  var result = [];
+
+  for (var i = 1; i < data.length; i++) {
+    var room = String(data[i][0]);
+    var name = String(data[i][1]);
+    var paidMonth = parseYearMonth(data[i][2]);
+    var prepaidUntil = parseYearMonth(data[i][3]);
+    var freeFrom = addMonths(paidMonth, 1);
+
+    // 下個月仍在免繳範圍內
+    if (nextMonth >= freeFrom && nextMonth <= prepaidUntil) {
+      result.push([data[i][0], name, data[i][2], data[i][3]]);
+    }
+  }
+
+  if (result.length === 0) {
+    ui.alert('下個月沒有需要帶入的預繳資料！');
+    return;
+  }
+
+  // 建立或更新「下月預繳名單」工作表
+  var exportSheet = ss.getSheetByName('下月預繳名單');
+  if (exportSheet) ss.deleteSheet(exportSheet);
+  exportSheet = ss.insertSheet('下月預繳名單');
+  exportSheet.getRange(1,1,1,4).setValues([['房號','姓名','繳費年月','預繳至年月']]);
+  exportSheet.getRange(1,1,1,4).setBackground('#16a34a').setFontColor('#fff').setFontWeight('bold');
+  exportSheet.getRange(2,1,result.length,4).setValues(result);
+
+  ui.alert('✅ 完成！共 '+result.length+' 位住戶的預繳資料已匯出到「下月預繳名單」工作表\n\n下個月建立新試算表時，把這個工作表的資料複製到新試算表的「預繳追蹤」工作表即可！');
+}
+
+// ── 測試：檢查住戶名單讀取 ──────────────────────────────
+function testRoomLookup() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var nameSheet = ss.getSheetByName('住戶名單');
+  if (!nameSheet) { SpreadsheetApp.getUi().alert('找不到住戶名單工作表！'); return; }
+  var nd = nameSheet.getDataRange().getValues();
+  var result = '找到 ' + (nd.length-1) + ' 筆住戶\n\n';
+  for (var i = 1; i < nd.length; i++) {
+    if (parseInt(nd[i][0]) === 345) {
+      result += '找到 345！姓名：' + nd[i][1] + '，應繳：' + nd[i][2];
+      SpreadsheetApp.getUi().alert(result);
+      return;
+    }
+  }
+  result += '找不到 345！';
+  SpreadsheetApp.getUi().alert(result);
+}
+
+// ── 除錯：測試預繳邏輯 ───────────────────────────────────
+function debugPrepay() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var prepaySheet = ss.getSheetByName('預繳追蹤');
+  if (!prepaySheet) { SpreadsheetApp.getUi().alert('找不到預繳追蹤工作表！'); return; }
+
+  var data = prepaySheet.getDataRange().getValues();
+  var thisMonth = parseYearMonth('2026/4');
+  var msg = '本月時間戳：'+thisMonth.getTime()+'\n\n';
+
+  // 只看649那筆
+  for (var i = 1; i < data.length; i++) {
+    var room = String(data[i][0]);
+    if (room !== '649') continue;
+    
+    var raw2 = data[i][2];
+    var raw3 = data[i][3];
+    var paidMonth = parseYearMonth(raw2);
+    var prepaidUntil = parseYearMonth(raw3);
+    var freeFrom = addMonths(paidMonth, 1);
+    
+    msg += '649原始C值：'+raw2+'\n';
+    msg += '649原始D值：'+raw3+'\n';
+    msg += 'C的型別：'+(typeof raw2)+'\n';
+    msg += 'D的型別：'+(typeof raw3)+'\n';
+    msg += 'C是Date：'+(raw2 instanceof Date)+'\n';
+    msg += 'paidMonth時間戳：'+paidMonth.getTime()+'\n';
+    msg += 'prepaidUntil時間戳：'+prepaidUntil.getTime()+'\n';
+    msg += 'freeFrom時間戳：'+freeFrom.getTime()+'\n';
+    msg += 'thisMonth>=freeFrom：'+(thisMonth>=freeFrom)+'\n';
+    msg += 'thisMonth<=prepaidUntil：'+(thisMonth<=prepaidUntil)+'\n';
+  }
+  SpreadsheetApp.getUi().alert(msg);
+}
+
+// ── 收費統計名單工作表 ────────────────────────────────────
+function _generateNameList(ss, thisMonthNum, thisYear, floors, floorData,
+    prevPrepayList, prevFutureList, thisPrepayGroups,
+    countMissing, countLong, countNun, countProject, countIntern) {
+
+  var sheet = ss.getSheetByName('收費統計名單');
+  if (sheet) ss.deleteSheet(sheet);
+  sheet = ss.insertSheet('收費統計名單');
+
+  var r = 1;
+  var white = '#ffffff';
+  var colors = {
+    missing:  '#f5c6c6',
+    longTerm: '#c6d9c6',
+    nun:      '#d4c6d9',
+    project:  '#c6d4d9',
+    intern:   '#d9d4c6',
+    prepay:   '#f5e6c6',
+    prevPrepay: '#e8f0fe',
+  };
+
+  // 標題列
+  sheet.getRange(r,1,1,4).merge();
+  sheet.getRange(r,1).setValue(thisYear+'年'+thisMonthNum+'月 收費統計名單')
+    .setBackground('#2563eb').setFontColor(white).setFontWeight('bold').setFontSize(13);
+  r++; r++;
+
+  function writeSection(title, list, color, count) {
+    // 區塊標題（含人數）
+    sheet.getRange(r,1,1,4).merge();
+    sheet.getRange(r,1).setValue(title+'　共 '+count+' 人')
+      .setBackground(color).setFontColor('#333333').setFontWeight('bold').setFontSize(11);
+    r++;
+
+    if (!list || list.length === 0) {
+      sheet.getRange(r,1,1,4).merge();
+      sheet.getRange(r,1).setValue('　（無）').setFontColor('#888888');
+      r++; return;
+    }
+
+    // 欄標題
+    sheet.getRange(r,1,1,4).setValues([['樓層','房號','姓名','備註']]);
+    sheet.getRange(r,1,1,4).setBackground('#f0f0f0').setFontWeight('bold');
+    r++;
+
+    list.forEach(function(item){
+      var floor = item[0]||'';
+      var room  = item[1]||'';
+      var name  = item[2]||'';
+      var note  = item[3]||'';
+      sheet.getRange(r,1,1,4).setValues([[floor, room, name, note]]);
+      sheet.getRange(r,1,1,4).setBackground(color);
+      r++;
     });
-}
+    r++;
+  }
 
-// ── 本日紀錄頁更新 ────────────────────────────────────────
-function updateLogPage() {
-  var today = getTodayStr();
-  var allLogs = sessionLog.concat(backdateLog);
-  var total = allLogs.length;
-
-  // Badge
-  document.getElementById('logBadge').textContent = total>0?'('+total+')':'';
-
-  // 依日期分組（包含今日）
-  var groups = {};
-  allLogs.forEach(function(r){
-    var d = r.time.substring(0,10);
-    if (!groups[d]) groups[d] = {net:0, count:0};
-    groups[d].net += r.amount;
-    groups[d].count++;
-  });
-
-  // 每日收費統計
-  var dailyStats = document.getElementById('dailyStats');
-  var sortedDates = Object.keys(groups).sort();
-
-  if (sortedDates.length === 0) {
-    dailyStats.innerHTML = '<div style="text-align:center;color:var(--muted);font-size:13px;padding:10px 0;">尚無收費紀錄</div>';
-  } else {
-    var html = '';
-    var grandTotal = 0;
-    sortedDates.forEach(function(d){
-      var g = groups[d];
-      grandTotal += g.net;
-      var parts = d.split('/');
-      var shortDate = parseInt(parts[1])+'/'+parseInt(parts[2]);
-      var isToday = (d === today);
-      var amtClass = g.net >= 0 ? 'plus' : 'minus';
-      var amtStr = (g.net >= 0 ? '+' : '') + g.net.toLocaleString() + ' 元';
-      html += '<div class="daily-row">';
-      html += '<span class="daily-date'+(isToday?' today':'')+'">'+shortDate+(isToday?' （今日）':'')+'</span>';
-      html += '<span class="daily-amount '+amtClass+'">'+amtStr+'</span>';
-      html += '</div>';
+  // 合併所有樓層的名單
+  function mergeFloorList(key) {
+    var all = [];
+    floors.forEach(function(f){
+      if (floorData[f] && floorData[f][key]) {
+        floorData[f][key].forEach(function(item){ all.push(item); });
+      }
     });
-    var totalClass = grandTotal >= 0 ? 'color:var(--success)' : 'color:var(--danger)';
-    var totalStr = (grandTotal >= 0 ? '+' : '') + grandTotal.toLocaleString() + ' 元';
-    html += '<div class="daily-total"><span>合計</span><b style="'+totalClass+'">'+totalStr+'</b></div>';
-    dailyStats.innerHTML = html;
+    return all;
   }
 
-  // 本期累計
-  var periodIn=0, periodOut=0;
-  allLogs.forEach(function(r){ if(r.amount>0) periodIn+=r.amount; else periodOut+=r.amount; });
-  var periodNet=periodIn+periodOut;
-  document.getElementById('periodIn').textContent='+'+periodIn.toLocaleString()+' 元';
-  document.getElementById('periodOut').textContent=periodOut.toLocaleString()+' 元';
-  var pn=document.getElementById('periodNet');
-  pn.textContent=periodNet.toLocaleString()+' 元';
-  pn.style.color=periodNet<0?'var(--danger)':'var(--success)';
+  // 缺繳名單
+  writeSection('缺繳名單', mergeFloorList('missingList'), colors.missing, countMissing);
 
-  // 每筆明細（依日期由新到舊，每筆有刪除按鈕）
-  var allItems = document.getElementById('allItems');
-  allItems.innerHTML = '';
-  if (total === 0) {
-    allItems.innerHTML = '<div style="text-align:center;color:var(--muted);font-size:13px;padding:16px 0;">尚無收費紀錄</div>';
-  } else {
-    // 依日期由新到舊排序
-    var sortedLogs = allLogs.slice().sort(function(a,b){ return b.time > a.time ? 1 : -1; });
-    sortedLogs.forEach(function(r){
-      var isBackdate = r.time.substring(0,10) !== today;
-      var idxInSession = sessionLog.indexOf(r);
-      var idxInBackdate = backdateLog.indexOf(r);
-      var idx = idxInSession >= 0 ? idxInSession : idxInBackdate;
-      allItems.appendChild(makeLogCard(r, idx, isBackdate));
-    });
+  // 長期義工名單
+  writeSection('長期義工名單', mergeFloorList('longTermList'), colors.longTerm, countLong);
+
+  // 師姑名單
+  writeSection('師姑名單', mergeFloorList('nunList'), colors.nun, countNun);
+
+  // 專案人員名單
+  writeSection('專案人員名單', mergeFloorList('projectList'), colors.project, countProject);
+
+  // 實習生名單
+  writeSection('實習生名單', mergeFloorList('internList'), colors.intern, countIntern);
+
+  // 之前預繳名單
+  writeSection('之前預繳名單（本月在免繳範圍）', prevPrepayList, colors.prevPrepay, prevPrepayList.length);
+
+  // 之前預繳至下期以後
+  writeSection('之前預繳至下期以後', prevFutureList, colors.prevPrepay, prevFutureList.length);
+
+  // 預繳（新收）名單：從各樓層清冊H欄抓
+  var allNewPrepay = mergeFloorList('prepayList');
+  writeSection('預繳（新收）名單', allNewPrepay, colors.prepay, allNewPrepay.length);
+
+  // 欄寬
+  sheet.setColumnWidth(1, 70);
+  sheet.setColumnWidth(2, 80);
+  sheet.setColumnWidth(3, 120);
+  sheet.setColumnWidth(4, 220);
+  sheet.getDataRange().setFontSize(12);
+}
+
+// ── 同步住戶身份到清冊J欄備註 ────────────────────────────
+// 只附加身份說明，不覆蓋現有備註
+function syncIdentity() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+
+  // 從住戶名單讀取身份
+  var nameSheet = ss.getSheetByName('住戶名單');
+  var identityMap = {};
+  if (nameSheet) {
+    var nd = nameSheet.getDataRange().getValues();
+    for (var i=1; i<nd.length; i++) {
+      var room = String(nd[i][0]);
+      var identity = String(nd[i][3]||'').trim();
+      if (room && identity && identity !== '') {
+        identityMap[room] = identity;
+      }
+    }
   }
 
-  // 空狀態
-  document.getElementById('logEmpty').style.display = total===0?'block':'none';
-}
+  // 身份對應的備註文字
+  var identityNotes = {
+    '長期義工': '長期義工不用繳交',
+    '師姑': '師姑不用繳交',
+    '專案人員': '專案人員不用繳交',
+    '實習生': '實習生不用繳交',
+    '普中教職員': '普中教職員需收管理費',
+  };
 
-function makeLogCard(r, idx, isBackdate) {
-  var div = document.createElement('div');
-  div.className = 'log-item'+(r.minus?' minus':r.backdate?' backdate-item':'');
-  var amtHtml = r.minus
-    ? '<span class="log-amount-minus">'+r.amount.toLocaleString()+' 元</span>'
-    : '<span class="log-amount-plus">+'+r.amount.toLocaleString()+' 元</span>';
-  var badgeClass = r.minus?'minus':r.backdate?'backdate':'';
-  var dateLabel = r.backdate ? '補登 '+r.time.substring(0,10) : r.time;
-  div.innerHTML =
-    '<div class="log-top">'+
-      '<div><span class="log-room">'+r.room+'</span><span class="log-name">'+r.name+'</span></div>'+
-      amtHtml+
-    '</div>'+
-    '<div class="log-meta">'+
-      '<span class="log-type-badge '+badgeClass+'">'+r.type+'</span>'+
-      '<span>'+dateLabel+'</span>'+
-    '</div>'+
-    (r.note?'<div class="log-note">備註：'+r.note+'</div>':'')+
-    '<div class="log-delete-btn"><button class="delete-btn" onclick="deleteRecord('+idx+','+!!isBackdate+')">🗑️ 刪除這筆</button></div>';
-  return div;
-}
+  var updated = 0;
+  ['3F','4F','5F','6F'].forEach(function(f) {
+    var s = ss.getSheetByName(f+'_清冊');
+    if (!s) return;
+    var d = s.getDataRange().getValues();
+    for (var i=1; i<d.length; i++) {
+      var room = String(d[i][0]);
+      var identity = identityMap[room];
+      if (!identity) continue;
 
-// ── 成功彈窗 ──────────────────────────────────────────────
-function showSuccess(ok, room, note, timeStr, isBackdate, signedAmount) {
-  var icon=document.getElementById('overlayIcon');
-  var title=document.getElementById('overlayTitle');
-  var detail=document.getElementById('overlayDetail');
-  var nextBtn=document.getElementById('nextBtn');
-  if (ok) {
-    icon.textContent = isMinusType?'💸':'✅';
-    title.className='success-title';
-    title.textContent = isBackdate?'已補登入試算表！':'已存入試算表！';
-    var todayNet=0; sessionLog.forEach(function(r){todayNet+=r.amount;});
-    detail.innerHTML=
-      '<b>'+room+' '+currentName+'</b><br>'+
-      '金額：<b>'+(signedAmount>0?'+':'')+signedAmount.toLocaleString()+' 元</b><br>'+
-      '性質：'+selectedType+'<br>'+
-      (note?'備註：'+note+'<br>':'')+
-      '時間：'+timeStr+
-      (isBackdate?'':'<br><br>今日淨額 <b style="color:'+(todayNet<0?'var(--danger)':'var(--accent)')+'">'+todayNet.toLocaleString()+'</b> 元');
-    nextBtn.textContent='登記下一筆';
-  } else {
-    icon.textContent='❌'; title.className='success-title err'; title.textContent='送出失敗';
-    detail.innerHTML='資料未能存入試算表。<br>請確認網路連線後重新送出。';
-    nextBtn.textContent='重試';
-  }
-  document.getElementById('successOverlay').classList.add('show');
-}
+      var noteText = identityNotes[identity] || identity;
+      var cell = s.getRange(i+1, 10);
+      var existing = String(cell.getValue()||'').trim();
 
-// ── 下一筆 ────────────────────────────────────────────────
-function nextRecord() {
-  document.getElementById('successOverlay').classList.remove('show');
-  if (document.getElementById('overlayTitle').textContent!=='送出失敗') {
-    document.getElementById('roomInput').value='';
-    document.getElementById('noteInput').value='';
-    document.getElementById('customAmount').value='';
-    document.getElementById('prepayUntilMonth').value='';
-    document.getElementById('prepayMonthCard').style.display='none';
-    document.getElementById('customWrap').classList.remove('show');
-    // 備註收起
-    document.getElementById('noteBody').classList.remove('show');
-    document.getElementById('noteToggle').classList.remove('open');
-    lookupRoom('');
-    document.querySelectorAll('.amount-chip').forEach(function(c,i){c.classList.toggle('active',i===0);});
-    selectedAmount=2500;
-    document.querySelectorAll('.type-chip').forEach(function(t,i){t.classList.toggle('active',i===0);});
-    selectedType='本月正常繳交'; isMinusType=false;
-    document.getElementById('roomInput').focus();
-  }
-  updateSubmit();
-}
+      // 如果備註已有這個身份說明，不重複加
+      if (existing.indexOf(noteText) >= 0) continue;
 
-// ── 刪除紀錄 ─────────────────────────────────────────────
-function deleteRecord(idx, isBackdate) {
-  var log = isBackdate ? backdateLog : sessionLog;
-  var r = log[idx];
-  if (!r) return;
-
-  if (!confirm('確認刪除這筆紀錄？\n'+r.room+' '+r.name+'\n'+r.amount.toLocaleString()+' 元・'+r.type+'\n\n此操作無法復原')) return;
-
-  // 從試算表刪除並重跑清冊
-  var payload = { action: 'delete', time: r.time, room: r.room, amount: r.amount, type: r.type };
-
-  fetch(scriptUrl, { method: 'POST', body: JSON.stringify(payload) })
-    .then(function(res){ return res.json(); })
-    .then(function(data){
-      if (data.status === 'ok') {
-        // 從本地紀錄移除
-        log.splice(idx, 1);
-        // 更新今日累計
-        if (!isBackdate) {
-          sessionLog = log;
-        } else {
-          backdateLog = log;
-        }
-        updateCounters();
-        updateLogPage();
-        alert('✅ 已刪除！清冊已自動更新。');
+      // 附加身份說明
+      if (existing === '' || existing === 'null') {
+        cell.setValue(noteText);
       } else {
-        alert('刪除失敗：'+data.message);
+        cell.setValue(existing + '；' + noteText);
       }
-    })
-    .catch(function(){ alert('刪除失敗，請確認網路連線。'); });
-}
-
-// ── 結帳 ──────────────────────────────────────────────────
-function confirmSettle() {
-  var allLogs = sessionLog.concat(backdateLog);
-  if (allLogs.length===0) { alert('目前沒有任何紀錄可以結帳！'); return; }
-
-  var periodIn=0, periodOut=0;
-  allLogs.forEach(function(r){ if(r.amount>0) periodIn+=r.amount; else periodOut+=r.amount; });
-  var net = periodIn+periodOut;
-
-  if (!confirm('確認結帳？\n本期收入：'+periodIn.toLocaleString()+' 元\n本期支出：'+Math.abs(periodOut).toLocaleString()+' 元\n本期淨額：'+net.toLocaleString()+' 元\n\n結帳後將清零，資料存入歷史。')) return;
-
-  // 存入歷史
-  var history = JSON.parse(localStorage.getItem('settleHistory')||'[]');
-  var now = new Date();
-  var settleDate = now.getFullYear()+'/'+String(now.getMonth()+1).padStart(2,'0')+'/'+String(now.getDate()).padStart(2,'0');
-  history.unshift({
-    settleDate: settleDate,
-    periodStart: periodStartDate || allLogs[allLogs.length-1].time.substring(0,10),
-    periodEnd: settleDate,
-    income: periodIn,
-    expense: periodOut,
-    net: net,
-    records: allLogs
+      updated++;
+    }
   });
-  localStorage.setItem('settleHistory', JSON.stringify(history));
 
-  // 清零
-  sessionLog = [];
-  backdateLog = [];
-  periodStartDate = '';
-  localStorage.removeItem('periodStart');
-  updateCounters();
-  updateLogPage();
-  alert('✅ 結帳完成！本期淨額：'+net.toLocaleString()+' 元');
+  SpreadsheetApp.getUi().alert('✅ 完成！共更新 '+updated+' 筆身份備註');
 }
 
-// ── 查看歷史 ──────────────────────────────────────────────
-function showHistory() {
-  var history = JSON.parse(localStorage.getItem('settleHistory')||'[]');
-  var list = document.getElementById('historyList');
-  list.innerHTML = '';
-  if (history.length===0) {
-    list.innerHTML='<p style="color:var(--muted);text-align:center;padding:20px;">尚無歷史紀錄</p>'; 
-  } else {
-    history.forEach(function(h,idx){
-      var div=document.createElement('div');
-      div.className='history-item';
-      div.innerHTML=
-        '<div class="history-period">第'+(history.length-idx)+'期・'+h.periodStart+' ～ '+h.periodEnd+'</div>'+
-        '<div class="history-amount">淨額：'+h.net.toLocaleString()+' 元</div>'+
-        '<div class="history-detail">收入 '+h.income.toLocaleString()+' 元 / 支出 '+Math.abs(h.expense).toLocaleString()+' 元・共 '+h.records.length+' 筆</div>'+
-        '<button onclick="showHistoryDetail('+idx+')" style="font-size:12px;color:var(--accent);background:none;border:none;cursor:pointer;padding:4px 0;">查看明細 →</button>';
-      list.appendChild(div);
+// ── 初始化住戶名單D欄身份（只需執行一次）────────────────
+function setupIdentityColumn() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var nameSheet = ss.getSheetByName('住戶名單');
+  if (!nameSheet) { SpreadsheetApp.getUi().alert('找不到住戶名單！'); return; }
+
+  // 從Excel匯入的身份資料
+  var identities = [
+    [301, '許芳瑜', '長期義工'],
+    [304, '黃彩羚', '長期義工'],
+    [306, '高桂存', '長期義工'],
+    [308, '潘素鳳', '長期義工'],
+    [309, '李沅螢', '長期義工'],
+    [313, '范馨亞', '長期義工'],
+    [319, '黃金珠', '長期義工'],
+    [320, '陳育青', '長期義工'],
+    [339, '潘心怡', '長期義工'],
+    [347, '張麗惠', '長期義工'],
+    [350, '張伯嬌師姑', '師姑'],
+    [411, '王梃萱', '長期義工'],
+    [427, '郎筱玲', '長期義工'],
+    [432, '蔡麗玉', '長期義工'],
+    [445, '林淯立', '長期義工'],
+    [453, '趙怡婷', '長期義工'],
+    [456, '陳慧穎', '專案人員'],
+    [457, '李佳紜', '長期義工'],
+    [460, '鄭淳云', '長期義工'],
+    [463, '蘇孟賢', '長期義工'],
+    [466, '劉佳苑', '長期義工'],
+    [470, '林梅芳', '長期義工'],
+    [525, '蔡淑芳', '長期義工'],
+    [529, '蔡麗芬師姑', '師姑'],
+    [533, '李蘊詩', '長期義工'],
+    [535, '高菁眉', '專案人員'],
+    [544, '許文貞', '長期義工'],
+    [546, '伍雅嵐', '專案人員'],
+    [549, '盧姿伶', '長期義工'],
+    [560, '陳金菊', '長期義工'],
+    [563, '謝于寧', '專案人員'],
+    [564, '謝秀娟', '長期義工'],
+    [567, '周媛', '長期義工'],
+    [630, '何翊嘉', '實習生']
+  ];
+
+  var nd = nameSheet.getDataRange().getValues();
+  var updated = 0;
+
+  identities.forEach(function(item) {
+    var room = String(item[0]);
+    var identity = item[2];
+    for (var i=1; i<nd.length; i++) {
+      if (String(nd[i][0]) === room) {
+        nameSheet.getRange(i+1, 4).setValue(identity);
+        updated++;
+        break;
+      }
+    }
+  });
+
+  SpreadsheetApp.getUi().alert('✅ 完成！共設定 '+updated+' 位住戶身份\n\n之後如有增減，直接在住戶名單D欄修改，再執行 syncIdentity 即可！');
+}
+
+// ── 同步住戶名單應繳金額到清冊C欄 ───────────────────────
+function syncShouldPay() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var nameSheet = ss.getSheetByName('住戶名單');
+  if (!nameSheet) {
+    SpreadsheetApp.getUi().alert('找不到住戶名單工作表！');
+    return;
+  }
+
+  var nd = nameSheet.getDataRange().getValues();
+  var updated = 0;
+
+  for (var i = 1; i < nd.length; i++) {
+    var room = String(nd[i][0]);
+    var name = String(nd[i][1]);
+    var shouldPay = Number(nd[i][2]||0);
+    if (!room || !name) continue;
+
+    var floor = getFloor(room);
+    if (!floor) continue;
+    var ledger = ss.getSheetByName(floor+'_清冊');
+    if (!ledger) continue;
+
+    var row = findRoomRow(ledger, room, name);
+    if (row < 0) continue;
+
+    var currentPay = ledger.getRange(row, 3).getValue();
+    if (Number(currentPay) !== shouldPay) {
+      ledger.getRange(row, 3).setValue(shouldPay);
+      updated++;
+    }
+  }
+
+  SpreadsheetApp.getUi().alert('✅ 同步完成！共更新 '+updated+' 筆應繳金額');
+}
+
+// ── 補入缺少的空房房號（不影響現有資料）────────────────
+function addEmptyRooms() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var totalAdded = 0;
+
+  var allRooms = {
+    '3F': [301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374],
+    '4F': [401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474],
+    '5F': [517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568],
+    '6F': [617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664]
+  };
+
+  Object.keys(allRooms).forEach(function(floor) {
+    var sheet = ss.getSheetByName(floor + '_清冊');
+    if (!sheet) return;
+
+    var expectedRooms = allRooms[floor];
+
+    expectedRooms.forEach(function(roomNum) {
+      // 檢查這個房號是否已存在
+      var existingRow = findRoomRow(sheet, roomNum, null);
+      if (existingRow > 0) return; // 已存在，不動
+
+      // 找到正確的插入位置
+      var data = sheet.getDataRange().getValues();
+      var insertRow = sheet.getLastRow(); // 預設插在合計列前
+      for (var i = 1; i < data.length - 1; i++) {
+        var cellRoom = parseInt(data[i][0]);
+        if (!isNaN(cellRoom) && cellRoom > roomNum) {
+          insertRow = i + 1;
+          break;
+        }
+      }
+
+      // 插入空房列（只有房號，其他全空）
+      sheet.insertRowBefore(insertRow);
+      sheet.getRange(insertRow, 1).setValue(roomNum);
+      totalAdded++;
+    });
+  });
+
+  SpreadsheetApp.getUi().alert('✅ 完成！共補入 ' + totalAdded + ' 間空房房號');
+}
+
+// ══════════════════════════════════════════════════════════
+// 合計頁籤自動統計功能
+// ══════════════════════════════════════════════════════════
+
+function generateSummary() {
+  var ui = SpreadsheetApp.getUi();
+  var response = ui.prompt('請輸入本月年月', '格式：2026/5', ui.ButtonSet.OK_CANCEL);
+  if (response.getSelectedButton() !== ui.Button.OK) return;
+  var thisMonthStr = response.getResponseText().trim();
+  var thisMonth = parseYearMonth(thisMonthStr);
+  var thisMonthNum = thisMonth.getMonth()+1;
+  var thisYear = thisMonth.getFullYear();
+
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sumSheet = ss.getSheetByName('合計');
+  if (!sumSheet) sumSheet = ss.insertSheet('合計');
+  sumSheet.clear();
+
+  var floors = ['3F','4F','5F','6F'];
+  var floorData = {};
+
+  floors.forEach(function(f){
+    var s = ss.getSheetByName(f+'_清冊');
+    if (!s) return;
+    var d = s.getDataRange().getValues();
+
+    var data = {
+      actualPay:0, backPay:0, deposit:0, refundDeposit:0, prePay:0,
+      shouldPayCount:0,
+      missingList:[], longTermList:[], nunList:[], projectList:[], internList:[],
+      prepayList:[]
+    };
+
+    for (var i=1; i<d.length; i++) {
+      var room = d[i][0];
+      var name = String(d[i][1]||'').trim();
+      if (!room || String(room)==='合計' || !name || name==='' || name==='三人房') continue;
+
+      var shouldPay = Number(d[i][2]||0);
+      var actualPay = Number(d[i][3]||0);
+      var deposit = Number(d[i][4]||0);
+      var refundDeposit = Number(d[i][5]||0);
+      var backPay = Number(d[i][6]||0);
+      var prePay = Number(d[i][7]||0);
+      var note = String(d[i][9]||'').replace(/\n/g,' ').replace(/\r/g,' ');
+
+      if (actualPay > 0) data.actualPay += actualPay;
+      if (backPay > 0) data.backPay += backPay;
+      if (deposit > 0) data.deposit += deposit;
+      if (refundDeposit !== 0) data.refundDeposit += Math.abs(refundDeposit);
+      if (prePay > 0) data.prePay += prePay;
+      if (shouldPay > 0) data.shouldPayCount++;
+
+      var isMissing = shouldPay > 0 && actualPay === 0 && backPay === 0 && note.indexOf('預繳') < 0;
+      if (isMissing) data.missingList.push([f, String(room), name]);
+
+      if (note.indexOf('長期義工') >= 0) data.longTermList.push([f, String(room), name]);
+      if (note.indexOf('師姑') >= 0) data.nunList.push([f, String(room), name]);
+      if (note.indexOf('專案人員') >= 0) data.projectList.push([f, String(room), name]);
+      if (note.indexOf('實習生') >= 0) data.internList.push([f, String(room), name]);
+
+      if (prePay > 0) {
+        var prepayMatch = note.match(/預繳管理費至(\d+)月/);
+        var untilNote = prepayMatch ? '預繳至'+prepayMatch[1]+'月' : '預繳'+prePay+'元';
+        data.prepayList.push([f, String(room), name, untilNote]);
+      }
+    }
+    floorData[f] = data;
+  });
+
+  // 預繳追蹤
+  var prepaySheet = ss.getSheetByName('預繳追蹤');
+  var prevPrepay = {'3F':0,'4F':0,'5F':0,'6F':0,'total':0};
+  var prevFuture = {'3F':0,'4F':0,'5F':0,'6F':0,'total':0};
+  var prevPrepayList = [];
+  var prevFutureList = [];
+  var thisPrepayGroups = {};
+
+  if (prepaySheet) {
+    var pd = prepaySheet.getDataRange().getValues();
+    for (var i=1; i<pd.length; i++) {
+      var room = String(pd[i][0]);
+      var name = String(pd[i][1]);
+      var paidMonth = parseYearMonth(pd[i][2]);
+      var untilMonth = parseYearMonth(pd[i][3]);
+      var paidMonthNum = paidMonth.getMonth()+1;
+      var paidYear = paidMonth.getFullYear();
+      var untilMonthNum = untilMonth.getMonth()+1;
+      var untilYear = untilMonth.getFullYear();
+
+      var floor = getFloor(room);
+      if (!floor) continue;
+      var ledger = ss.getSheetByName(floor+'_清冊');
+      var shouldPay = 2500;
+      if (ledger) {
+        var rRow = findRoomRow(ledger, room, name);
+        if (rRow > 0) shouldPay = Number(ledger.getRange(rRow,3).getValue()||2500);
+      }
+
+      var freeFrom = addMonths(paidMonth, 1);
+      var isPrev = (paidYear < thisYear || (paidYear===thisYear && paidMonthNum < thisMonthNum));
+      var inRange = (thisMonth >= freeFrom && thisMonth <= untilMonth);
+
+      if (isPrev && inRange) {
+        prevPrepay[floor] += shouldPay;
+        prevPrepay.total += shouldPay;
+        prevPrepayList.push([floor, room, name, paidMonthNum+'月預繳至'+untilMonthNum+'月']);
+
+        if (untilYear > thisYear || (untilYear===thisYear && untilMonthNum > thisMonthNum)) {
+          prevFuture[floor] += shouldPay;
+          prevFuture.total += shouldPay;
+          prevFutureList.push([floor, room, name, paidMonthNum+'月預繳至'+untilMonthNum+'月']);
+        }
+      }
+
+      if (paidYear===thisYear && paidMonthNum===thisMonthNum) {
+        var untilKey = untilMonthNum+'月';
+        if (!thisPrepayGroups[untilKey]) thisPrepayGroups[untilKey]={amount:0,list:[]};
+        thisPrepayGroups[untilKey].amount += shouldPay;
+        thisPrepayGroups[untilKey].list.push([floor, room, name, thisMonthNum+'月預繳至'+untilMonthNum+'月']);
+      }
+    }
+  }
+
+  var totalActual=0,totalBack=0,totalDeposit=0,totalRefund=0,totalPrePay=0;
+  floors.forEach(function(f){
+    if(!floorData[f]) return;
+    totalActual+=floorData[f].actualPay;
+    totalBack+=floorData[f].backPay;
+    totalDeposit+=floorData[f].deposit;
+    totalRefund+=floorData[f].refundDeposit;
+    totalPrePay+=floorData[f].prePay;
+  });
+
+  var financeTotal = totalActual + totalBack + prevPrepay.total;
+  var cashTotal = totalActual + totalBack + totalPrePay + totalDeposit - totalRefund;
+
+  // 計算人數
+  var countMissing=0,countLong=0,countNun=0,countProject=0,countIntern=0;
+  floors.forEach(function(f){
+    if(!floorData[f]) return;
+    countMissing+=floorData[f].missingList.length;
+    countLong+=floorData[f].longTermList.length;
+    countNun+=floorData[f].nunList.length;
+    countProject+=floorData[f].projectList.length;
+    countIntern+=floorData[f].internList.length;
+  });
+
+  // ══ 合計頁籤（只有數字，無名單）══
+  var r=1;
+  var blue='#2563eb',white='#ffffff',green='#dcfce7',yellow='#fffbeb';
+
+  function hdr6(text) {
+    sumSheet.getRange(r,1,1,6).merge();
+    sumSheet.getRange(r,1).setValue(text).setBackground(blue).setFontColor(white).setFontWeight('bold').setFontSize(11);
+    r++;
+  }
+
+  function row6(label,v3,v4,v5,v6,total,bg) {
+    sumSheet.getRange(r,1,1,6).setValues([[label,v3,v4,v5,v6,total]]);
+    if(bg) sumSheet.getRange(r,1,1,6).setBackground(bg);
+    r++;
+  }
+
+  function row2(label,value,bg) {
+    sumSheet.getRange(r,1,1,2).setValues([[label,value]]);
+    sumSheet.getRange(r,1,1,2).setFontWeight('bold');
+    if(bg) sumSheet.getRange(r,1,1,2).setBackground(bg);
+    r++;
+  }
+
+  // 欄標題
+  sumSheet.getRange(r,1,1,6).setValues([['收支明細','3F','4F','5F','6F','小計']]);
+  sumSheet.getRange(r,1,1,6).setBackground(blue).setFontColor(white).setFontWeight('bold');
+  r++;
+
+  row6('實際繳',floorData['3F']?floorData['3F'].actualPay:0,floorData['4F']?floorData['4F'].actualPay:0,floorData['5F']?floorData['5F'].actualPay:0,floorData['6F']?floorData['6F'].actualPay:0,totalActual,null);
+  row6('補繳',floorData['3F']?floorData['3F'].backPay:0,floorData['4F']?floorData['4F'].backPay:0,floorData['5F']?floorData['5F'].backPay:0,floorData['6F']?floorData['6F'].backPay:0,totalBack,null);
+  row6('收保證金',floorData['3F']?floorData['3F'].deposit:0,floorData['4F']?floorData['4F'].deposit:0,floorData['5F']?floorData['5F'].deposit:0,floorData['6F']?floorData['6F'].deposit:0,totalDeposit,null);
+  row6('退保證金',floorData['3F']?floorData['3F'].refundDeposit:0,floorData['4F']?floorData['4F'].refundDeposit:0,floorData['5F']?floorData['5F'].refundDeposit:0,floorData['6F']?floorData['6F'].refundDeposit:0,totalRefund,null);
+  row6('之前預繳（本月在免繳範圍）',prevPrepay['3F'],prevPrepay['4F'],prevPrepay['5F'],prevPrepay['6F'],prevPrepay.total,yellow);
+  row6('預繳（新收）',floorData['3F']?floorData['3F'].prePay:0,floorData['4F']?floorData['4F'].prePay:0,floorData['5F']?floorData['5F'].prePay:0,floorData['6F']?floorData['6F'].prePay:0,totalPrePay,yellow);
+  row6('之前預繳至下期以後',prevFuture['3F'],prevFuture['4F'],prevFuture['5F'],prevFuture['6F'],prevFuture.total,yellow);
+  r++;
+  row2('本月預繳管理費合計（僅新收）',totalPrePay,yellow);
+  r++;
+
+  hdr6('★ 重要統計');
+  row2('繳回財務金額（實際繳+補繳+之前預繳）',financeTotal,green);
+  row2('本月實收現金（實際繳+補繳+預繳新收+保證金-退保證金）',cashTotal,green);
+  r++;
+
+  hdr6('人數統計');
+  sumSheet.getRange(r,1,1,6).setValues([['類別','3F','4F','5F','6F','小計']]);
+  sumSheet.getRange(r,1,1,6).setBackground(blue).setFontColor(white).setFontWeight('bold');
+  r++;
+
+  var countTypes=[
+    ['應繳人數','shouldPayCount'],
+    ['缺繳人數','missingList'],
+    ['長期義工人數','longTermList'],
+    ['師姑人數','nunList'],
+    ['專案人員人數','projectList'],
+    ['實習生人數','internList'],
+  ];
+
+  countTypes.forEach(function(ct){
+    var vals=[ct[0]]; var total=0;
+    floors.forEach(function(f){
+      var v=floorData[f]?(Array.isArray(floorData[f][ct[1]])?floorData[f][ct[1]].length:floorData[f][ct[1]]):0;
+      vals.push(v); total+=v;
+    });
+    vals.push(total);
+    sumSheet.getRange(r,1,1,6).setValues([vals]);
+    r++;
+  });
+
+  sumSheet.setColumnWidth(1,300);
+  [2,3,4,5,6].forEach(function(c){sumSheet.setColumnWidth(c,100);});
+  sumSheet.getDataRange().setFontSize(12);
+
+  // ══ 收費統計名單工作表 ══
+  _generateNameList(ss, thisMonthNum, thisYear, floors, floorData,
+    prevPrepayList, prevFutureList, thisPrepayGroups,
+    countMissing, countLong, countNun, countProject, countIntern);
+
+  SpreadsheetApp.getUi().alert('合計統計完成！');
+}
+
+function _generateReport(ss, thisMonthNum, thisYear, floors, floorData, prevPrepayList, prevFutureList) {
+  var reportSheet = ss.getSheetByName('主管報表');
+  if (reportSheet) ss.deleteSheet(reportSheet);
+  reportSheet = ss.insertSheet('主管報表');
+
+  var r = 1;
+  var blue='#2563eb', white='#ffffff';
+  // 莫蘭迪色系
+  var colors = {
+    missing: '#f5c6c6',    // 玫瑰粉：缺繳
+    longTerm: '#c6d9c6',   // 灰綠：長期義工
+    nun: '#d4c6d9',        // 薰衣草：師姑
+    project: '#c6d4d9',    // 霧藍：專案人員
+    intern: '#d9d4c6',     // 沙棕：實習生
+    prepay: '#f5e6c6',     // 暖米：預繳
+  };
+
+  function writeHeader(title, bg) {
+    reportSheet.getRange(r,1,1,3).merge();
+    reportSheet.getRange(r,1).setValue(title)
+      .setBackground(bg||blue).setFontColor(white).setFontWeight('bold').setFontSize(11);
+    r++;
+    reportSheet.getRange(r,1,1,3).setValues([['樓層','房號','姓名']]);
+    reportSheet.getRange(r,1,1,3).setBackground('#e8eaf6').setFontWeight('bold');
+    r++;
+  }
+
+  function writeList(list, bg) {
+    if(!list||list.length===0){
+      reportSheet.getRange(r,1,1,3).merge();
+      reportSheet.getRange(r,1).setValue('（無）').setFontColor('#888888');
+      r++; return;
+    }
+    list.forEach(function(item){
+      // item 格式：「room　name　...」
+      var parts = item.split('　');
+      var room = parts[0]||'';
+      var name = parts[1]||'';
+      var floor = getFloor(String(room))||'';
+      reportSheet.getRange(r,1,1,3).setValues([[floor, room, name]]);
+      if(bg) reportSheet.getRange(r,1,1,3).setBackground(bg);
+      r++;
     });
   }
-  document.getElementById('historyOverlay').classList.add('show');
+
+  function writeFloorList(key, bg) {
+    var allList = [];
+    floors.forEach(function(f){
+      if(!floorData[f]||!floorData[f][key]) return;
+      floorData[f][key].forEach(function(item){ allList.push(item); });
+    });
+    writeList(allList, bg);
+  }
+
+  // 標題
+  reportSheet.getRange(r,1,1,3).merge();
+  reportSheet.getRange(r,1).setValue(thisYear+'年'+thisMonthNum+'月 管理費統計報表')
+    .setBackground(blue).setFontColor(white).setFontWeight('bold').setFontSize(13);
+  r++; r++;
+
+  // 缺繳名單
+  writeHeader('缺繳名單', '#c0392b');
+  writeFloorList('missingList', colors.missing);
+  r++;
+
+  // 長期義工名單
+  writeHeader('長期義工名單', '#27ae60');
+  writeFloorList('longTermList', colors.longTerm);
+  r++;
+
+  // 師姑名單
+  writeHeader('師姑名單', '#8e44ad');
+  writeFloorList('nunList', colors.nun);
+  r++;
+
+  // 專案人員名單
+  writeHeader('專案人員名單', '#2980b9');
+  writeFloorList('projectList', colors.project);
+  r++;
+
+  // 實習生名單
+  writeHeader('實習生名單', '#d35400');
+  writeFloorList('internList', colors.intern);
+  r++;
+
+  // 之前預繳名單
+  writeHeader('之前預繳名單', '#7f8c8d');
+  writeList(prevPrepayList, colors.prepay);
+  r++;
+
+  // 之前預繳至下期以後
+  writeHeader('之前預繳至下期以後', '#7f8c8d');
+  writeList(prevFutureList, colors.prepay);
+  r++;
+
+  // 欄寬
+  reportSheet.setColumnWidth(1, 60);
+  reportSheet.setColumnWidth(2, 70);
+  reportSheet.setColumnWidth(3, 100);
 }
 
-function showHistoryDetail(idx) {
-  var history = JSON.parse(localStorage.getItem('settleHistory')||'[]');
-  var h = history[idx];
-  var list = document.getElementById('historyList');
-  list.innerHTML = '<button onclick="showHistory()" style="font-size:13px;color:var(--accent);background:none;border:none;cursor:pointer;padding:4px 0 12px;">← 返回列表</button>';
-  h.records.forEach(function(r){
-    var div = makeLogCard(r);
-    list.appendChild(div);
-  });
+function debugPrepayCalc() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var prepaySheet = ss.getSheetByName('預繳追蹤');
+  if (!prepaySheet) { SpreadsheetApp.getUi().alert('找不到預繳追蹤！'); return; }
+  
+  var thisMonth = parseYearMonth('2026/5');
+  var thisMonthNum = thisMonth.getMonth()+1;
+  var thisYear = thisMonth.getFullYear();
+  
+  var pd = prepaySheet.getDataRange().getValues();
+  var msg = '預繳追蹤共 '+(pd.length-1)+' 筆\n\n';
+  
+  for (var i=1; i<pd.length; i++) {
+    var room = String(pd[i][0]);
+    var name = String(pd[i][1]);
+    var paidMonth = parseYearMonth(pd[i][2]);
+    var untilMonth = parseYearMonth(pd[i][3]);
+    var paidMonthNum = paidMonth.getMonth()+1;
+    var paidYear = paidMonth.getFullYear();
+    var untilMonthNum = untilMonth.getMonth()+1;
+    var untilYear = untilMonth.getFullYear();
+    
+    var isA7 = (paidYear < thisYear || (paidYear===thisYear && paidMonthNum < thisMonthNum))
+               && untilYear===thisYear && untilMonthNum===thisMonthNum;
+    var isA8 = paidYear===thisYear && paidMonthNum===thisMonthNum
+               && (untilYear > thisYear || (untilYear===thisYear && untilMonthNum > thisMonthNum));
+    
+    msg += room+' '+name+' 繳費:'+paidYear+'/'+paidMonthNum+' 至:'+untilYear+'/'+untilMonthNum;
+    msg += ' A7:'+isA7+' A8:'+isA8+'\n';
+  }
+  
+  SpreadsheetApp.getUi().alert(msg);
 }
-</script>
-</body>
-</html>
+
+function debugNotes() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var s = ss.getSheetByName('3F_清冊');
+  var d = s.getDataRange().getValues();
+  var msg = '3F J欄備註有內容的列：\n';
+  for (var i=1; i<d.length; i++) {
+    var note = String(d[i][9]||'').trim();
+    if (note && note !== '') {
+      msg += d[i][0]+'　'+d[i][1]+'：'+note.substring(0,30)+'\n';
+    }
+  }
+  SpreadsheetApp.getUi().alert(msg||'全部空白！');
+}
+
+// ── 匯入備註到清冊J欄（只寫J欄，不動其他欄位）──────────
+function importNotes() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var notes = [
+    [301, '長期義工不用繳交'],
+    [304, '長期義工不用繳交'],
+    [306, '長期義工不用繳交'],
+    [308, '長期義工不用繳交'],
+    [309, '長期義工不用繳交'],
+    [311, '5月預繳管理費至6月 收5000元（5、6月）'],
+    [313, '長期義工不用繳交'],
+    [316, '收5000元（4、5月）'],
+    [317, '4月預繳管理費至6月'],
+    [319, '長期義工不用繳交'],
+    [320, '長期義工不用繳交'],
+    [328, '工作至5/31，預計退單'],
+    [339, '長期義工不用繳交'],
+    [342, '缺繳5月管理費'],
+    [345, '5/11退單，收5月管理費1000元，退保證金2000元'],
+    [347, '長期義工不用繳交'],
+    [350, '師姑不用繳交'],
+    [351, '4月預繳管理費至5月'],
+    [358, '缺繳5月管理費'],
+    [370, '4月預繳管理費至6月'],
+    [372, '5/1入住，繳交4500元(5月管+保)'],
+    [401, '5月預繳管理費至6月 收5000元（5、6月）'],
+    [411, '長期義工不用繳交'],
+    [415, '5月預繳管理費至6月 收10000元（3-6月）'],
+    [427, '長期義工不用繳交'],
+    [431, '缺繳5月管理費'],
+    [432, '長期義工不用繳交'],
+    [433, '缺繳4、5月管理費'],
+    [434, '缺繳5月管理費'],
+    [436, '5/14退單，退保證金，繳交5月管理費1000元'],
+    [445, '長期義工不用繳交'],
+    [446, '缺繳5月管理費'],
+    [453, '長期義工不用繳交'],
+    [456, '專案人員不用繳交'],
+    [457, '長期義工不用繳交'],
+    [460, '長期義工不用繳交'],
+    [461, '普中教職員'],
+    [463, '長期義工不用繳交'],
+    [465, '收10000元（2-5月）'],
+    [466, '長期義工不用繳交'],
+    [467, '缺繳5月管理費'],
+    [470, '長期義工不用繳交'],
+    [473, '5月預繳管理費至6月 收5000元（5、6月）'],
+    [520, '5月預繳管理費至6月。 收5000元（5、6月）'],
+    [525, '長期義工不用繳交'],
+    [527, '缺繳5月管理費'],
+    [529, '師姑不用繳交'],
+    [533, '長期義工不用繳交'],
+    [535, '專案人員不用繳交'],
+    [537, '收5000元（4、5月）'],
+    [544, '長期義工不用繳交'],
+    [546, '專案人員不用繳交'],
+    [547, '5/4入住，收保證金2000元  5/8繳交5月份管理費'],
+    [549, '長期義工不用繳交'],
+    [552, '5月預繳管理費至6月 收10000元(3-6月)'],
+    [553, '普中教職員'],
+    [554, '普中教職員'],
+    [555, '普中教職員 收7500元（3-5月）'],
+    [560, '長期義工不用繳交'],
+    [562, '5月預繳管理費至6月 收5000元（5、6月）'],
+    [563, '專案人員不用繳交'],
+    [564, '長期義工不用繳交'],
+    [565, '缺繳5月管理費'],
+    [567, '長期義工不用繳交'],
+    [621, '缺繳4、5月管理費'],
+    [625, '缺繳3、4、5月管理費'],
+    [630, '實習生不用繳交'],
+    [638, '收5000元（4、5月）'],
+    [639, '缺繳5月管理費'],
+    [641, '5月預繳管理費至6月 收5000元（5、6月）'],
+    [647, '普中教職員'],
+    [649, '缺繳5月管理費'],
+    [651, '4/30退單，退保證金2000元'],
+    [653, '缺繳5月管理費'],
+    [660, '收5000元（4、5月）'],
+    [664, '5月預繳管理費至6月 收5000元（5、6月）']
+  ];
+
+  var updated = 0;
+  notes.forEach(function(n) {
+    var room = String(n[0]);
+    var note = n[1];
+    var floor = getFloor(room);
+    if (!floor) return;
+    var s = ss.getSheetByName(floor+'_清冊');
+    if (!s) return;
+    var d = s.getDataRange().getValues();
+    for (var i=1; i<d.length; i++) {
+      if (String(d[i][0]) === room) {
+        s.getRange(i+1, 10).setValue(note); // 只寫J欄
+        updated++;
+        break;
+      }
+    }
+  });
+  SpreadsheetApp.getUi().alert('✅ 完成！共寫入 '+updated+' 筆備註到J欄');
+}
