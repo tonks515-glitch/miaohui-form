@@ -544,26 +544,31 @@ function setStatus(state, text) {
 
 // ── 載入住戶名單 ─────────────────────────────────────────
 function loadRoomData() {
-  fetch(scriptUrl+'?action=roomlist')
-    .then(function(r){return r.json();})
-    .then(function(res){
-      // 不管 status，只要有 period 就更新標題
-      if(res.period) {
-        document.getElementById('periodLabel').textContent = res.period;
-      }
-      if(res.rooms){
-        dynamicRoomList = res.rooms;
-        dynamicRoomData = {};
-        res.rooms.forEach(function(r){
-          if(r.room && r.name) dynamicRoomData[parseInt(r.room)] = r.name;
-        });
-        roomDataLoaded = true;
-        var roomVal = document.getElementById('roomInput').value;
-        if(roomVal && roomVal.length >= 3) lookupRoom(roomVal);
+  fetch(scriptUrl+'?action=roomlist', {redirect:'follow'})
+    .then(function(r){ return r.text(); })
+    .then(function(text){
+      try {
+        var res = JSON.parse(text);
+        if(res.period) {
+          document.getElementById('periodLabel').textContent = res.period;
+        } else {
+          document.getElementById('periodLabel').textContent = '115年6月';
+        }
+        if(res.rooms){
+          dynamicRoomList = res.rooms;
+          dynamicRoomData = {};
+          res.rooms.forEach(function(r){
+            if(r.room && r.name) dynamicRoomData[parseInt(r.room)] = r.name;
+          });
+          roomDataLoaded = true;
+          var roomVal = document.getElementById('roomInput').value;
+          if(roomVal && roomVal.length >= 3) lookupRoom(roomVal);
+        }
+      } catch(e) {
+        document.getElementById('periodLabel').textContent = '115年6月';
       }
     })
     .catch(function(){
-      // API 失敗時顯示預設月份
       document.getElementById('periodLabel').textContent = '115年6月';
     });
 }
