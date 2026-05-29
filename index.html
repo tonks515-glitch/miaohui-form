@@ -545,45 +545,49 @@ function setStatus(state, text) {
 }
 
 // ── 載入住戶名單 ─────────────────────────────────────────
+// JSONP callback 函式
+function _roomlistCallback(res) {
+  if(res.period) {
+    document.getElementById('periodLabel').textContent = res.period;
+  }
+  if(res.rooms && res.rooms.length > 0) {
+    dynamicRoomList = res.rooms;
+    dynamicRoomData = {};
+    res.rooms.forEach(function(r){
+      if(r.room && r.name) dynamicRoomData[parseInt(r.room)] = r.name;
+    });
+    roomDataLoaded = true;
+    var roomVal = document.getElementById('roomInput').value;
+    if(roomVal && roomVal.length >= 3) lookupRoom(roomVal);
+  }
+  // 清除 script 標籤
+  var old = document.getElementById('_roomlistScript');
+  if(old) old.parentNode.removeChild(old);
+}
+
 function loadRoomData(retryCount) {
   retryCount = retryCount || 0;
-  fetch(scriptUrl+'?action=roomlist', {redirect:'follow'})
-    .then(function(r){ return r.text(); })
-    .then(function(text){
-      try {
-        var res = JSON.parse(text);
-        // 更新月份標題
-        if(res.period) {
-          document.getElementById('periodLabel').textContent = res.period;
-        }
-        // 載入住戶名單
-        if(res.rooms && res.rooms.length > 0){
-          dynamicRoomList = res.rooms;
-          dynamicRoomData = {};
-          res.rooms.forEach(function(r){
-            if(r.room && r.name) dynamicRoomData[parseInt(r.room)] = r.name;
-          });
-          roomDataLoaded = true;
-          // 如果房號欄已有值，重新觸發查詢
-          var roomVal = document.getElementById('roomInput').value;
-          if(roomVal && roomVal.length >= 3) lookupRoom(roomVal);
-        } else if(retryCount < 3) {
-          // 名單是空的，重試
-          setTimeout(function(){ loadRoomData(retryCount+1); }, 2000);
-        }
-      } catch(e) {
-        // JSON解析失敗，重試
-        if(retryCount < 3) {
-          setTimeout(function(){ loadRoomData(retryCount+1); }, 2000);
-        }
-      }
-    })
-    .catch(function(){
-      // 網路失敗，重試
-      if(retryCount < 3) {
-        setTimeout(function(){ loadRoomData(retryCount+1); }, 2000);
-      }
-    });
+  // 移除舊的 script 標籤
+  var old = document.getElementById('_roomlistScript');
+  if(old) old.parentNode.removeChild(old);
+
+  // 用 JSONP 方式載入（繞過 CORS 問題）
+  var script = document.createElement('script');
+  script.id = '_roomlistScript';
+  script.src = scriptUrl + '?action=roomlist&callback=_roomlistCallback';
+  script.onerror = function() {
+    if(retryCount < 3) {
+      setTimeout(function(){ loadRoomData(retryCount+1); }, 2000);
+    }
+  };
+  document.head.appendChild(script);
+
+  // 5秒後如果還沒載入，重試
+  setTimeout(function(){
+    if(!roomDataLoaded && retryCount < 3) {
+      loadRoomData(retryCount+1);
+    }
+  }, 5000);
 }
 
 // ── 載入今日及最近7天補登資料 ────────────────────────────
