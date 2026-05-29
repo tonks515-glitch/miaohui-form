@@ -545,33 +545,44 @@ function setStatus(state, text) {
 }
 
 // ── 載入住戶名單 ─────────────────────────────────────────
-function loadRoomData() {
+function loadRoomData(retryCount) {
+  retryCount = retryCount || 0;
   fetch(scriptUrl+'?action=roomlist', {redirect:'follow'})
     .then(function(r){ return r.text(); })
     .then(function(text){
       try {
         var res = JSON.parse(text);
+        // 更新月份標題
         if(res.period) {
           document.getElementById('periodLabel').textContent = res.period;
-        } else {
-          document.getElementById('periodLabel').textContent = '115年6月';
         }
-        if(res.rooms){
+        // 載入住戶名單
+        if(res.rooms && res.rooms.length > 0){
           dynamicRoomList = res.rooms;
           dynamicRoomData = {};
           res.rooms.forEach(function(r){
             if(r.room && r.name) dynamicRoomData[parseInt(r.room)] = r.name;
           });
           roomDataLoaded = true;
+          // 如果房號欄已有值，重新觸發查詢
           var roomVal = document.getElementById('roomInput').value;
           if(roomVal && roomVal.length >= 3) lookupRoom(roomVal);
+        } else if(retryCount < 3) {
+          // 名單是空的，重試
+          setTimeout(function(){ loadRoomData(retryCount+1); }, 2000);
         }
       } catch(e) {
-        document.getElementById('periodLabel').textContent = '115年6月';
+        // JSON解析失敗，重試
+        if(retryCount < 3) {
+          setTimeout(function(){ loadRoomData(retryCount+1); }, 2000);
+        }
       }
     })
     .catch(function(){
-      document.getElementById('periodLabel').textContent = '115年6月';
+      // 網路失敗，重試
+      if(retryCount < 3) {
+        setTimeout(function(){ loadRoomData(retryCount+1); }, 2000);
+      }
     });
 }
 
@@ -614,8 +625,19 @@ function lookupRoom(val) {
   if (!val || String(val).length < 3) {
     input.className = 'room-input';
     display.className = 'name-display empty';
-    display.innerHTML = '<span>👤</span><span>輸入房號後自動顯示姓名</span>';
+    if(!roomDataLoaded) {
+      display.innerHTML = '<span>⏳</span><span>名單載入中，請稍候再輸入…</span>';
+    } else {
+      display.innerHTML = '<span>👤</span><span>輸入房號後自動顯示姓名</span>';
+    }
     currentName = ''; updateSubmit(); return;
+  }
+  // 動態名單還沒載入完，等待後重試
+  if(!roomDataLoaded) {
+    display.innerHTML = '<span>⏳</span><span>名單載入中，請稍候…</span>';
+    currentName = ''; updateSubmit();
+    setTimeout(function(){ lookupRoom(val); }, 1500);
+    return;
   }
   // 如果住戶名單還沒載入完，先顯示靜態名單結果，載入完後自動更新
   var matches = [];
