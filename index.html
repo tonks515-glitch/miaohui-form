@@ -601,7 +601,6 @@ function submitForm() {
 
   fetch(scriptUrl, {
     method: 'POST',
-    headers: {'Content-Type': 'application/json'},
     body: JSON.stringify(payload)
   })
     .then(function(r){ return r.json(); })
@@ -758,7 +757,7 @@ function deleteRecord(idx, isBackdate) {
   if (!r) return;
   if (!confirm('確認刪除這筆紀錄？\n'+r.room+' '+r.name+'\n'+r.amount.toLocaleString()+' 元・'+r.type+'\n\n此操作無法復原')) return;
   var payload = { action: 'delete', time: r.time, room: r.room, amount: r.amount, type: r.type };
-  fetch(scriptUrl, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload) })
+  fetch(scriptUrl, { method: 'POST', body: JSON.stringify(payload) })
     .then(function(res){ return res.json(); })
     .then(function(data){
       if (data.status === 'ok') {
