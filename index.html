@@ -365,7 +365,7 @@ const roomData = {
   625:'吳姿儀',626:'鄭安安',627:'鄧文琪',630:'何翊嘉',634:'侯妙璇',636:'孫佩貝',637:'陳怡君',
   638:'蘇郁鈞',639:'王薏菁',640:'王麗君',641:'劉姿佑',642:'龔品蓉',643:'劉芷妤',644:'李敏瑜',
   645:'戴雅琪',646:'李家儀',647:'許瀞文',648:'江承澂',649:'黃亭穎',650:'許庭禎',652:'林佳臻',
-  653:'徐采伶',654:'周裘語',655:'黃宜婷',659:'匡婕',660:'劉書菡',661:'呂明霞',663:'陳映頤',664:'林郁婷'
+  653:'徐采伶',654:'周裘語',655:'黃宜婷',659:'匡婕',660:'劉書菡',662:'呂明霞',663:'陳映頤',664:'林郁婷'
 };
 
 const MINUS_TYPES = ['退保證金','歸還零用金'];
@@ -376,6 +376,8 @@ var isMinusType = false;
 var currentName = '';
 var scriptUrl = 'https://script.google.com/macros/s/AKfycbxecn2fyM4GDT4JjmD6LIl8G7zPiGjBnnaD4ilitiiBDu5q-GojS1RUYtC7fYzrZ6wP/exec';
 var dateMode = 'today';
+var dynamicRoomData = {};
+var roomDataLoaded = false;
 var sessionLog = [];
 var backdateLog = [];
 var periodStartDate = localStorage.getItem('periodStart') || '';
@@ -391,6 +393,7 @@ window.onload = function() {
   document.getElementById('dateInput').max = today;
   document.getElementById('statusDot').className='status-dot connected';
   document.getElementById('statusText').textContent='已連線・資料將自動存入試算表';
+  loadRoomData();
   loadTodayData();
   updateSubmit();
 };
@@ -441,6 +444,28 @@ function setStatus(state, text) {
   dot.className = 'status-dot'+(state==='connected'?' connected':state==='error'?' error':'');
   document.getElementById('statusText').textContent = text;
 }
+function loadRoomData() {
+  var cbName = 'gasRoomCb_' + Date.now();
+  window[cbName] = function(res) {
+    try {
+      if(res.period) {
+        document.getElementById('periodLabel').textContent = res.period;
+      }
+      if(res.rooms){
+        res.rooms.forEach(function(r){
+          if(r.room && r.name) dynamicRoomData[parseInt(r.room)] = r.name;
+        });
+        roomDataLoaded = true;
+      }
+    } catch(e) {}
+    delete window[cbName];
+  };
+  var s = document.createElement('script');
+  s.src = scriptUrl + '?action=roomlist&callback=' + cbName;
+  s.onerror = function() { delete window[cbName]; };
+  document.head.appendChild(s);
+}
+
 
 function loadTodayData() {
   var today = getTodayStr();
