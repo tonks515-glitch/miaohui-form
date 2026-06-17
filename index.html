@@ -504,7 +504,9 @@ function lookupRoom(val) {
     display.innerHTML = '<span>👤</span><span>輸入房號後自動顯示姓名</span>';
     currentName = ''; updateSubmit(); return;
   }
+  // 靜態名單優先查詢，查無再查動態名單（住戶名單試算表新增的房號）
   var name = roomData[num];
+  if (!name && dynamicRoomData[num]) name = dynamicRoomData[num];
   if (name) {
     currentName = name;
     input.className = 'room-input valid';
