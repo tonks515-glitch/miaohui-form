@@ -2,1955 +2,849 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>妙慧樓 水電報修</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script>
-
-// ═══════════════════════════════════════════════════════════════
-// XB — Pure JS XLSX Builder (bypasses SheetJS style limitations)
-// ═══════════════════════════════════════════════════════════════
-(function(){
-const _CT=new Uint32Array(256);for(let n=0;n<256;n++){let v=n;for(let k=0;k<8;k++)v=(v&1)?(0xEDB88320^(v>>>1)):(v>>>1);_CT[n]=v;}
-function _crc(d){let c=0xFFFFFFFF;for(let i=0;i<d.length;i++)c=_CT[(c^d[i])&0xFF]^(c>>>8);return(c^0xFFFFFFFF)>>>0;}
-function _u32(n){const b=new Uint8Array(4);new DataView(b.buffer).setUint32(0,n,true);return b;}
-function _u16(n){const b=new Uint8Array(2);new DataView(b.buffer).setUint16(0,n,true);return b;}
-function _cat(a){const t=a.reduce((s,x)=>s+x.length,0),o=new Uint8Array(t);let p=0;for(const x of a){o.set(x,p);p+=x.length;}return o;}
-function _enc(s){return new TextEncoder().encode(s);}
-function _zip(files){
-  const es=[];let off=0;
-  for(const[nm,data]of files){
-    const nb=_enc(nm),db=typeof data==='string'?_enc(data):data,crc=_crc(db);
-    const loc=_cat([new Uint8Array([0x50,0x4B,0x03,0x04,0x14,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00]),_u32(crc),_u32(db.length),_u32(db.length),_u16(nb.length),_u16(0),nb,db]);
-    es.push({nb,crc,sz:db.length,off,loc});off+=loc.length;
-  }
-  const cds=[];let cdsz=0;
-  for(const e of es){
-    const cd=_cat([new Uint8Array([0x50,0x4B,0x01,0x02,0x14,0x00,0x14,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00]),_u32(e.crc),_u32(e.sz),_u32(e.sz),_u16(e.nb.length),_u16(0),_u16(0),_u16(0),_u16(0),_u32(0),_u32(e.off),e.nb]);
-    cds.push(cd);cdsz+=cd.length;
-  }
-  const eocd=_cat([new Uint8Array([0x50,0x4B,0x05,0x06,0x00,0x00,0x00,0x00]),_u16(es.length),_u16(es.length),_u32(cdsz),_u32(off),_u16(0)]);
-  return _cat([...es.map(e=>e.loc),...cds,eocd]);
-}
-const _ST='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><fonts count="4"><font><sz val="13"/><name val="Calibri"/></font><font><sz val="13"/><b/><name val="Calibri"/></font><font><sz val="13"/><b/><color rgb="FFFFFFFF"/><name val="Calibri"/></font><font><sz val="14"/><b/><color rgb="FF1A4A78"/><name val="Calibri"/></font></fonts><fills count="6"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FF1A4A78"/></patternFill></fill><fill><patternFill patternType="solid"><fgColor rgb="FFEAF0F9"/></patternFill></fill><fill><patternFill patternType="solid"><fgColor rgb="FFFFFFFF"/></patternFill></fill><fill><patternFill patternType="solid"><fgColor rgb="FFF2F6FC"/></patternFill></fill></fills><borders count="3"><border><left/><right/><top/><bottom/><diagonal/></border><border><left style="thin"><color rgb="FF999999"/></left><right style="thin"><color rgb="FF999999"/></right><top style="thin"><color rgb="FF999999"/></top><bottom style="thin"><color rgb="FF999999"/></bottom><diagonal/></border><border><left style="medium"><color rgb="FF1A4A78"/></left><right style="medium"><color rgb="FF1A4A78"/></right><top style="medium"><color rgb="FF1A4A78"/></top><bottom style="medium"><color rgb="FF1A4A78"/></bottom><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="9"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/><xf numFmtId="0" fontId="3" fillId="3" borderId="1" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center" wrapText="1"/></xf><xf numFmtId="0" fontId="2" fillId="2" borderId="2" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center" wrapText="1"/></xf><xf numFmtId="0" fontId="2" fillId="2" borderId="2" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="left" vertical="center" wrapText="1"/></xf><xf numFmtId="0" fontId="0" fillId="4" borderId="1" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center" wrapText="1"/></xf><xf numFmtId="0" fontId="0" fillId="4" borderId="1" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="left" vertical="center" wrapText="1"/></xf><xf numFmtId="0" fontId="0" fillId="5" borderId="1" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center" wrapText="1"/></xf><xf numFmtId="0" fontId="0" fillId="5" borderId="1" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="left" vertical="center" wrapText="1"/></xf><xf numFmtId="0" fontId="1" fillId="3" borderId="1" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center" wrapText="1"/></xf></cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>';
-function _col(c){let s='';c++;while(c>0){s=String.fromCharCode(65+(c-1)%26)+s;c=Math.floor((c-1)/26);}return s;}
-function _esc(s){return String(s===null||s===undefined?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-function _ws(rows,cols,merges){
-  let x='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><cols>';
-  cols.forEach((w,i)=>{x+='<col min="'+(i+1)+'" max="'+(i+1)+'" width="'+w+'" customWidth="1"/>';});
-  x+='</cols><sheetData>';
-  rows.forEach((row,ri)=>{
-    x+='<row r="'+(ri+1)+'" ht="'+(row.ht||39)+'" customHeight="1">';
-    row.cells.forEach((cell,ci)=>{
-      if(cell.skip)return;
-      const addr=_col(ci)+(ri+1);
-      const v=cell.v;
-      const isNum=typeof v==='number';
-      x+='<c r="'+addr+'" s="'+(cell.s||0)+'"'+(isNum?'':' t="str"')+'>'+( (v===null||v===undefined||v==='')? '' : '<v>'+_esc(v)+'</v>' )+'</c>';
-    });
-    x+='</row>';
-  });
-  x+='</sheetData>';
-  if(merges&&merges.length){x+='<mergeCells count="'+merges.length+'">';merges.forEach(m=>{x+='<mergeCell ref="'+_col(m.c1)+(m.r1+1)+':'+_col(m.c2)+(m.r2+1)+'"/>';});x+='</mergeCells>';}
-  x+='</worksheet>';return x;
-}
-// Multi-sheet download: sheets = [{name, rows, cols, merges}, ...]
-function _dlSheets(fn, sheets){
-  const CT_parts=sheets.map((s,i)=>'<Override PartName="/xl/worksheets/sheet'+(i+1)+'.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>').join('');
-  const CT='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>'+CT_parts+'<Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/></Types>';
-  const RR='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>';
-  const WB_sheets=sheets.map((s,i)=>'<sheet name="'+_esc(s.name)+'" sheetId="'+(i+1)+'" r:id="rId'+(i+1)+'"/>').join('');
-  const WB='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets>'+WB_sheets+'</sheets></workbook>';
-  const WR_rels=sheets.map((s,i)=>'<Relationship Id="rId'+(i+1)+'" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet'+(i+1)+'.xml"/>').join('');
-  const WR='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'+WR_rels+'<Relationship Id="rId'+(sheets.length+1)+'" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>';
-  const files=[['[Content_Types].xml',CT],['_rels/.rels',RR],['xl/workbook.xml',WB],['xl/_rels/workbook.xml.rels',WR]];
-  sheets.forEach((s,i)=>files.push(['xl/worksheets/sheet'+(i+1)+'.xml',_ws(s.rows,s.cols,s.merges)]));
-  files.push(['xl/styles.xml',_ST]);
-  const zip=_zip(files);
-  const blob=new Blob([zip],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
-  const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=fn;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
-}
-function _dl(fn,sn,rows,cols,merges){_dlSheets(fn,[{name:sn,rows,cols,merges}]);}
-// Style helpers: ds(rowIndex, 'center'|'left') -> style index for data rows
-window.XB={dl:_dl,dl2:_dlSheets,S:{TI:1,HC:2,HL:3,DC:4,DL:5,AC:6,AL:7,HN:8},ds:function(ri,al){const a=ri%2!==0;return a?(al==='left'?7:6):(al==='left'?5:4);}};
-})();
-
-
-</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<!-- BUILD:2026-07-01-v202 -->
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>管理費繳交登記 2026-07</title>
 <style>
-:root{
-  --bg:#f0eeeb;--card:#fff;--pri:#1a4a78;--pri-dk:#112f50;--pri-lt:#e6eef8;--pri-md:#3d7abf;
-  --acc:#c96b0a;--acc-lt:#fef3e7;--grn:#246b42;--grn-lt:#e8f5ee;
-  --pur:#5e3899;--pur-lt:#f0ebff;--red:#b83030;--red-lt:#fceaea;
-  --amber:#b87800;--amber-lt:#fff8e8;--sky:#0077a8;--sky-lt:#e0f4ff;
-  --bdr:#dedad4;--bdr-md:#c8c4bc;--t1:#181816;--t2:#52504c;--t3:#96938e;
-  --r:12px;--rs:8px;--rss:5px;
-}
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-body{font-family:'Noto Sans TC',system-ui,sans-serif;background:var(--bg);color:var(--t1);font-size:15px;padding-bottom:80px;}
-
-/* HEADER */
-.hdr{background:var(--pri);padding:0 16px;position:sticky;top:0;z-index:300;box-shadow:0 2px 12px rgba(0,0,0,.18);}
-.hdr-inner{display:flex;align-items:center;justify-content:space-between;height:52px;}
-.hdr-title{color:#fff;font-size:16px;font-weight:700;line-height:1.2;}
-.hdr-sub{color:rgba(255,255,255,.6);font-size:11px;margin-top:1px;}
-.hdr-pill{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);color:#fff;font-size:11px;font-weight:700;padding:4px 11px;border-radius:20px;white-space:nowrap;}
-.hdr-pill.urgent{background:var(--acc);border-color:var(--acc);}
-
-/* NAV */
-.nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--bdr);display:flex;z-index:300;padding-bottom:env(safe-area-inset-bottom,0);box-shadow:0 -2px 12px rgba(0,0,0,.06);}
-.nb{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 4px 6px;cursor:pointer;color:var(--t3);font-size:10px;font-weight:600;letter-spacing:.3px;gap:3px;border-top:2px solid transparent;transition:all .15s;}
-.nb svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
-.nb.on{color:var(--pri);border-top-color:var(--pri);}
-
-/* PAGE */
-.page{display:none;padding:14px 14px 20px;}
-.page.on{display:block;}
-
-/* CARD */
-.card{background:var(--card);border-radius:var(--r);border:1px solid var(--bdr);margin-bottom:10px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.05),0 4px 12px rgba(0,0,0,.04);}
-.card-hd{padding:11px 14px 10px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between;}
-.card-hl{display:flex;align-items:center;gap:8px;}
-.ci-icon{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
-.ci-icon.blue{background:var(--pri-lt);} .ci-icon.green{background:var(--grn-lt);} .ci-icon.amber{background:var(--amber-lt);}
-.card-ttl{font-size:13px;font-weight:700;color:var(--t1);}
-.card-sub{font-size:11px;color:var(--t3);margin-top:1px;}
-.card-body{padding:13px 14px;}
-
-/* FORM */
-.f{margin-bottom:10px;}
-.f:last-child{margin-bottom:0;}
-label{display:block;font-size:11px;font-weight:700;color:var(--t3);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px;}
-.req{color:var(--red);}
-input[type=text],input[type=number],input[type=date],select,textarea{
-  width:100%;padding:10px 12px;border:1.5px solid var(--bdr-md);border-radius:var(--rs);
-  font-size:16px;font-family:inherit;background:#fff;color:var(--t1);
-  -webkit-appearance:none;appearance:none;outline:none;
-  transition:border-color .15s,box-shadow .15s;
-}
-input:focus,select:focus,textarea:focus{border-color:var(--pri-md);box-shadow:0 0 0 3px rgba(61,122,191,.14);}
-select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='7'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2396938e' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 11px center;padding-right:32px;}
-textarea{resize:vertical;min-height:64px;line-height:1.55;}
-.row2{display:flex;gap:9px;}
-.row2 .f{flex:1;margin-bottom:0;}
-.field-hint{font-size:11px;color:var(--t3);margin-top:4px;}
-
-/* ITEM GRID */
-.igrid-wrap{border:1.5px solid var(--bdr-md);border-radius:var(--rs);overflow:hidden;background:#fafaf8;}
-.igrid-search{padding:8px;border-bottom:1px solid var(--bdr);}
-.igrid-search input{border-color:var(--bdr);background:#fff;font-size:13px;padding:7px 10px;}
-.igrid-scroll{max-height:210px;overflow-y:auto;padding:6px;-webkit-overflow-scrolling:touch;}
-.igrid{display:grid;grid-template-columns:1fr 1fr;gap:3px;}
-.ic{padding:9px 10px;border-radius:var(--rss);font-size:14px;cursor:pointer;color:var(--t2);transition:all .12s;user-select:none;border:1px solid transparent;min-height:44px;display:flex;align-items:center;}
-.ic-custom{justify-content:space-between;gap:6px;}
-.ic-del{flex-shrink:0;color:var(--t3);font-size:16px;padding:2px 6px;border-radius:4px;line-height:1;}
-.ic-custom.on .ic-del{color:rgba(255,255,255,.7);}
-.ic-del:hover{background:rgba(0,0,0,.08);color:var(--danger);}
-.ic:hover{background:var(--pri-lt);color:var(--pri);}
-.ic.on{background:var(--pri);color:#fff;font-weight:600;}
-.manual-add{display:flex;gap:7px;margin-top:8px;}
-.manual-add input{flex:1;font-size:16px;padding:10px 12px;}
-.manual-add button{padding:8px 13px;background:var(--pri-lt);color:var(--pri);border:1.5px solid var(--pri-md);border-radius:var(--rs);font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;}
-
-/* CONTENT AREA */
-.content-card.hidden{display:none;}
-.ci{border-bottom:1px solid var(--bdr);padding:13px 14px;}
-.ci:last-child{border-bottom:none;}
-.ci-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
-.ci-badge{background:var(--pri);color:#fff;border-radius:var(--rss);padding:3px 10px;font-size:13px;font-weight:700;}
-.ci-remove{color:var(--t3);font-size:20px;cursor:pointer;padding:2px 6px;border-radius:4px;}
-.ci-remove:hover{color:var(--red);background:var(--red-lt);}
-.chips{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:9px;}
-.chip{padding:8px 13px;border-radius:20px;font-size:13px;border:1.5px solid var(--bdr);background:#fff;cursor:pointer;transition:all .12s;color:var(--t2);user-select:none;line-height:1.3;min-height:40px;display:inline-flex;align-items:center;}
-.chip:hover{border-color:var(--pri-md);color:var(--pri);}
-.chip.on{background:var(--pri-lt);border-color:var(--pri);color:var(--pri);font-weight:600;}
-.ci-fields{display:flex;gap:7px;margin-top:8px;}
-.ci-fields input{font-size:13px;padding:7px 10px;}
-.ci-fields .qty{width:100px;flex:none;}
-.ci-fields .loc{flex:1;}
-.ci-custom{margin-top:7px;}
-.ci-custom input{font-size:13px;padding:7px 10px;}
-
-/* SUBMIT BAR — sticky above nav */
-.submit-bar{position:sticky;bottom:72px;left:0;right:0;background:linear-gradient(to top,var(--bg) 75%,transparent);padding:14px 14px 8px;margin:0 -14px;z-index:50;}
-
-/* RECORD LIST */
-.srch{position:sticky;top:0;background:var(--bg);padding:8px 0 6px;z-index:10;}
-.srch-row{display:flex;gap:7px;}
-.srch-row input{flex:1;font-size:14px;}
-.srch-row select{width:auto;min-width:88px;flex-shrink:0;font-size:13px;}
-.sort-row{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap;}
-.sort-btn{padding:8px 14px;border-radius:20px;font-size:12px;font-weight:600;border:1.5px solid var(--bdr-md);background:#fff;cursor:pointer;color:var(--t2);transition:all .12s;white-space:nowrap;min-height:36px;}
-.sort-btn.on{background:var(--pri-lt);border-color:var(--pri);color:var(--pri);}
-.list-meta{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;margin-top:4px;}
-.list-ttl{font-size:14px;font-weight:700;}
-.count-pill{background:var(--pri);color:#fff;border-radius:20px;padding:2px 10px;font-size:12px;font-weight:700;}
-.floor-group{margin-bottom:4px;}
-.floor-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--t3);padding:6px 2px 4px;}
-
-.rec{background:var(--card);border:1px solid var(--bdr);border-radius:var(--r);margin-bottom:8px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.05);}
-.rec-hd{display:flex;align-items:center;justify-content:space-between;padding:10px 13px 9px;border-bottom:1px solid var(--bdr);gap:8px;}
-.rec-loc{font-weight:700;font-size:15px;color:var(--pri);}
-.rec-loc small{font-weight:400;font-size:12px;color:var(--t3);margin-left:4px;}
-.rec-rdate{font-size:11px;color:var(--t3);margin-top:2px;}
-.rec-entries{padding:0 13px;}
-.re{padding:9px 0;border-bottom:1px solid var(--bdr);}
-.re:last-child{border-bottom:none;}
-.re-top{display:flex;align-items:flex-start;justify-content:space-between;gap:6px;margin-bottom:4px;}
-.re-item{font-weight:700;font-size:14px;color:var(--t1);}
-.re-content{font-size:13px;color:var(--t2);line-height:1.45;}
-.re-fix{font-size:13px;color:var(--grn);margin-top:3px;line-height:1.45;}
-.re-mats{font-size:12px;color:var(--acc);margin-top:3px;line-height:1.5;}
-.rec-acts{padding:9px 13px;display:flex;gap:7px;background:#fafaf8;border-top:1px solid var(--bdr);}
-
-/* BADGES */
-.badge{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;white-space:nowrap;}
-.b-p{background:#fff4e0;color:#8a5000;}
-.b-d{background:var(--grn-lt);color:var(--grn);}
-.b-df{background:var(--pur-lt);color:var(--pur);}
-.b-prog{background:var(--sky-lt);color:var(--sky);}
-
-/* BUTTONS */
-.btn{display:block;width:100%;padding:12px;border:none;border-radius:var(--rs);font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;transition:all .15s;text-align:center;letter-spacing:.2px;}
-.btn:active{transform:scale(.98);}
-.btn-p{background:var(--pri);color:#fff;box-shadow:0 4px 14px rgba(26,74,120,.3);}
-.btn-p:active{background:var(--pri-dk);}
-.btn-g{background:var(--grn);color:#fff;}
-.btn-a{background:var(--acc);color:#fff;}
-.btn-o{background:transparent;color:var(--pri);border:1.5px solid var(--pri);}
-.btn-ghost{background:transparent;color:var(--t2);border:1.5px solid var(--bdr-md);}
-.btn-sm{padding:7px 13px;font-size:13px;width:auto;display:inline-block;}
-.btn-xs{padding:5px 10px;font-size:12px;width:auto;display:inline-block;border-radius:var(--rss);}
-.btn-row{display:flex;gap:8px;margin-bottom:10px;}
-.btn-row .btn{flex:1;}
-
-/* STATUS MODAL */
-.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:400;align-items:flex-end;}
-.overlay.open{display:flex;}
-.sheet{background:#fff;border-radius:18px 18px 0 0;width:100%;max-height:95vh;overflow-y:auto;padding:6px 0 44px;}
-.sh-handle{width:36px;height:4px;background:var(--bdr-md);border-radius:2px;margin:10px auto 0;}
-.sh-hd{padding:14px 16px 12px;border-bottom:1px solid var(--bdr);display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
-.sh-title{font-size:17px;font-weight:700;color:var(--t1);}
-.sh-loc{font-size:13px;color:var(--t3);margin-top:3px;}
-.sh-close{color:var(--t3);font-size:24px;cursor:pointer;line-height:1;padding:2px;}
-.sh-close:hover{color:var(--t1);}
-.fx-date-bar{padding:12px 16px;background:var(--pri-lt);border-bottom:1px solid #d0e0f5;display:flex;align-items:center;gap:10px;}
-.fx-date-bar label{font-size:12px;font-weight:700;color:var(--pri);flex-shrink:0;text-transform:uppercase;letter-spacing:.4px;white-space:nowrap;}
-.fx-date-bar input{font-size:16px;padding:9px 11px;border-color:#b0c8e8;width:110px;flex:none;}
-.fx-entries{padding:0 16px;}
-.fxe{border-bottom:1px solid var(--bdr);padding:14px 0;}
-.fxe:last-child{border-bottom:none;}
-.fxe-ttl{font-size:15px;font-weight:700;color:var(--pri);margin-bottom:2px;}
-.fxe-content{font-size:13px;color:var(--t2);margin-bottom:12px;}
-.status-row{display:flex;gap:8px;margin-bottom:12px;}
-.st-btn{flex:1;text-align:center;padding:9px 6px;border-radius:var(--rs);border:1.5px solid var(--bdr-md);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;color:var(--t2);line-height:1.3;}
-.st-btn.sd{border-color:var(--grn);background:var(--grn-lt);color:var(--grn);}
-.st-btn.sdf{border-color:var(--pur);background:var(--pur-lt);color:var(--pur);}
-.st-btn.spg{border-color:var(--sky);background:var(--sky-lt);color:var(--sky);}
-.compose-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:7px;}
-.compose-grid select,.compose-grid input{font-size:16px;padding:10px 12px;}
-.fx-sel{font-size:16px;padding:8px 10px;margin-bottom:7px;width:100%;border:1.5px solid var(--bdr-md);border-radius:var(--rs);-webkit-appearance:none;appearance:none;font-family:inherit;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='7'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2396938e' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 11px center;padding-right:30px;color:var(--t1);outline:none;}
-.fx-sel:focus{border-color:var(--pri-md);box-shadow:0 0 0 3px rgba(61,122,191,.14);}
-.fx-inp{font-size:16px;padding:8px 10px;margin-bottom:7px;width:100%;border:1.5px solid var(--bdr-md);border-radius:var(--rs);font-family:inherit;color:var(--t1);background:#fff;outline:none;}
-.fx-inp:focus{border-color:var(--pri-md);box-shadow:0 0 0 3px rgba(61,122,191,.14);}
-
-/* MAT */
-.mat-section{margin-top:10px;}
-.mat-section>label{font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:7px;}
-.mat-list{border:1px solid var(--bdr);border-radius:var(--rs);overflow:hidden;margin-bottom:8px;}
-.mat-row{display:flex;align-items:center;gap:6px;padding:8px 10px;border-bottom:1px solid var(--bdr);background:#fff;overflow:hidden;}
-.mat-row:last-child{border-bottom:none;}
-.mat-info{flex:1;min-width:0;overflow:hidden;display:flex;flex-direction:column;gap:2px;}
-.mat-name{font-size:13px;font-weight:600;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;}
-.mat-src-badge{display:inline-block;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;margin-top:2px;}
-.mss{background:var(--pri-lt);color:var(--pri);}
-.msv{background:var(--amber-lt);color:var(--amber);}
-.msr{background:var(--pur-lt);color:var(--pur);}
-.mat-qty-inp,.mat-fee-inp{padding:6px 4px;border:1.5px solid var(--bdr-md);border-radius:var(--rss);font-size:14px;font-family:inherit;text-align:center;outline:none;width:60px;max-width:60px;box-sizing:border-box;display:block;}
-
-.mat-fee-inp{width:64px;}
-.mat-lbl{font-size:11px;color:var(--t3);margin-bottom:2px;text-align:right;}
-.mat-del{color:var(--t3);font-size:20px;cursor:pointer;flex-shrink:0;padding:2px 4px;border-radius:4px;}
-.mat-del:hover{color:var(--red);background:var(--red-lt);}
-.mat-add-row{display:flex;gap:7px;}
-.mat-add-row select{flex:1;font-size:16px;padding:10px 12px;}
-.mat-empty{padding:10px 12px;font-size:13px;color:var(--t3);font-style:italic;}
-
-/* PRE-MAT (耗材先行) */
-.premat-section{background:var(--amber-lt);border:1px solid #f0d080;border-radius:var(--rs);padding:12px 14px;margin-bottom:10px;}
-.premat-title{font-size:13px;font-weight:700;color:var(--amber);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
-.premat-row{display:flex;align-items:center;gap:6px;padding:6px 0;border-bottom:1px solid rgba(184,120,0,.15);}
-.premat-row:last-child{border-bottom:none;}
-.premat-name{flex:1;min-width:0;overflow:hidden;font-size:13px;font-weight:600;color:var(--t1);}
-.premat-qty{width:70px;min-width:70px;max-width:70px;padding:6px 4px;border:1.5px solid #deb84a;border-radius:var(--rss);font-size:14px;text-align:center;background:#fff;flex-shrink:0;box-sizing:border-box;}
-.premat-del{color:var(--amber);font-size:18px;cursor:pointer;padding:2px;flex-shrink:0;}
-
-/* CONSUMABLE PAGE */
-.ctable-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
-.ctable{width:100%;border-collapse:collapse;font-size:13px;min-width:320px;}
-.ctable th{background:var(--bg);padding:8px 11px;text-align:left;font-size:11px;font-weight:700;letter-spacing:.5px;color:var(--t3);border-bottom:1px solid var(--bdr);white-space:nowrap;}
-.ctable td{padding:9px 11px;border-bottom:1px solid var(--bdr);vertical-align:middle;}
-.ctable tr:last-child td{border-bottom:none;}
-.ctable input{padding:5px 8px;font-size:13px;border:1.5px solid var(--bdr-md);border-radius:var(--rss);}
-.ctable input[type=number]{width:64px;text-align:center;font-size:16px;}
-.ctable input[type=text]{width:100%;font-size:16px;}
-
-/* MISC */
-.notice{border-radius:var(--rs);padding:10px 13px;font-size:13px;margin-bottom:10px;line-height:1.55;display:flex;gap:9px;align-items:flex-start;}
-.notice-icon{font-size:16px;flex-shrink:0;margin-top:-1px;}
-.n-blue{background:var(--pri-lt);border:1px solid #c0d8f5;color:#1a3a60;}
-.n-green{background:var(--grn-lt);border:1px solid #a8d8be;color:#1a4a2e;}
-.n-amber{background:var(--amber-lt);border:1px solid #f0d080;color:#7a5000;}
-.empty{text-align:center;padding:44px 20px;color:var(--t3);font-size:14px;}
-hr{border:none;border-top:1px solid var(--bdr);margin:12px 0;}
-.rp-item{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--bdr);}
-.rp-item:last-child{border-bottom:none;}
-.rp-item input[type=checkbox]{width:18px;height:18px;accent-color:var(--pri);flex-shrink:0;margin-top:1px;cursor:pointer;}
-.rp-info{flex:1;cursor:pointer;}
-#toast{position:fixed;bottom:84px;left:50%;transform:translateX(-50%) translateY(20px);background:rgba(20,20,18,.92);color:#fff;padding:10px 22px;border-radius:30px;font-size:14px;font-weight:600;z-index:9999;opacity:0;transition:all .2s;white-space:nowrap;max-width:90vw;text-align:center;pointer-events:none;}
-#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
-
-@media (max-width:380px){
-  .row2{flex-direction:column;gap:0;}
-  .row2 .f{margin-bottom:10px;}
-  .compose-grid{grid-template-columns:1fr;}
-  .status-row{flex-wrap:wrap;}
-  .st-btn{flex:none;width:calc(50% - 4px);}
-  .hdr-title{font-size:15px;}
-  .rec-loc{font-size:14px;}
-  .igrid{grid-template-columns:1fr 1fr;}
-  .btn-sm{font-size:12px;padding:8px 10px;}
-  .fx-date-bar{flex-wrap:wrap;gap:6px;}
-}
-@media (max-width:480px){
-  .page{padding:10px 12px 20px;}
-  .card-body{padding:11px 12px;}
-  .fx-entries{padding:0 12px;}
-}
-
-#sync-status.syncing{color:rgba(255,255,255,0.8);}
-#sync-status.ok{color:#7dffb3;}
-#sync-status.err{color:#ffb3b3;}
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap');
+  :root {
+    --bg:#f5f4f0;--card:#fff;--accent:#2563eb;--accent-light:#eff6ff;--accent-mid:#bfdbfe;
+    --text:#1e293b;--muted:#64748b;--border:#e2e8f0;
+    --success:#16a34a;--success-light:#f0fdf4;
+    --danger:#dc2626;--danger-light:#fef2f2;
+    --warn:#d97706;--warn-light:#fffbeb;
+    --radius:14px;--shadow:0 2px 12px rgba(0,0,0,0.07);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+  body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:40px;}
+  header{background:var(--accent);color:#fff;padding:16px 20px 14px;position:sticky;top:0;z-index:10;box-shadow:0 2px 8px rgba(37,99,235,0.3);}
+  header h1{font-size:18px;font-weight:700;}
+  header p{font-size:11px;opacity:0.8;margin-top:1px;}
+  .status-bar{display:flex;align-items:center;gap:6px;font-size:11px;margin-top:4px;opacity:0.9;}
+  .status-dot{width:7px;height:7px;border-radius:50%;background:#4ade80;flex-shrink:0;}
+  .status-dot.connected{background:#4ade80;}
+  .status-dot.error{background:#f87171;}
+  .tab-bar{display:flex;background:#fff;border-bottom:1px solid var(--border);position:sticky;top:72px;z-index:9;}
+  .tab{flex:1;padding:10px 4px;text-align:center;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;border-bottom:2.5px solid transparent;transition:all 0.15s;}
+  .tab.active{color:var(--accent);border-bottom-color:var(--accent);}
+  .page{display:none;}
+  .page.active{display:block;}
+  .form-wrap{padding:12px 16px;max-width:480px;margin:0 auto;display:flex;flex-direction:column;gap:10px;}
+  .card{background:var(--card);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow);}
+  .field-label{font-size:12px;font-weight:700;color:var(--muted);letter-spacing:0.8px;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+  .field-label .req{color:var(--danger);font-size:14px;}
+  .room-input{width:100%;font-size:30px;font-weight:700;font-family:'Noto Sans TC',sans-serif;color:var(--text);background:var(--bg);border:2px solid var(--border);border-radius:10px;padding:10px 16px;outline:none;letter-spacing:8px;transition:border-color 0.2s,background 0.2s;-webkit-appearance:none;}
+  .room-input:focus{border-color:var(--accent);background:var(--accent-light);}
+  .room-input.valid{border-color:var(--success);background:var(--success-light);}
+  .room-input.invalid{border-color:var(--danger);background:var(--danger-light);}
+  .name-display{margin-top:8px;padding:10px 14px;border-radius:10px;font-size:16px;font-weight:500;min-height:44px;display:flex;align-items:center;gap:10px;transition:all 0.2s;}
+  .name-display.empty{background:var(--border);color:var(--muted);font-size:13px;}
+  .name-display.found{background:var(--success-light);color:var(--success);border:1.5px solid #bbf7d0;}
+  .name-display.not-found{background:var(--danger-light);color:var(--danger);border:1.5px solid #fecaca;font-size:13px;}
+  .date-row{display:flex;gap:8px;}
+  .date-chip{padding:7px 14px;border-radius:20px;border:1.5px solid var(--border);background:var(--bg);font-size:13px;font-weight:500;cursor:pointer;color:var(--text);transition:all 0.15s;font-family:'Noto Sans TC',sans-serif;}
+  .date-chip.active{background:var(--accent);border-color:var(--accent);color:#fff;}
+  .date-input-wrap{display:none;margin-top:8px;}
+  .date-input-wrap.show{display:block;}
+  .date-input{width:100%;font-size:16px;font-family:'Noto Sans TC',sans-serif;color:var(--text);background:var(--bg);border:2px solid var(--accent);border-radius:10px;padding:9px 14px;outline:none;-webkit-appearance:none;}
+  .backdate-note{font-size:11px;color:var(--warn);margin-top:4px;font-weight:500;}
+  .amount-row{display:flex;gap:7px;flex-wrap:wrap;}
+  .amount-chip{padding:8px 14px;border-radius:20px;border:1.5px solid var(--border);background:var(--bg);font-size:14px;font-weight:700;cursor:pointer;color:var(--text);transition:all 0.15s;font-family:'Noto Sans TC',sans-serif;}
+  .amount-chip.active{background:var(--accent);border-color:var(--accent);color:#fff;}
+  .amount-chip:active{transform:scale(0.95);}
+  .amount-custom-wrap{margin-top:8px;display:none;}
+  .amount-custom-wrap.show{display:block;}
+  .amount-input{width:100%;font-size:20px;font-weight:700;font-family:'Noto Sans TC',sans-serif;color:var(--text);background:var(--bg);border:2px solid var(--accent);border-radius:10px;padding:9px 16px;outline:none;-webkit-appearance:none;}
+  .amount-hint{font-size:11px;color:var(--muted);margin-top:6px;line-height:1.7;}
+  .type-row{display:flex;gap:6px;flex-wrap:wrap;}
+  .type-chip{padding:7px 12px;border-radius:20px;border:1.5px solid var(--border);background:var(--bg);font-size:13px;font-weight:500;cursor:pointer;color:var(--text);transition:all 0.15s;font-family:'Noto Sans TC',sans-serif;white-space:nowrap;}
+  .type-chip.active{background:var(--accent);border-color:var(--accent);color:#fff;}
+  .type-chip.minus-chip{border-color:#fca5a5;}
+  .type-chip.minus-chip.active{background:var(--danger);border-color:var(--danger);color:#fff;}
+  .minus-label{font-size:10px;background:#fef2f2;color:var(--danger);padding:1px 5px;border-radius:6px;margin-left:3px;font-weight:700;}
+  /* 預繳月份 */
+  .prepay-card{background:var(--warn-light);border:1.5px solid #fcd34d;border-radius:10px;padding:10px 14px;margin-top:8px;display:none;}
+  .prepay-card label{font-size:12px;font-weight:700;color:#92400e;display:block;margin-bottom:6px;}
+  .prepay-input{width:100%;font-size:16px;font-family:'Noto Sans TC',sans-serif;color:var(--text);background:#fff;border:1.5px solid #fcd34d;border-radius:8px;padding:8px 12px;outline:none;-webkit-appearance:none;}
+  .toggle-btn{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--accent);cursor:pointer;padding:4px 0;font-weight:500;background:none;border:none;font-family:'Noto Sans TC',sans-serif;}
+  .toggle-btn .arrow{font-size:10px;transition:transform 0.2s;}
+  .toggle-btn.open .arrow{transform:rotate(180deg);}
+  .collapsible{visibility:hidden;height:0;overflow:hidden;margin:0;padding:0;}
+  .collapsible.show{visibility:visible;height:auto;overflow:visible;}
+  .note-input{width:100%;font-size:14px;font-family:'Noto Sans TC',sans-serif;color:var(--text);background:var(--bg);border:2px solid var(--border);border-radius:10px;padding:9px 14px;outline:none;resize:none;transition:border-color 0.2s;margin-top:8px;}
+  .note-input:focus{border-color:var(--accent);}
+  .cash-card{border:1.5px solid #fca5a5;}
+  .last-badge{display:inline-block;background:#fef2f2;color:var(--danger);font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;margin-bottom:6px;}
+  .cash-summary{margin-top:10px;padding:10px 12px;background:var(--bg);border-radius:8px;display:flex;flex-direction:column;gap:6px;}
+  .cash-row{display:flex;justify-content:space-between;align-items:center;font-size:13px;}
+  .cash-row b{font-size:16px;font-weight:700;}
+  .cash-divider{border:none;border-top:1px dashed var(--border);}
+  .check-result{margin-top:6px;font-size:13px;font-weight:700;text-align:center;padding:6px 10px;border-radius:8px;display:none;}
+  .submit-btn{width:100%;padding:14px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius);font-size:16px;font-weight:700;font-family:'Noto Sans TC',sans-serif;cursor:pointer;letter-spacing:1px;transition:all 0.15s;box-shadow:0 4px 14px rgba(37,99,235,0.35);display:flex;align-items:center;justify-content:center;gap:8px;}
+  .submit-btn:active{transform:scale(0.98);opacity:0.9;}
+  .submit-btn:disabled{background:var(--border);color:var(--muted);box-shadow:none;cursor:not-allowed;}
+  .spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,0.4);border-top-color:#fff;border-radius:50%;animation:spin 0.7s linear infinite;display:none;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .counter-bar{background:var(--accent-light);border:1px solid var(--accent-mid);border-radius:10px;padding:9px 14px;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--accent);}
+  .counter-bar b{font-size:16px;font-weight:700;}
+  .setup-card{background:#fffbeb;border:1.5px solid #fcd34d;border-radius:var(--radius);padding:14px;}
+  .setup-card h3{font-size:13px;font-weight:700;color:#92400e;margin-bottom:8px;}
+  .setup-input{width:100%;font-size:13px;font-family:'Noto Sans TC',sans-serif;color:var(--text);background:#fff;border:1.5px solid #fcd34d;border-radius:8px;padding:7px 10px;outline:none;margin-bottom:8px;}
+  .save-btn{padding:7px 14px;background:var(--warn);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;font-family:'Noto Sans TC',sans-serif;cursor:pointer;}
+  .log-wrap{padding:12px 16px;max-width:480px;margin:0 auto;}
+  .section-title{font-size:12px;font-weight:700;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin:12px 0 8px;display:flex;align-items:center;gap:8px;}
+  .section-title::after{content:'';flex:1;height:1px;background:var(--border);}
+  .daily-stats{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:4px;}
+  .daily-row{display:flex;justify-content:space-between;align-items:center;font-size:14px;padding:6px 0;border-bottom:1px solid var(--border);}
+  .daily-row:last-child{border-bottom:none;}
+  .daily-date{font-weight:700;color:var(--text);}
+  .daily-date.today{color:var(--accent);}
+  .daily-amount{font-weight:700;}
+  .daily-amount.plus{color:var(--success);}
+  .daily-amount.minus{color:var(--danger);}
+  .daily-total{display:flex;justify-content:space-between;font-size:15px;font-weight:700;color:var(--text);border-top:2px solid var(--border);padding-top:10px;margin-top:4px;}
+  .period-summary{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:var(--radius);padding:14px 16px;margin-bottom:4px;}
+  .period-row{display:flex;justify-content:space-between;font-size:13px;color:var(--success);margin-bottom:4px;}
+  .period-row b{font-weight:700;}
+  .period-net{display:flex;justify-content:space-between;font-size:15px;font-weight:700;color:var(--text);border-top:1px solid #bbf7d0;padding-top:8px;margin-top:4px;}
+  .log-item{background:var(--card);border-radius:var(--radius);padding:12px 16px;box-shadow:var(--shadow);margin-bottom:8px;}
+  .log-item.minus{border-left:4px solid var(--danger);}
+  .log-item.backdate-item{border-left:4px solid var(--warn);}
+  .log-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px;}
+  .log-room{font-size:18px;font-weight:700;color:var(--text);}
+  .log-name{font-size:15px;font-weight:500;color:var(--accent);margin-left:6px;}
+  .log-amount-plus{font-size:16px;font-weight:700;color:var(--success);}
+  .log-amount-minus{font-size:16px;font-weight:700;color:var(--danger);}
+  .log-meta{font-size:12px;color:var(--muted);display:flex;gap:8px;flex-wrap:wrap;margin-top:3px;}
+  .log-type-badge{display:inline-block;background:var(--accent-light);color:var(--accent);font-size:11px;font-weight:500;padding:2px 7px;border-radius:8px;}
+  .log-type-badge.minus{background:var(--danger-light);color:var(--danger);}
+  .log-type-badge.backdate{background:var(--warn-light);color:var(--warn);}
+  .log-note{font-size:12px;color:var(--muted);margin-top:3px;}
+  .log-delete-btn{display:flex;align-items:center;justify-content:flex-end;margin-top:8px;}
+  .delete-btn{padding:4px 10px;background:none;border:1px solid #fca5a5;border-radius:8px;color:var(--danger);font-size:12px;cursor:pointer;font-family:'Noto Sans TC',sans-serif;}
+  .delete-btn:active{background:var(--danger-light);}
+  .log-empty{text-align:center;color:var(--muted);font-size:14px;padding:40px 20px;}
+  .settle-section{display:block;}
+  .settle-card{background:#fff;border:2px solid var(--success);border-radius:var(--radius);padding:16px;margin-top:8px;}
+  .settle-card h3{font-size:15px;font-weight:700;color:var(--success);margin-bottom:8px;}
+  .settle-btn{padding:10px 20px;background:var(--success);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;font-family:'Noto Sans TC',sans-serif;cursor:pointer;margin-right:8px;}
+  .history-btn{padding:10px 20px;background:var(--bg);color:var(--text);border:1.5px solid var(--border);border-radius:10px;font-size:14px;font-weight:500;font-family:'Noto Sans TC',sans-serif;cursor:pointer;}
+  .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:100;align-items:center;justify-content:center;padding:20px;}
+  .overlay.show{display:flex;}
+  .modal{background:#fff;border-radius:20px;padding:24px;max-width:480px;width:100%;max-height:80vh;overflow-y:auto;box-shadow:0 8px 40px rgba(0,0,0,0.2);}
+  .modal h2{font-size:18px;font-weight:700;margin-bottom:16px;color:var(--text);}
+  .history-item{background:var(--bg);border-radius:10px;padding:12px 14px;margin-bottom:8px;}
+  .history-period{font-size:13px;font-weight:700;color:var(--accent);margin-bottom:4px;}
+  .history-amount{font-size:16px;font-weight:700;color:var(--success);}
+  .history-detail{font-size:12px;color:var(--muted);margin-top:2px;}
+  .modal-close{width:100%;padding:12px;background:var(--bg);border:none;border-radius:10px;font-size:14px;font-weight:500;font-family:'Noto Sans TC',sans-serif;cursor:pointer;margin-top:8px;}
+  .success-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:100;align-items:center;justify-content:center;padding:20px;}
+  .success-overlay.show{display:flex;}
+  .success-card{background:#fff;border-radius:20px;padding:24px;text-align:center;max-width:320px;width:100%;box-shadow:0 8px 40px rgba(0,0,0,0.2);}
+  .success-icon{font-size:44px;margin-bottom:8px;}
+  .success-title{font-size:18px;font-weight:700;color:var(--success);margin-bottom:6px;}
+  .success-title.err{color:var(--danger);}
+  .success-detail{font-size:13px;color:var(--muted);line-height:1.8;margin-bottom:16px;}
+  .success-detail b{color:var(--text);}
+  .next-btn{width:100%;padding:12px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;font-family:'Noto Sans TC',sans-serif;cursor:pointer;}
 </style>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
-<header class="hdr">
-  <div class="hdr-inner">
-    <div><div class="hdr-title">妙慧樓 水電報修</div><div class="hdr-sub">維修管理系統</div></div>
-    <div style="display:flex;gap:8px;align-items:center;">
-    <div id="sync-status" style="font-size:11px;color:rgba(255,255,255,0.7);"></div>
-    <div class="hdr-pill urgent" id="pending-badge">0 待維修</div>
-  </div>
+<header>
+  <h1>管理費繳交登記</h1>
+  <p>妙慧樓 — 收費員專用・<span id='periodLabel'>115年7月</span></p>
+  <div class="status-bar">
+    <div class="status-dot" id="statusDot"></div>
+    <span id="statusText">檢查連線中…</span>
   </div>
 </header>
 
-<!-- ══ PAGE 1 登記報修 ══ -->
-<div class="page on" id="pg-add">
-  <div class="notice n-green" style="margin-top:2px;">
-    <span class="notice-icon">💡</span>
-    <div><b>操作流程：</b>①填位置與報修日期 → ②選報修項目 → ③填故障描述 → ④點「儲存報修」→ ⑤到「紀錄」頁 → 點「更新維修狀況」填入維修結果</div>
+<div class="tab-bar">
+  <div class="tab active" onclick="switchTab('form',this)">登記繳費</div>
+  <div class="tab" onclick="switchTab('log',this)">本日紀錄 <span id="logBadge"></span></div>
+</div>
+
+<div class="page active" id="page-form">
+<div class="form-wrap">
+
+  <div class="setup-card" id="setupCard" style="display:none;">
+    <h3>⚙️ 第一次使用請先設定 Apps Script 網址</h3>
+    <input class="setup-input" type="url" id="scriptUrlInput" placeholder="貼上 Apps Script 網頁應用程式 URL">
+    <button class="save-btn" onclick="saveScriptUrl()">儲存並連線</button>
   </div>
 
+  <div class="counter-bar">
+    <span>今日已登記 <b id="countNum">0</b> 筆</span>
+    <span>今日淨額 <b id="totalNum">0</b> 元</span>
+  </div>
+
+  <!-- 繳費日期 -->
   <div class="card">
-    <div class="card-hd"><div class="card-hl"><div class="ci-icon blue">📍</div><div><div class="card-ttl">位置資訊</div></div></div></div>
-    <div class="card-body">
-      <div class="row2">
-        <div class="f"><label>區域 <span class="req">*</span></label>
-          <select id="a-zone"><option value="">選擇</option><option>有人住</option><option>空寮</option><option>公區</option><option>管理室</option></select>
-        </div>
-        <div class="f"><label>樓層 <span class="req">*</span></label>
-          <select id="a-floor"><option value="">選擇</option><option value="B1">B1</option><option value="一">一樓</option><option value="二">二樓</option><option value="三">三樓</option><option value="四">四樓</option><option value="五">五樓</option><option value="六">六樓</option><option value="頂樓">頂樓</option></select>
-        </div>
-      </div>
-      <div class="row2">
-        <div class="f"><label>位置 / 房號 <span class="req">*</span></label>
-          <input type="text" id="a-room" placeholder="例：501、大交陽台" autocomplete="off"/>
-        </div>
-        <div class="f">
-          <label>報修日期 <span class="req">*</span></label>
-          <input type="date" id="a-rdate"/>
-          <div class="field-hint">住戶回報壞掉的日期</div>
-        </div>
-      </div>
+    <div class="field-label"><span class="req">*</span> 繳費日期</div>
+    <div class="date-row">
+      <button class="date-chip active" onclick="selectDateMode('today',this)">今天</button>
+      <button class="date-chip" onclick="selectDateMode('backdate',this)">補登過去日期</button>
+    </div>
+    <div class="date-input-wrap" id="dateInputWrap">
+      <input class="date-input" type="date" id="dateInput">
+      <div class="backdate-note">⚠️ 補登模式：補登資料不計入今日金額</div>
     </div>
   </div>
 
+  <!-- 房號 -->
   <div class="card">
-    <div class="card-hd"><div class="card-hl"><div class="ci-icon blue">🔧</div><div><div class="card-ttl">報修項目</div><div class="card-sub">點選後於下方填故障描述</div></div></div></div>
-    <div class="card-body">
-      <div class="igrid-wrap">
-        <div class="igrid-search"><input type="text" placeholder="🔍 搜尋項目…" id="item-search" oninput="filterItems(this.value)" autocomplete="off"/></div>
-        <div class="igrid-scroll"><div class="igrid" id="item-grid"></div></div>
-      </div>
-      <div class="manual-add" style="margin-top:8px;">
-        <input type="text" id="a-manual" placeholder="其他項目（Enter 新增）"/>
-        <button onclick="addManual()">＋ 新增</button>
-      </div>
+    <div class="field-label"><span class="req">*</span> 房號</div>
+    <input class="room-input" type="number" id="roomInput" placeholder="輸入房號"
+           inputmode="numeric" autocomplete="off"
+           oninput="lookupRoom(this.value)"
+           onkeyup="lookupRoom(this.value)"
+           onchange="lookupRoom(this.value)">
+    <div class="name-display empty" id="nameDisplay">
+      <span>👤</span><span>輸入房號後自動顯示姓名</span>
     </div>
   </div>
 
-  <div class="card content-card hidden" id="content-card">
-    <div class="card-hd"><div class="card-hl"><div class="ci-icon green">📝</div><div><div class="card-ttl">報修內容</div><div class="card-sub">每個項目各自填描述、數量、位置</div></div></div></div>
-    <div id="content-area"></div>
+  <!-- 金額 -->
+  <div class="card">
+    <div class="field-label"><span class="req">*</span> 繳交金額</div>
+    <div class="amount-row">
+      <button class="amount-chip active" onclick="selectAmount(2500,this)">2500 元</button>
+      <button class="amount-chip" onclick="selectAmount(1000,this)">1000 元</button>
+      <button class="amount-chip" onclick="selectAmount(2000,this)">2000 元</button>
+      <button class="amount-chip" onclick="selectAmount('custom',this)">其他</button>
+    </div>
+    <div class="amount-hint">
+      整月 2500：1～15日入住 / 16日～月底退房<br>
+      半月 1000：16日～月底入住 / 1～15日退房<br>
+      保證金 2000：入住收 / 退房退
+    </div>
+    <div class="amount-custom-wrap" id="customWrap">
+      <input class="amount-input" type="number" id="customAmount"
+             placeholder="輸入金額" inputmode="numeric" oninput="onCustomAmount()">
+    </div>
   </div>
 
-  <!-- 耗材先行：在儲存報修前就可以填入預計耗材 -->
-  <div class="card content-card hidden" id="premat-card">
-    <div class="card-hd"><div class="card-hl"><div class="ci-icon amber">📦</div><div><div class="card-ttl">預計耗材（選填）</div><div class="card-sub">維修前先填，供廠商採購參考</div></div></div></div>
-    <div class="card-body">
-      <div class="premat-section" id="premat-area">
-        <div class="premat-title">📋 預計需要的耗材</div>
-        <div id="premat-list"></div>
-        <div style="display:flex;gap:7px;margin-top:8px;">
-          <select id="premat-sel" style="flex:1;font-size:16px;padding:10px 10px;">
-            <option value="">── 選擇耗材 ──</option>
-            <optgroup label="妙慧樓自備">
-              <option value="和成HCG馬桶水箱落水器|self">和成 HCG 馬桶水箱落水器</option>
-              <option value="浴室崁燈15W自然光4000k|self">浴室崁燈 15W 自然光 4000k</option>
-              <option value="走道燈15W暖白光3000k|self">走道燈 15W 暖白光 3000k</option>
-              <option value="防鳥刺|self|noqty">防鳥刺</option>
-            </optgroup>
-            <optgroup label="廠商提供">
-              <option value="12W暖黃光燈泡|vendor">12W 暖黃光燈泡</option>
-              <option value="10W暖黃光燈泡|vendor">10W 暖黃光燈泡</option>
-              <option value="5W崁燈|vendor">5W 崁燈</option>
-              <option value="三段式開關|vendor">三段式開關</option>
-              <option value="小夜燈|vendor">小夜燈</option>
-              <option value="冷氣遙控器|vendor">冷氣遙控器</option>
-              <option value="落水器|vendor">落水器（馬桶）</option>
-              <option value="浮球開關|vendor">浮球開關</option>
-              <option value="排水管|vendor">排水管</option>
-              <option value="風鼓的軸承|vendor">風鼓的軸承</option>
-              <option value="肥皂架|vendor">肥皂架</option>
-              <option value="水門|vendor">水門</option>
-            </optgroup>
-            <optgroup label="廠商代購，住眾自費">
-              <option value="馬桶水箱蓋|resident|fee:600">馬桶水箱蓋（600元）</option>
-              <option value="蓮蓬頭的水管|resident|fee:150">蓮蓬頭的水管（150元）</option>
-            </optgroup>
-            <option value="__custom__|vendor">＋ 其他（手動輸入）</option>
-          </select>
-          <button class="btn-xs btn-ghost" style="border:1.5px solid #deb84a;color:var(--amber);background:transparent;padding:8px 12px;border-radius:var(--rs);font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;" onclick="addPremat()">＋</button>
+  <!-- 繳費性質 -->
+  <div class="card">
+    <div class="field-label"><span class="req">*</span> 繳費性質</div>
+    <div class="type-row">
+      <button class="type-chip active" onclick="selectType(this,false)">本月正常繳交</button>
+      <button class="type-chip" onclick="selectType(this,false)">補繳</button>
+      <button class="type-chip" onclick="selectType(this,false)">預繳</button>
+      <button class="type-chip" onclick="selectType(this,false)">收保證金</button>
+      <button class="type-chip minus-chip" onclick="selectType(this,true)">退保證金<span class="minus-label">支出</span></button>
+      <button class="type-chip minus-chip" onclick="selectType(this,true)">歸還零用金<span class="minus-label">支出</span></button>
+    </div>
+    <!-- 預繳至月份（選預繳才出現） -->
+    <div class="prepay-card" id="prepayMonthCard">
+      <label>預繳至幾月份？（例：7）</label>
+      <input class="prepay-input" type="number" id="prepayUntilMonth"
+             placeholder="輸入月份數字，例：7" inputmode="numeric" min="1" max="12">
+    </div>
+  </div>
+
+  <!-- 備註 -->
+  <div class="card">
+    <button class="toggle-btn" id="noteToggle" onclick="toggleSection('noteBody','noteToggle')">
+      <span class="arrow">▼</span> 新增備註
+    </button>
+    <div class="collapsible" id="noteBody">
+      <textarea class="note-input" id="noteInput" rows="2"
+                placeholder="例：收5000元(3、4月)、退保證金2000…"></textarea>
+    </div>
+  </div>
+
+  <!-- 現金核對 -->
+  <div class="card cash-card">
+    <button class="toggle-btn" id="cashToggle" onclick="toggleSection('cashBody','cashToggle')">
+      <span class="arrow">▼</span> <span class="last-badge">最後一筆才填</span> 現金核對
+    </button>
+    <div class="collapsible" id="cashBody">
+      <input class="amount-input" type="number" id="cashInput"
+             placeholder="點算手上現金後填入" inputmode="numeric"
+             oninput="updateCashCheck()" style="margin-top:10px;border-color:var(--border);">
+      <div style="font-size:11px;color:var(--danger);margin-top:4px;">收費結束後才填，核對現金有無短少</div>
+      <div class="cash-summary">
+        <div class="cash-row">
+          <span style="color:var(--muted);">今日累計淨額</span>
+          <b id="runningTotal" style="color:var(--accent);">0 元</b>
         </div>
+        <hr class="cash-divider">
+        <div class="cash-row">
+          <span style="color:var(--muted);">手上現金</span>
+          <b id="cashDisplay" style="color:var(--muted);">— 元</b>
+        </div>
+        <div class="check-result" id="checkResult"></div>
       </div>
     </div>
   </div>
 
-  <div class="submit-bar">
-    <button class="btn btn-p" id="submit-btn" onclick="submitRepair()" style="padding:15px;font-size:16px;letter-spacing:.5px;">✚ 儲存報修</button>
+  <button class="submit-btn" id="submitBtn" onclick="submitForm()" disabled>
+    <div class="spinner" id="spinner"></div>
+    <span id="submitText">送出這筆紀錄</span>
+  </button>
+
+</div>
+</div>
+
+<!-- 本日紀錄頁 -->
+<div class="page" id="page-log">
+  <div class="log-wrap" id="logWrap">
+    <div class="section-title">每日收費統計</div>
+    <div class="daily-stats" id="dailyStats">
+      <div style="text-align:center;color:var(--muted);font-size:13px;padding:10px 0;">載入中…</div>
+    </div>
+    <div class="section-title">每筆明細</div>
+    <div id="allItems"></div>
+    <div class="section-title">本期累計</div>
+    <div class="period-summary">
+      <div class="period-row"><span>本期收入</span><b id="periodIn" style="color:var(--success);">+0 元</b></div>
+      <div class="period-row"><span>本期支出</span><b id="periodOut" style="color:var(--danger);">0 元</b></div>
+      <div class="period-net"><span>本期淨額</span><b id="periodNet">0 元</b></div>
+    </div>
+    <div class="settle-section">
+      <div class="settle-card">
+        <h3>💰 結帳</h3>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:12px;">結帳後本期資料會存入歷史，下一期從零開始。</p>
+        <button class="settle-btn" onclick="confirmSettle()">執行結帳</button>
+        <button class="history-btn" onclick="showHistory()">查看歷史紀錄</button>
+      </div>
+    </div>
+    <div class="log-empty" id="logEmpty" style="display:none;">尚未登記任何紀錄</div>
   </div>
 </div>
 
-<!-- ══ PAGE 2 維修紀錄 ══ -->
-<div class="page" id="pg-list">
-  <div class="srch">
-    <div class="srch-row">
-      <input type="text" id="s-q" placeholder="🔍 搜尋房號、項目…" oninput="renderList()"/>
-      <select id="s-st" onchange="renderList()" style="font-size:13px;">
-        <option value="">全部</option><option value="pending">待維修</option>
-        <option value="done">已完修</option><option value="deferred">待下次</option><option value="inprog">處理中</option>
-      </select>
-    </div>
-    <div class="sort-row">
-      <span style="font-size:11px;font-weight:700;color:var(--t3);align-self:center;">排序：</span>
-      <div class="sort-btn on" id="sort-top" onclick="setSort('top-down',this)">⬇ 從高樓層往下</div>
-      <div class="sort-btn" id="sort-bot" onclick="setSort('bot-up',this)">⬆ 從低樓層往上</div>
-      <div class="sort-btn" id="sort-res" onclick="setSort('resident',this)">🏠 有人住</div>
-    </div>
-  </div>
-  <div class="list-meta">
-    <span class="list-ttl">維修紀錄</span>
-    <div style="display:flex;gap:8px;align-items:center;">
-      <button onclick="syncFromSheets()" style="background:var(--pri-lt);color:var(--pri);border:1px solid var(--pri-md);border-radius:var(--rs);padding:5px 11px;font-size:12px;font-weight:700;cursor:pointer;">↻ 同步</button>
-      <span class="count-pill" id="list-count">0</span>
-    </div>
-  </div>
-  <div id="list-body"></div>
-</div>
-
-<!-- ══ PAGE 3 報表 ══ -->
-<div class="page" id="pg-report">
-  <div class="card">
-    <div class="card-hd"><div class="card-hl"><div class="ci-icon blue">📄</div><div><div class="card-ttl">報修單設定</div></div></div></div>
-    <div class="card-body">
-      <div class="row2">
-        <div class="f"><label>廠商</label><input type="text" id="rp-vendor" value="快陞"/></div>
-        <div class="f"><label>年月（如 2026, 5）</label><input type="text" id="rp-ym" oninput="localStorage.setItem('mhb7_ym',this.value);pushCustom('reportYm',this.value);"/></div>
-      </div>
-      <div class="row2">
-        <div class="f"><label>報修日期</label><input type="text" id="rp-date" placeholder="2026.04.29"/><div class="field-hint">整批報修給廠商的日期</div></div>
-        <div class="f"><label>維修日期</label><input type="text" id="rp-fixdate" placeholder="2026.05.04"/><div class="field-hint">廠商實際來施作的日期</div></div>
-      </div>
-    </div>
-  </div>
-  <div class="card">
-    <div class="card-hd">
-      <div class="card-hl"><div class="ci-icon blue">☑</div><div><div class="card-ttl">選擇紀錄</div></div></div>
-      <div style="display:flex;gap:6px;">
-        <button class="btn btn-ghost btn-xs" onclick="rpSel(true)">全選</button>
-        <button class="btn btn-ghost btn-xs" onclick="rpSel(false)">全不選</button>
-        <button class="btn btn-ghost btn-xs" onclick="rpSelP()">待維修</button>
-      </div>
-    </div>
-    <div class="card-body" style="padding-top:4px;padding-bottom:4px;"><div id="rp-list"></div></div>
-  </div>
-  <div class="btn-row"><button class="btn btn-a" onclick="exportPremat()">📋 下載預計耗材表（給廠商採購）</button></div>
-  <div class="btn-row"><button class="btn btn-p" onclick="exportReport()">⬇ 下載報修單 Excel（給廠商）</button></div>
-  <div class="btn-row"><button class="btn btn-o" onclick="exportAll()">📊 匯出完整紀錄 Excel（內部管理）</button></div>
-
-  <div style="margin-top:4px;padding:13px 14px;background:var(--red-lt);border:1px solid #f0c0bb;border-radius:var(--r);">
-    <div style="font-size:13px;font-weight:700;color:var(--red);margin-bottom:6px;">🔄 期數結束 / 重置紀錄</div>
-    <div style="font-size:12px;color:var(--t2);margin-bottom:10px;line-height:1.5;">下載或匯出完成後，可清除紀錄以開始新一期。建議先下載備份再清除。</div>
-    <div class="btn-row" style="margin-bottom:6px;">
-      <button class="btn btn-ghost" style="border-color:#e08080;color:var(--red);" onclick="clearDone()">清除已完修紀錄</button>
-      <button class="btn btn-d" onclick="clearAll()">清除全部紀錄</button>
-    </div>
-  </div>
-  <div style="height:8px;"></div>
-</div>
-
-<!-- ══ PAGE 4 耗材 ══ -->
-<div class="page" id="pg-mat">
-  <div class="card">
-    <div class="card-hd"><div class="card-hl"><div class="ci-icon amber">📦</div><div><div class="card-ttl">本月耗材用量</div><div class="card-sub">依完工紀錄自動統計</div></div></div></div>
-    <div class="card-body" style="padding:0;"><div class="ctable-wrap">
-      <table class="ctable">
-        <thead><tr><th>耗材項目</th><th>來源</th><th>廠商提供</th><th>妙慧樓自備</th></tr></thead>
-        <tbody id="mat-auto"></tbody>
-      </table></div>
-    </div>
-  </div>
-  <div class="card">
-    <div class="card-hd">
-      <div class="card-hl"><div class="ci-icon amber">🛒</div><div><div class="card-ttl">本月採購耗材</div><div class="card-sub">廠商請款用，手動填入</div></div></div>
-      <button class="btn btn-ghost btn-xs" onclick="addPur()">＋ 新增</button>
-    </div>
-    <div class="card-body" style="padding:0;"><div class="ctable-wrap">
-      <table class="ctable">
-        <thead><tr><th>採購項目</th><th>數量</th><th>單位</th><th></th></tr></thead>
-        <tbody id="pur-body"></tbody>
-      </table></div>
-    </div>
-  </div>
-  <div class="btn-row"><button class="btn btn-a" onclick="exportMat()">⬇ 匯出耗材 Excel</button></div>
-  <div style="height:8px;"></div>
-</div>
-
-<!-- ══ 維修狀況 MODAL ══ -->
-<div class="overlay" id="modal-fix">
-  <div class="sheet">
-    <div class="sh-handle"></div>
-    <div class="sh-hd">
-      <div><div class="sh-title">更新維修狀況</div><div class="sh-loc" id="fx-loc"></div></div>
-      <span class="sh-close" onclick="closeModal()">×</span>
-    </div>
-    <div class="fx-date-bar">
-      <label>維修日期</label>
-      <input type="text" id="fx-date" placeholder="例：5/4" oninput="autoFixAll()"/>
-      <span style="font-size:11px;color:var(--pri);opacity:.8;">廠商來施作的日期</span>
-    </div>
-    <div class="fx-entries" id="fx-entries"></div>
-    <div style="padding:14px 16px 0;">
-      <div class="btn-row">
-        <button class="btn btn-ghost" onclick="closeModal()">取消</button>
-        <button class="btn btn-g" onclick="saveFix()">儲存</button>
-      </div>
-    </div>
+<!-- 送出成功彈窗 -->
+<div class="success-overlay" id="successOverlay">
+  <div class="success-card">
+    <div class="success-icon" id="overlayIcon">✅</div>
+    <div class="success-title" id="overlayTitle"></div>
+    <div class="success-detail" id="overlayDetail"></div>
+    <button class="next-btn" onclick="nextRecord()" id="nextBtn">登記下一筆</button>
   </div>
 </div>
 
-
-<!-- 編輯報修 Modal -->
-<div class="overlay" id="modal-edit">
-  <div class="sheet">
-    <div class="sh-handle"></div>
-    <div class="sh-hd">
-      <div><div class="sh-title">編輯報修資料</div><div class="sh-loc" id="ed-loc"></div></div>
-      <span class="sh-close" onclick="closeEditModal()">×</span>
-    </div>
-    <div style="padding:14px 16px;">
-      <input type="hidden" id="ed-id"/>
-
-      <div class="f">
-        <label>區域</label>
-        <select id="ed-zone">
-          <option value="">選擇</option>
-          <option>有人住</option><option>空寮</option><option>公區</option><option>管理室</option>
-        </select>
-      </div>
-      <div class="row2">
-        <div class="f">
-          <label>樓層</label>
-          <select id="ed-floor">
-            <option value="">選擇</option>
-            <option value="B1">B1</option><option value="一">一樓</option>
-            <option value="二">二樓</option><option value="三">三樓</option>
-            <option value="四">四樓</option><option value="五">五樓</option>
-            <option value="六">六樓</option><option value="頂樓">頂樓</option>
-          </select>
-        </div>
-        <div class="f">
-          <label>位置/房號</label>
-          <input type="text" id="ed-room"/>
-        </div>
-      </div>
-      <div class="f">
-        <label>報修日期</label>
-        <input type="date" id="ed-rdate"/>
-      </div>
-
-      <hr/>
-
-      <!-- 報修內容 -->
-      <div class="f">
-        <label>報修內容</label>
-        <div id="ed-entries-list"></div>
-      </div>
-
-      <hr/>
-
-      <!-- 預計耗材 -->
-      <div class="f">
-        <label>預計耗材</label>
-        <div class="notice n-amber" style="margin-bottom:8px;">可在此新增或修改預計耗材項目及數量</div>
-        <div id="ed-premat-list"></div>
-        <div style="display:flex;gap:7px;margin-top:8px;">
-          <select id="ed-premat-sel" style="flex:1;font-size:16px;padding:10px 12px;border:1.5px solid var(--bdr-md);border-radius:var(--rs);-webkit-appearance:none;appearance:none;background:#fff url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%227%22%3E%3Cpath d=%22M1 1l5 5 5-5%22 stroke=%2296938e%22 stroke-width=%221.5%22 fill=%22none%22/%3E%3C/svg%3E') no-repeat right 11px center;padding-right:32px;">
-            <option value="">── 選擇耗材 ──</option>
-            <optgroup label="妙慧樓自備">
-              <option value="和成HCG馬桶水箱落水器|self">和成 HCG 馬桶水箱落水器</option>
-              <option value="浴室崁燈15W自然光4000k|self">浴室崁燈 15W 自然光 4000k</option>
-              <option value="走道燈15W暖白光3000k|self">走道燈 15W 暖白光 3000k</option>
-              <option value="防鳥刺|self|noqty">防鳥刺</option>
-            </optgroup>
-            <optgroup label="廠商提供">
-              <option value="12W暖黃光燈泡|vendor">12W 暖黃光燈泡</option>
-              <option value="10W暖黃光燈泡|vendor">10W 暖黃光燈泡</option>
-              <option value="5W崁燈|vendor">5W 崁燈</option>
-              <option value="三段式開關|vendor">三段式開關</option>
-              <option value="小夜燈|vendor">小夜燈</option>
-              <option value="冷氣遙控器|vendor">冷氣遙控器</option>
-              <option value="落水器|vendor">落水器（馬桶）</option>
-              <option value="浮球開關|vendor">浮球開關</option>
-              <option value="排水管|vendor">排水管</option>
-              <option value="風鼓的軸承|vendor">風鼓的軸承</option>
-              <option value="肥皂架|vendor">肥皂架</option>
-              <option value="水門|vendor">水門</option>
-            </optgroup>
-            <optgroup label="廠商代購，住眾自費">
-              <option value="馬桶水箱蓋|resident|fee:600">馬桶水箱蓋（600元）</option>
-              <option value="蓮蓬頭的水管|resident|fee:150">蓮蓬頭的水管（150元）</option>
-            </optgroup>
-            <option value="__custom__|vendor">＋ 其他（手動輸入）</option>
-          </select>
-          <button class="btn-xs btn-ghost" onclick="addEditPremat()" style="flex:none;padding:10px 13px;border:1.5px solid var(--bdr-md);border-radius:var(--rs);cursor:pointer;background:#fff;font-size:14px;font-weight:700;">＋</button>
-        </div>
-      </div>
-
-      <div class="btn-row" style="margin-top:16px;">
-        <button class="btn btn-ghost" onclick="closeEditModal()">取消</button>
-        <button class="btn btn-p" onclick="saveEdit()">儲存</button>
-      </div>
-    </div>
+<!-- 歷史紀錄彈窗 -->
+<div class="overlay" id="historyOverlay">
+  <div class="modal">
+    <h2>歷史結帳紀錄</h2>
+    <div id="historyList"></div>
+    <button class="modal-close" onclick="document.getElementById('historyOverlay').classList.remove('show')">關閉</button>
   </div>
 </div>
-
-<nav class="nav">
-  <div class="nb on" onclick="goPage('add',this)"><svg viewBox="0 0 24 24"><path d="M9 12h6M9 16h6M9 8h6M5 4h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2z"/></svg>登記</div>
-  <div class="nb" onclick="goPage('list',this)"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h7"/><circle cx="17" cy="18" r="3"/></svg>紀錄</div>
-  <div class="nb" onclick="goPage('report',this)"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>報表</div>
-  <div class="nb" onclick="goPage('mat',this)"><svg viewBox="0 0 24 24"><path d="M20 7H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>耗材</div>
-</nav>
-<div id="toast"></div>
 
 <script>
-// ━━━━━━━━━━━━━━━━━━━━━━━━ CONSTANTS ━━━━━━━━━━━━━━━━━━━━━━━━
-// VERSION: v17-20260603-FINAL
-const ITEMS=['主燈','崁燈','壁燈','小夜燈','走道燈','立燈','陽台燈','吸頂燈','日光燈','小崁燈','壁掛式筒燈','餐廳吊燈','照明開關','換氣扇','馬桶','馬桶水箱按鈕','馬桶水箱蓋','馬桶浮球開關','洗手台','洗手台水龍頭','洗手台落水頭','洗手台起泡器','浴室水龍頭','水龍頭','水門','蓮蓬頭的水管','水槽','排水口','排水管','脫水機管線的排水孔','冷氣','冷氣遙控器','插座','椅子','墊片','肥皂架','浴廁置物架','鳥屎','鳥巢'];
-const CMAP={'主燈':['主燈不亮','主燈閃爍','主燈三段式故障','主燈故障','太暗想換燈泡'],'崁燈':['崁燈不亮','崁燈閃爍','崁燈故障','電源關掉仍持續亮燈'],'壁燈':['壁燈不亮','壁燈故障'],'小夜燈':['小夜燈不亮','小夜燈故障'],'走道燈':['走道燈不亮','走道燈故障'],'立燈':['立燈燈泡故障','立燈故障'],'陽台燈':['陽台燈不亮','陽台燈故障'],'吸頂燈':['吸頂燈不亮','吸頂燈故障'],'日光燈':['日光燈不亮','日光燈故障'],'小崁燈':['小崁燈不亮','小崁燈故障'],'壁掛式筒燈':['壁掛式筒燈不亮','壁掛式筒燈故障'],'餐廳吊燈':['餐廳吊燈不亮','餐廳吊燈故障'],'照明開關':['照明開關故障','三段式開關故障'],'換氣扇':['換氣扇故障','換氣扇異音'],'馬桶':['馬桶自動補水','馬桶水流不止、自動補水','馬桶沒水','馬桶需更換落水器','馬桶故障'],'馬桶水箱按鈕':['按鈕按下去不會回彈','馬桶水箱按鈕容易卡住','馬桶水箱按鈕無法自動彈回','馬桶水箱按鈕故障'],'馬桶水箱蓋':['馬桶水箱蓋破裂','馬桶水箱蓋故障'],'馬桶浮球開關':['馬桶浮球開關鬆脫浮在水中','馬桶浮球開關故障'],'洗手台':['洗手台冷水量非常小','洗手台熱水量小','洗手台故障'],'洗手台水龍頭':['冷水量小','熱水出水量小','洗手台水龍頭故障'],'洗手台落水頭':['落水頭鬆脫','洗手台落水頭鬆脫','洗手台落水頭故障'],'洗手台起泡器':['洗手台起泡器故障'],'浴室水龍頭':['熱水出水量小','冷水量小','浴室水龍頭故障'],'水龍頭':['冷水量小','熱水出水量小','水龍頭故障'],'蓮蓬頭的水管':['蓮蓬頭出水量小','蓮蓬頭的水管故障'],'水槽':['水槽水管破裂','水槽排水不順','水槽故障'],'排水口':['排水口堵塞','排水口故障'],'排水管':['排水管故障','排水管堵塞'],'水門':['缺水門','水門故障','水門漏水'],'冷氣':['冷氣異音','冷氣不冷','冷氣漏水','冷氣故障'],'冷氣遙控器':['冷氣遙控器故障','冷氣遙控器無法操作'],'鳥屎':['陽台有鳥屎'],'鳥巢':['陽台有鳥巢','有鳥蛋'],'插座':['插座故障','插座無電'],'椅子':['椅子故障','椅腳斷裂'],'墊片':['墊片損壞','墊片故障'],'肥皂架':['肥皂架鬆脫','肥皂架故障'],'浴廁置物架':['浴廁置物架鬆脫','浴廁置物架故障'],'脫水機管線的排水孔':['排水孔堵塞','脫水機管線故障']};
-
-// Common part names for fix note composition (item → part options)
-const PART_NAMES={
-  '主燈':['燈泡','三段式開關','燈泡及三段式開關'],
-  '崁燈':['5W崁燈','崁燈'],
-  '壁燈':['燈泡','壁燈'],
-  '小夜燈':['小夜燈'],
-  '走道燈':['走道燈燈泡','走道燈'],
-  '立燈':['燈泡','立燈'],
-  '陽台燈':['燈泡','陽台燈'],
-  '吸頂燈':['燈泡','吸頂燈'],
-  '日光燈':['燈管','日光燈'],
-  '小崁燈':['小崁燈'],
-  '壁掛式筒燈':['燈泡','壁掛式筒燈'],
-  '餐廳吊燈':['燈泡','餐廳吊燈'],
-  '照明開關':['三段式開關','照明開關'],
-  '換氣扇':['風鼓的軸承','換氣扇'],
-  '馬桶':['落水器','馬桶落水器'],
-  '馬桶水箱按鈕':['馬桶水箱按鈕'],
-  '馬桶水箱蓋':['馬桶水箱蓋'],
-  '馬桶浮球開關':['浮球開關'],
-  '洗手台':['洗手台'],
-  '洗手台水龍頭':['洗手台水龍頭'],
-  '洗手台落水頭':['落水頭'],
-  '洗手台起泡器':['起泡器'],
-  '浴室水龍頭':['浴室水龍頭'],
-  '水龍頭':['水龍頭'],
-  '蓮蓬頭的水管':['蓮蓬頭的水管'],
-  '水槽':['水管'],
-  '排水管':['排水管'],
-  '肥皂架':['肥皂架'],
-  '冷氣遙控器':['冷氣遙控器'],
-  'default':['燈泡','開關','水管','零件']
+const roomData = {
+  301:'許芳瑜',302:'林鎂伶',303:'李怡諠',304:'黃彩羚',306:'高桂存',307:'黃嘉盈',308:'潘素鳳',
+  309:'李沅螢',310:'許美娟',311:'黃桂蓉',312:'黃乙宸',313:'范馨亞',314:'鄭婷元',315:'陳秀鳯',
+  316:'陳泠璇',317:'張麗慧',319:'黃金珠',320:'陳育青',321:'林遜玲',322:'謝春綢',324:'林惠敏',
+  325:'李法伯',326:'趙宥惠',327:'林秋妙',328:'李尉慈',329:'陳虹熹',331:'陳慧如',336:'許純瑞',
+  337:'謝瑞燕',338:'蔡美慧',339:'潘心怡',340:'柯培今',341:'曾芝蘭',342:'張毓晏',343:'張秋月',
+  344:'林素卿',345:'何麗敏',346:'毛如瑩',347:'張麗惠',348:'胡詠綺',349:'林姿伶',350:'張伯嬌師姑',
+  351:'葉秋甄',352:'李帆葳',356:'陳貞妤',357:'賴采璿',358:'顏婉如',359:'陳錦蓉',360:'林彩秀',
+  361:'廖美華',362:'曾歐麗玉',363:'杜珮合',364:'林子云',365:'蔡萓蓁',366:'曾獻儀',368:'蔡佩蓉',
+  369:'劉珮瑤',370:'張玉燕',371:'馬偉群',372:'陳玥蓁',374:'吳仲芳',
+  401:'趙梓臣',402:'洪秀華',403:'王莉茹',404:'陳心瀅',405:'于美鳳',407:'黃雅文',408:'吳瓊霞',
+  409:'陳心怡',411:'王梃萱',412:'鍾孟岑',413:'陳玟婷',414:'江婉瑜',415:'黃宣珮',416:'莊琇鈞',
+  417:'陳巧晴',419:'蕭彩云',420:'張瑜庭',422:'王敏純',424:'王俊婷',425:'朱燕孺',426:'李生鳳',
+  427:'郎筱玲',428:'郭秋君',429:'緣固',430:'緣光',431:'緣端',432:'蔡麗玉',433:'李麗明',
+  434:'黃婉怡',435:'林國金',437:'陳雅婷',438:'蔡依蓉',439:'張雅茵',440:'黃秐穎',441:'許碩倢',
+  442:'賴淑真',443:'陳怡君',445:'林淯立',446:'楊維竹',447:'郭姿妙',448:'黃譓娗',449:'戴鈺珊',
+  450:'王秀珍',451:'李美朱',452:'林琇鴦',453:'趙怡婷',454:'鄭心佩',456:'陳慧穎',457:'李佳紜',
+  459:'李苑嫣',460:'鄭淳云',461:'胡馨方',462:'黃如敏',463:'蘇孟賢',465:'陳盈均',466:'劉佳菀',
+  467:'黃馨玉',468:'蔡品涵',469:'柯惠玲',470:'林梅芳',472:'于定萱',473:'陳怡孜',474:'凃依芬',
+  517:'許文君',518:'單薰潁',520:'楊亞琳',521:'黃麗蓉',522:'温秀珍',523:'王貞婷',524:'莊雅嵐',
+  525:'蔡淑芳',526:'葉道欣',527:'林玫汝',528:'鄭媄嬬',529:'蔡麗芬師姑',530:'洪錦媖',531:'黃歆淳',
+  533:'李蘊詩',535:'高菁眉',537:'高觀妙',538:'洪佳綺',539:'王靖涵',541:'黃怡禎',542:'段繼慧',
+  544:'許文貞',545:'張瑛玲',546:'伍雅嵐',547:'張睿潔',548:'江麗雅',549:'盧姿伶',550:'林美麗',
+  551:'陳素芬',552:'劉秀桃',553:'戴佳勳',554:'黃柏雅',555:'呂家妤',556:'李素卿',557:'陳秀月',
+  558:'周筱靜',559:'彭金玉',560:'陳金菊',561:'李慧琳',562:'陳怜君',563:'謝于寧',564:'謝秀娟',
+  565:'簡一修',567:'周媛',568:'羅竹君',
+  617:'王夢愉',618:'何倩馨',619:'曾晴鈺',620:'蔡孟蓉',621:'曾綉芳',622:'鄭綸霈',623:'郭珮緹',
+  625:'吳姿儀',626:'鄭安安',627:'鄧文琪',630:'何翊嘉',634:'侯妙璇',636:'孫佩貝',637:'陳怡君',
+  638:'蘇郁鈞',639:'王薏菁',640:'王麗君',641:'劉姿佑',642:'龔品蓉',643:'劉芷妤',644:'李敏瑜',
+  645:'戴雅琪',646:'李家儀',647:'許瀞文',648:'江承澂',649:'黃亭穎',650:'許庭禎',652:'林佳臻',
+  653:'徐采伶',654:'周裘語',655:'黃宜婷',659:'匡婕',660:'劉書菡',662:'呂明霞',663:'陳映頤',664:'林郁婷'
 };
-// src: self=妙慧樓自備, vendor=廠商提供, resident=廠商代購住眾自費
-const MAT_OPTS=[
-  {k:'和成HCG馬桶水箱落水器',lb:'和成 HCG 馬桶水箱落水器',src:'self',noQty:false,hasFee:false},
-  {k:'浴室崁燈15W自然光4000k',lb:'浴室崁燈 15W 自然光 4000k',src:'self',noQty:false,hasFee:false},
-  {k:'走道燈15W暖白光3000k',lb:'走道燈 15W 暖白光 3000k',src:'self',noQty:false,hasFee:false},
-  {k:'防鳥刺',lb:'防鳥刺',src:'self',noQty:true,hasFee:false},
-  {k:'12W暖黃光燈泡',lb:'12W 暖黃光燈泡',src:'vendor',noQty:false,hasFee:false},
-  {k:'10W暖黃光燈泡',lb:'10W 暖黃光燈泡',src:'vendor',noQty:false,hasFee:false},
-  {k:'5W崁燈',lb:'5W 崁燈',src:'vendor',noQty:false,hasFee:false},
-  {k:'三段式開關',lb:'三段式開關',src:'vendor',noQty:false,hasFee:false},
-  {k:'小夜燈',lb:'小夜燈',src:'vendor',noQty:false,hasFee:false},
-  {k:'冷氣遙控器',lb:'冷氣遙控器',src:'vendor',noQty:false,hasFee:false},
-  {k:'落水器',lb:'落水器（馬桶）',src:'vendor',noQty:false,hasFee:false},
-  {k:'浮球開關',lb:'浮球開關',src:'vendor',noQty:false,hasFee:false},
-  {k:'排水管',lb:'排水管',src:'vendor',noQty:false,hasFee:false},
-  {k:'風鼓的軸承',lb:'風鼓的軸承',src:'vendor',noQty:false,hasFee:false},
-  {k:'肥皂架',lb:'肥皂架',src:'vendor',noQty:false,hasFee:false},
-  {k:'馬桶水箱蓋',lb:'馬桶水箱蓋（廠商代購，住眾自費）',src:'resident',noQty:false,hasFee:true,defaultFee:600},
-  {k:'蓮蓬頭的水管',lb:'蓮蓬頭的水管（廠商代購，住眾自費）',src:'resident',noQty:false,hasFee:true,defaultFee:150},
-  {k:'水門',lb:'水門',src:'vendor',noQty:false,hasFee:false},
-];
-const SRC_LB={self:'妙慧樓自備',vendor:'廠商提供',resident:'住眾自費'};
-const SRC_CLS={self:'mss',vendor:'msv',resident:'msr'};
-// Floor sort order
-const FLOOR_ORDER=['頂樓','六','五','四','三','二','一','B1'];
-const ST_LB={pending:'待維修',done:'已完修',deferred:'待下次',inprog:'處理中'};
-const ST_CLS={pending:'b-p',done:'b-d',deferred:'b-df',inprog:'b-prog'};
 
-// ── Google Sheets 同步設定 ──
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbykZv6SiY0KQsgNWQtIUIW-LcdftReLf62OiSqxos3eCGha_enYPgSg2bFDa3qAxQQE/exec'; // 部署後填入 Apps Script 網址
+const MINUS_TYPES = ['退保證金','歸還零用金'];
 
-let records=JSON.parse(localStorage.getItem('mhb7_r')||'[]');
-let purchases=JSON.parse(localStorage.getItem('mhb7_p')||'[]');
-let customMats=JSON.parse(localStorage.getItem('mhb7_cm')||'[]');
-let customPartNames=JSON.parse(localStorage.getItem('mhb7_cpn')||'{}');
-let customChips=JSON.parse(localStorage.getItem('mhb7_cc')||'{}');
-let customItems=JSON.parse(localStorage.getItem('mhb7_ci')||'[]'); // 手動新增的報修項目（永久保存）
-let _syncing=false;
-let cState={};
-let preMats=[];  // [{name,lb,src,qty,noQty,hasFee,fee}]
-let fixId=null;
-let sortMode='top-down';
+var selectedAmount = 2500;
+var selectedType = '本月正常繳交';
+var isMinusType = false;
+var currentName = '';
+var scriptUrl = 'https://script.google.com/macros/s/AKfycbxNOHFt7LgT2OAh1O-DWuVkm3E1vGE8hZ6vbX-3gUBHQx7v6lxOSG-dCeIjLcqhlEIe/exec';
+var dateMode = 'today';
+var dynamicRoomData = {};
+var roomDataLoaded = false;
+var sessionLog = [];
+var backdateLog = [];
+var periodStartDate = localStorage.getItem('periodStart') || '';
 
-
-// ── Google Sheets 同步函數 ──
-function setSyncStatus(msg, cls){
-  const el=document.getElementById('sync-status');
-  if(!el)return;
-  el.textContent=msg; el.className=cls||'';
+function getTodayStr() {
+  var now = new Date();
+  return now.getFullYear()+'/'+String(now.getMonth()+1).padStart(2,'0')+'/'+String(now.getDate()).padStart(2,'0');
 }
 
-async function gasGet(action){
-  if(!GAS_URL||GAS_URL==='__GAS_URL__') return null;
-  return new Promise((resolve)=>{
-    // Use JSONP to avoid CORS issues with GAS redirects
-    const cbName='_gasCb'+Date.now();
-    const script=document.createElement('script');
-    const timeout=setTimeout(()=>{
-      delete window[cbName];
-      document.body.removeChild(script);
-      resolve(null);
-    },15000);
-    window[cbName]=function(data){
-      clearTimeout(timeout);
-      delete window[cbName];
-      try{document.body.removeChild(script);}catch(e){}
-      resolve(data);
-    };
-    script.src=GAS_URL+'?action='+action+'&callback='+cbName;
-    document.body.appendChild(script);
-  });
+window.onload = function() {
+  var today = getTodayStr().replace(/\//g,'-');
+  document.getElementById('dateInput').value = today;
+  document.getElementById('dateInput').max = today;
+  document.getElementById('statusDot').className='status-dot connected';
+  document.getElementById('statusText').textContent='已連線・資料將自動存入試算表';
+  loadRoomData();
+  loadTodayData();
+  updateSubmit();
+};
+
+function switchTab(name, el) {
+  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
+  el.classList.add('active');
+  document.getElementById('page-'+name).classList.add('active');
 }
 
-async function gasPost(data){
-  if(!GAS_URL||GAS_URL==='__GAS_URL__') return null;
-  try{
-    const res=await fetch(GAS_URL,{
-      method:'POST',
-      body:JSON.stringify(data)
-    });
-    const text=await res.text();
-    try{return JSON.parse(text);}catch(e){return {ok:true};}
-  }catch(e){
-    console.error('gasPost error:',e);
-    return null;
+function toggleSection(bodyId, btnId) {
+  var body = document.getElementById(bodyId);
+  var btn = document.getElementById(btnId);
+  var isOpen = body.classList.contains('show');
+  body.classList.toggle('show', !isOpen);
+  btn.classList.toggle('open', !isOpen);
+}
+
+function selectDateMode(mode, el) {
+  document.querySelectorAll('.date-chip').forEach(function(c){c.classList.remove('active');});
+  el.classList.add('active');
+  dateMode = mode;
+  document.getElementById('dateInputWrap').classList.toggle('show', mode==='backdate');
+}
+
+function getSelectedDate() {
+  if (dateMode === 'today') {
+    var now = new Date();
+    return now.getFullYear()+'/'+String(now.getMonth()+1).padStart(2,'0')+'/'+String(now.getDate()).padStart(2,'0')+' '+String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+  } else {
+    return document.getElementById('dateInput').value.replace(/-/g,'/') + ' 00:00';
   }
 }
 
-let _syncLock=false;
-// Auto-release sync lock after 10 seconds in case of network failure
-function _setSyncLock(val){
-  _syncLock=val;
-  if(val) setTimeout(()=>{_syncLock=false;},10000);
+function saveScriptUrl() {
+  var val = document.getElementById('scriptUrlInput').value.trim();
+  if (!val || !val.startsWith('https://')) { alert('請貼上正確的網址'); return; }
+  scriptUrl = val;
+  localStorage.setItem('scriptUrl', scriptUrl);
+  document.getElementById('setupCard').style.display = 'none';
+  setStatus('connected','已連線・資料將自動存入試算表');
+  loadTodayData();
 }
-async function syncFromSheets(){
-  if(!GAS_URL||GAS_URL==='__GAS_URL__') return;
-  if(_syncLock){setSyncStatus('','');return;} // 寫入進行中，不同步避免覆蓋
-  setSyncStatus('同步中…','syncing');
-  try{
-    const [recs, customs] = await Promise.all([
-      gasGet('getAll'),
-      gasGet('getCustom')
-    ]);
-    if(recs && Array.isArray(recs)){
-      records=recs;
-      localStorage.setItem('mhb7_r',JSON.stringify(records));
-    }
-    if(customs){
-      if(customs.customMats){customMats=customs.customMats;localStorage.setItem('mhb7_cm',JSON.stringify(customMats));}
-      if(customs.customPartNames){customPartNames=customs.customPartNames;localStorage.setItem('mhb7_cpn',JSON.stringify(customPartNames));}
-      if(customs.customChips){customChips=customs.customChips;localStorage.setItem('mhb7_cc',JSON.stringify(customChips));}
-      if(customs.purchases){purchases=customs.purchases;localStorage.setItem('mhb7_p',JSON.stringify(purchases));}
-      if(customs.customItems){customItems=customs.customItems;localStorage.setItem('mhb7_ci',JSON.stringify(customItems));buildItemGrid(ITEMS);}
-      if(customs.reportYm){
-        localStorage.setItem('mhb7_ym',customs.reportYm);
-        const ymEl=document.getElementById('rp-ym');
-        if(ymEl&&ymEl.value!==customs.reportYm) ymEl.value=customs.reportYm;
+
+function setStatus(state, text) {
+  var dot = document.getElementById('statusDot');
+  dot.className = 'status-dot'+(state==='connected'?' connected':state==='error'?' error':'');
+  document.getElementById('statusText').textContent = text;
+}
+function loadRoomData() {
+  var cbName = 'gasRoomCb_' + Date.now();
+  window[cbName] = function(res) {
+    try {
+      if(res.period) {
+        document.getElementById('periodLabel').textContent = res.period;
       }
-    }
-    setSyncStatus('已同步 ✓','ok');
-    // 同步後重設篩選為「全部」，避免誤以為資料不見
-    const stEl=document.getElementById('s-st');
-    if(stEl) stEl.value='';
-    renderAll();
-    setTimeout(()=>setSyncStatus('',''),3000);
-  }catch(e){
-    console.error('sync error:',e);
-    setSyncStatus('同步失敗 ('+e.message+')','err');
-  }
-}
-
-async function pushRecord(rec){
-  _setSyncLock(true);
-  localStorage.setItem('mhb7_r',JSON.stringify(records));
-  try{
-    let res=await gasPost({action:'saveRecord',record:rec});
-    if(!res||res.error){
-      // Retry once
-      await new Promise(r=>setTimeout(r,1500));
-      res=await gasPost({action:'saveRecord',record:rec});
-    }
-    if(res&&res.ok) return true;
-  }catch(e){console.error('pushRecord error:',e);}
-  finally{_setSyncLock(false);}
-  return false;
-}
-
-async function pushDeleteRecord(id){
-  _setSyncLock(true);
-  localStorage.setItem('mhb7_r',JSON.stringify(records));
-  try{ await gasPost({action:'deleteRecord',id:id}); }
-  finally{ _setSyncLock(false); }
-}
-
-async function pushCustom(key,value){
-  await gasPost({action:'saveCustom',key:key,value:value});
-}
-
-// 手動觸發同步按鈕
-function manualSync(){
-  syncFromSheets();
-}
-
-function save(){
-  localStorage.setItem('mhb7_r',JSON.stringify(records));
-  // Sync to Sheets is triggered by calling pushRecord directly
-}
-function savePur(){localStorage.setItem('mhb7_p',JSON.stringify(purchases));pushCustom('purchases',purchases);}
-function saveCustomMats(){localStorage.setItem('mhb7_cm',JSON.stringify(customMats));pushCustom('customMats',customMats);}
-function saveCustomPartNames(){localStorage.setItem('mhb7_cpn',JSON.stringify(customPartNames));pushCustom('customPartNames',customPartNames);}
-function saveCustomChips(){localStorage.setItem('mhb7_cc',JSON.stringify(customChips));pushCustom('customChips',customChips);}
-function saveCustomItems(){localStorage.setItem('mhb7_ci',JSON.stringify(customItems));pushCustom('customItems',customItems);}
-function getChips(item){return[...(CMAP[item]||[item+'故障']),...(customChips[item]||[])];}
-function addCustomChip(item){
-  const name=prompt('新增報修內容選項（將永久保存）：','');
-  if(!name||!name.trim())return;
-  if(!customChips[item])customChips[item]=[];
-  if(!customChips[item].includes(name.trim())){
-    customChips[item].push(name.trim());
-    saveCustomChips();
-    toast('✅ 已新增「'+name.trim()+'」為固定選項');
-  }
-  rebuildContent();
-}
-function getPartNames(item){return[...(PART_NAMES[item]||PART_NAMES['default']||[]),...(customPartNames[item]||[])];}
-function addCustomPartName(item,name){
-  if(!name||!name.trim())return;
-  if(!customPartNames[item])customPartNames[item]=[];
-  if(!customPartNames[item].includes(name.trim())){
-    customPartNames[item].push(name.trim());
-    saveCustomPartNames();
-  }
-}
-
-function rebuildPrematSel(){
-  const sel=document.getElementById('premat-sel');
-  if(!sel)return;
-  // Remove existing custom optgroup if present
-  const existing=sel.querySelector('optgroup[label="我的自訂耗材"]');
-  if(existing)existing.remove();
-  if(!customMats.length)return;
-  const grp=document.createElement('optgroup');
-  grp.label='我的自訂耗材';
-  customMats.forEach(m=>{
-    const opt=document.createElement('option');
-    opt.value=`${m.k}|${m.src}`;
-    opt.textContent=m.lb+(m.src==='self'?'（自備）':m.src==='resident'?'（住眾自費）':'');
-    grp.appendChild(opt);
-  });
-  // Insert before the custom input option (last option)
-  const lastOpt=sel.querySelector('option[value^="__custom__"]');
-  if(lastOpt)sel.insertBefore(grp,lastOpt);
-  else sel.appendChild(grp);
-}
-function today(){return new Date().toISOString().split('T')[0];}
-
-// ━━━━━━━━━━━━━━━━━━━━━━━━ INIT ━━━━━━━━━━━━━━━━━━━━━━━━
-function init(){
-  document.getElementById('a-rdate').value=today();
-  const now=new Date();
-  const savedYm=localStorage.getItem('mhb7_ym');
-  document.getElementById('rp-ym').value=savedYm||`${now.getFullYear()}, ${now.getMonth()+1}`;
-  buildItemGrid(ITEMS);
-  document.getElementById('a-manual').addEventListener('keydown',e=>{if(e.key==='Enter'){addManual();e.preventDefault();}});
-  rebuildPrematSel();
-  renderAll();
-  setTimeout(syncFromSheets, 2000); // 延遲 2 秒再同步，避免覆蓋本機剛進行的操作
-}
-
-// ━━━━━━━━━━━━━━━━━━━━━━━━ ITEM GRID ━━━━━━━━━━━━━━━━━━━━━━━━
-function buildItemGrid(list){
-  const sel=getSelItems();
-  const fixedHtml=list.map(it=>
-    '<div class="ic'+(sel.includes(it)?' on':'')+'" data-item="'+it+'" onclick="toggleItem(this)">'+it+'</div>'
-  ).join('');
-  const customHtml=customItems.map(it=>
-    '<div class="ic ic-custom'+(sel.includes(it)?' on':'')+'" data-item="'+it+'" data-manual="1">'+
-      '<span onclick="toggleItem(this.parentElement)" style="flex:1;overflow:hidden;text-overflow:ellipsis;">'+it+'</span>'+
-      '<span class="ic-del" onclick="event.stopPropagation();delCustomItem(\''+it.replace(/'/g,"\\'")+'\')">×</span>'+
-    '</div>'
-  ).join('');
-  document.getElementById('item-grid').innerHTML=fixedHtml+customHtml;
-}
-function delCustomItem(name){
-  if(!confirm('刪除自訂報修項目「'+name+'」？'))return;
-  customItems=customItems.filter(it=>it!==name);
-  saveCustomItems();
-  delete cState[name];
-  buildItemGrid(ITEMS);
-  rebuildContent();
-  toast('已刪除「'+name+'」');
-}
-function filterItems(q){
-  const manuals=[...document.querySelectorAll('.ic[data-manual]')].map(el=>el.dataset.item);
-  const base=q?ITEMS.filter(it=>it.includes(q)):ITEMS;
-  buildItemGrid([...new Set([...base,...manuals])]);
-}
-function getSelItems(){return[...document.querySelectorAll('.ic.on')].map(el=>el.dataset.item);}
-function toggleItem(el){
-  el.classList.toggle('on');
-  if(!el.classList.contains('on'))delete cState[el.dataset.item];
-  rebuildContent();
-}
-function addManual(){
-  const inp=document.getElementById('a-manual');
-  const name=inp.value.trim();
-  if(!name)return;
-  // 整段文字視為一個完整項目名稱，不再依逗號/頓號拆分
-  if(!ITEMS.includes(name)&&!customItems.includes(name)){
-    customItems.push(name);
-    saveCustomItems();
-  }
-  buildItemGrid(ITEMS);
-  // 自動選中剛新增/已存在的項目
-  const el=document.querySelector('.ic[data-item="'+name.replace(/"/g,'&quot;')+'"]');
-  if(el&&!el.classList.contains('on')) el.classList.add('on');
-  inp.value='';
-  rebuildContent();
-}
-
-// ━━━━━━━━━━━━━━━━━━━━━━━━ CONTENT AREA ━━━━━━━━━━━━━━━━━━━━━━━━
-
-function buildChips(chips, selectedChip, item){
-  return chips.map(function(c){
-    var on = selectedChip===c?' on':'';
-    return '<div class="chip'+on+'" data-item="'+item.replace(/"/g,'&quot;')+'" data-chip="'+c.replace(/"/g,'&quot;')+'" onclick="pickChipEl(this)">'+c+'</div>';
-  }).join('');
-}
-function buildPartOptions(item){
-  const parts=PART_NAMES[item]||PART_NAMES['default']||[];
-  return parts.map(function(p){return '<option value="'+p+'">';}).join('');
-}
-function rebuildContent(){
-  const items=getSelItems();
-  const show=items.length>0;
-  document.getElementById('content-card').classList.toggle('hidden',!show);
-  document.getElementById('premat-card').classList.toggle('hidden',!show);
-  if(!show){cState={};return;}
-  Object.keys(cState).forEach(k=>{if(!items.includes(k))delete cState[k];});
-  document.getElementById('content-area').innerHTML=items.map((item,idx)=>{
-    const chips=getChips(item);
-    const st=cState[item]||{};
-    return`<div class="ci">
-      <div class="ci-header"><span class="ci-badge">${item}</span><span class="ci-remove" onclick="deselItem('${esc(item)}')">×</span></div>
-      <div class="chips">
-        ${buildChips(chips,st.chip,item)}
-        <div class="chip" onclick="addCustomChip('${esc(item)}')" style="border-style:dashed;color:var(--t3);">＋ 新增</div>
-      </div>
-      <div class="ci-custom"><input class="fx-inp" type="text" placeholder="自訂描述（會覆蓋上方選擇）" value="${st.custom||''}" oninput="setCS('${esc(item)}','custom',this.value)"/></div>
-      <div class="ci-fields">
-        <input class="fx-inp qty" type="text" placeholder="數量 如 1、2" value="${st.qty||''}" oninput="setCS('${esc(item)}','qty',this.value)"/>
-        <input class="fx-inp loc" type="text" placeholder="位置 如 靠床、靠書桌" value="${st.loc||''}" oninput="setCS('${esc(item)}','loc',this.value)"/>
-      </div>
-    </div>`;
-  }).join('');
-}
-function deselItem(item){const el=document.querySelector(`.ic[data-item="${CSS.escape(item)}"]`);if(el)el.classList.remove('on');delete cState[item];rebuildContent();}
-function pickChip(item,chip){if(!cState[item])cState[item]={};cState[item].chip=cState[item].chip===chip?'':chip;rebuildContent();}
-function pickChipEl(el){var item=el.dataset.item;var chip=el.dataset.chip;pickChip(item,chip);}
-function setCS(item,key,val){if(!cState[item])cState[item]={};cState[item][key]=val;}
-function esc(s){return s.replace(/\\/g,'\\\\').replace(/'/g,"\\'");}
-
-// ━━━━━━━━━━━━━━━━━━━━━━━━ PRE-MAT ━━━━━━━━━━━━━━━━━━━━━━━━
-function addPremat(){
-  const sel=document.getElementById('premat-sel');
-  const v=sel.value; if(!v)return;
-  const parts=v.split('|');
-  let name=parts[0], src=parts[1]||'vendor';
-  // Handle custom input
-  if(name==='__custom__'){
-    const customName=prompt('輸入耗材名稱：','');
-    if(!customName||!customName.trim())return;
-    const customSrc=prompt('來源（廠商提供/妙慧樓自備/住眾自費）：','廠商提供');
-    name=customName.trim();
-    src={廠商提供:'vendor',妙慧樓自備:'self',住眾自費:'resident'}[customSrc]||'vendor';
-    // Save to persistent custom mats list
-    if(!customMats.find(m=>m.k===name)){
-      customMats.push({k:name,lb:name,src,noQty:false,hasFee:false});
-      saveCustomMats();
-      rebuildPrematSel();
-      toast('✅ 已新增「'+name+'」為固定耗材選項');
-    }
-  }
-  const noQty=parts[2]==='noqty';
-  const feeMatch=(parts[2]||'').match(/fee:(\d+)/);
-  const hasFee=!!feeMatch;
-  const defaultFee=hasFee?+feeMatch[1]:0;
-  const def=[...MAT_OPTS,...customMats].find(m=>m.k===name);
-  const lb=def?def.lb:name;
-  if(preMats.find(m=>m.name===name)){toast('已加入');return;}
-  preMats.push({name,lb,src,noQty,hasFee,fee:defaultFee,qty:''});
-  renderPremat(); sel.value='';
-}
-function renderPremat(){
-  const el=document.getElementById('premat-list');
-  if(!preMats.length){el.innerHTML='';return;}
-  el.innerHTML=preMats.map((m,i)=>`
-    <div class="premat-row">
-      <div class="premat-name"><div style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${m.lb}</div><div style="font-size:11px;color:var(--t3);white-space:nowrap;">${SRC_LB[m.src]}</div></div>
-      ${m.noQty?'<span style="font-size:11px;color:var(--t3);">不計數量</span>':`<input class="premat-qty" type="number" min="1" placeholder="數量" value="${m.qty||''}" onchange="preMats[${i}].qty=this.value"/>`}
-      ${m.hasFee?`<input class="premat-qty" type="number" placeholder="${m.fee}元" value="${m.fee||''}" onchange="preMats[${i}].fee=this.value" style="width:64px;min-width:64px;max-width:64px;flex-shrink:0;"/>`:''}
-      <span class="premat-del" onclick="preMats.splice(${i},1);renderPremat()">×</span>
-    </div>`).join('');
-}
-
-// ━━━━━━━━━━━━━━━━━━━━━━━━ SUBMIT ━━━━━━━━━━━━━━━━━━━━━━━━
-function buildEntries(){
-  return getSelItems().map(item=>{
-    const st=cState[item]||{};
-    const desc=st.custom||st.chip||`${item}故障`;
-    const rawQty=(st.qty||'').trim(),loc=(st.loc||'').trim();
-    // 純數字自動加 * 前綴（例如輸入 1 → *1）
-    const qty=rawQty?(/^\d+$/.test(rawQty)?'*'+rawQty:rawQty):'';
-    return{item,content:desc+(qty?qty:'')+(loc?`(${loc})`:''),fixStatus:'pending',fixNote:'',fixAct:'更換',fixQty:'',fixItem:item,fixResult:'恢復正常',mats:[]};
-  });
-}
-async function submitRepair(){
-  const zone=document.getElementById('a-zone').value;
-  const floor=document.getElementById('a-floor').value;
-  const room=document.getElementById('a-room').value.trim();
-  const rdate=document.getElementById('a-rdate').value;
-  if(!zone||!floor){toast('請選擇區域和樓層');return;}
-  if(!room){toast('請填寫位置/房號');return;}
-  if(!rdate){toast('請填寫報修日期');return;}
-  const entries=buildEntries();
-  if(!entries.length){toast('請選擇報修項目');return;}
-  const newRec={id:Date.now(),zone,floor,room,rdate,entries,status:'pending',preMats:JSON.parse(JSON.stringify(preMats))};
-  records.unshift(newRec);
-  save();resetForm();
-  setSyncStatus('儲存中…','syncing');
-  await pushRecord(newRec);
-  setSyncStatus('已同步 ✓','ok');
-  renderAll(); // pushRecord 完成後才 renderAll，確保資料正確
-  toast('✅ 報修紀錄已儲存');
-  setTimeout(()=>setSyncStatus('',''),3000);
-  goPage('list',document.querySelectorAll('.nb')[1]);
-}
-function resetForm(){
-  ['a-zone','a-floor','a-room','a-manual'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('a-rdate').value=today();
-  document.querySelectorAll('.ic.on').forEach(el=>el.classList.remove('on'));
-  document.querySelectorAll('.ic[data-manual]').forEach(el=>el.remove());
-  cState={};preMats=[];
-  document.getElementById('content-card').classList.add('hidden');
-  document.getElementById('premat-card').classList.add('hidden');
-  document.getElementById('item-search').value='';
-  document.getElementById('premat-list').innerHTML='';
-  buildItemGrid(ITEMS);
-}
-
-// ━━━━━━━━━━━━━━━━━━━━━━━━ SORT & LIST ━━━━━━━━━━━━━━━━━━━━━━━━
-function setSort(mode,el){
-  sortMode=mode;
-  document.querySelectorAll('.sort-btn').forEach(b=>b.classList.remove('on'));
-  el.classList.add('on');
-  renderList();
-}
-
-// Room number extractor: gets numeric part for sorting
-function roomNum(room){
-  const m=room.match(/\d+/);return m?+m[0]:0;
-}
-
-function sortedRecords(list){
-  // 有人住模式：只顯示有人住，房號從小到大
-  if(sortMode==='resident'){
-    return list.filter(r=>r.zone==='有人住').sort((a,b)=>roomNum(a.room)-roomNum(b.room));
-  }
-  const floorList=sortMode==='top-down'?[...FLOOR_ORDER]:([...FLOOR_ORDER].reverse());
-  // Group by floor
-  const byFloor={};
-  list.forEach(r=>{
-    const f=r.floor;
-    if(!byFloor[f])byFloor[f]=[];
-    byFloor[f].push(r);
-  });
-  const result=[];
-  floorList.forEach((f,fi)=>{
-    if(!byFloor[f])return;
-    const asc=fi%2!==0;
-    const sorted=[...byFloor[f]].sort((a,b)=>asc?roomNum(a.room)-roomNum(b.room):roomNum(b.room)-roomNum(a.room));
-    result.push(...sorted);
-  });
-  return result;
-}
-
-function renderList(){
-  const q=document.getElementById('s-q').value.toLowerCase();
-  const sf=document.getElementById('s-st').value;
-  let list=records.filter(r=>{
-    const txt=[r.room,r.floor,r.zone,...r.entries.map(e=>e.item+e.content)].join(' ').toLowerCase();
-    return(!q||txt.includes(q))&&(!sf||r.status===sf);
-  });
-  list=sortedRecords(list);
-  document.getElementById('list-count').textContent=list.length;
-  const el=document.getElementById('list-body');
-  if(!list.length){el.innerHTML='<div class="empty">沒有符合的紀錄</div>';return;}
-  el.innerHTML=list.map(r=>{
-    const entriesHtml=r.entries.map(e=>{
-      const es=e.fixStatus||'pending';
-      const matStr=(e.mats||[]).length?e.mats.map(m=>`${m.lb||m.name}${m.noQty?'':('×'+(m.qty||'?'))}${m.hasFee&&m.fee?`(${m.fee}元)`:''}(${SRC_LB[m.src]||m.src})`).join('、'):'';
-      return`<div class="re">
-        <div class="re-top"><div class="re-item">🔧 ${e.item}</div><span class="badge ${ST_CLS[es]}">${ST_LB[es]}</span></div>
-        <div class="re-content">📝 ${e.content}</div>
-        ${e.fixNote?`<div class="re-fix">✅ ${e.fixNote}</div>`:''}
-        ${matStr?`<div class="re-mats">📦 ${matStr}</div>`:''}
-      </div>`;
-    }).join('');
-    const prematStr=(r.preMats||[]).length?r.preMats.map(m=>`${m.lb}${m.noQty?'':('×'+(m.qty||'?'))}`).join('、'):'';
-    return`<div class="rec">
-      <div class="rec-hd">
-        <div><div class="rec-loc">${r.floor}F ${r.room}<small>${r.zone}</small></div><div class="rec-rdate">報修：${r.rdate||'─'}</div></div>
-        <span class="badge ${ST_CLS[r.status]}">${ST_LB[r.status]}</span>
-      </div>
-      <div class="rec-entries">${entriesHtml}</div>
-      ${prematStr?`<div style="padding:7px 13px;font-size:12px;color:var(--amber);background:var(--amber-lt);border-top:1px solid var(--bdr);">📋 預計耗材：${prematStr}</div>`:''}
-      <div class="rec-acts">
-        <button class="btn btn-sm" style="background:var(--pri-lt);color:var(--pri);border:none;font-weight:700;" onclick="openFix(${r.id})">更新維修狀況</button>
-        <button class="btn btn-ghost btn-sm" onclick="openEdit(${r.id})">編輯報修</button>
-        <button class="btn btn-ghost btn-sm" onclick="delRec(${r.id})">刪除</button>
-      </div>
-    </div>`;
-  }).join('');
-}
-async function delRec(id){
-  if(!confirm('確定刪除？'))return;
-  records=records.filter(r=>r.id!==id);
-  save();renderAll();toast('刪除中…');
-  setSyncStatus('刪除同步中…','syncing');
-  await pushDeleteRecord(id);
-  setSyncStatus('已同步 ✓','ok');
-  toast('✅ 已刪除');
-  setTimeout(()=>setSyncStatus('',''),3000);
-}
-
-// ━━━━━━━━━━━━━━━━━━━━━━━━ STATUS MODAL ━━━━━━━━━━━━━━━━━━━━━━━━
-function openFix(id){
-  const r=records.find(r=>r.id===id);if(!r)return;
-  fixId=id;
-  document.getElementById('fx-loc').textContent=`${r.floor}F ${r.room}（${r.zone}）`;
-  document.getElementById('fx-date').value=r.fixDate||'';
-  document.getElementById('fx-entries').innerHTML=r.entries.map((e,i)=>buildFxEntry(e,i)).join('');
-  r.entries.forEach((e,i)=>{
-    const aEl=document.getElementById(`fxa-${i}`);if(aEl&&e.fixAct)aEl.value=e.fixAct;
-    const rEl=document.getElementById(`fxr-${i}`);if(rEl&&e.fixResult)rEl.value=e.fixResult;
-  });
-  document.getElementById('modal-fix').classList.add('open');
-}
-function buildFxEntry(e,i){
-  const sd=e.fixStatus==='done'?'sd':'',sdf=e.fixStatus==='deferred'?'sdf':'',spg=e.fixStatus==='inprog'?'spg':'';
-  return`<div class="fxe">
-    <div class="fxe-ttl">${e.item}</div>
-    <div class="fxe-content">${e.content}</div>
-    <div class="status-row">
-      <div class="st-btn ${sd}" id="fsd-${i}" onclick="setFxSt(${i},'done')">✅ 已完修</div>
-      <div class="st-btn ${sdf}" id="fsdf-${i}" onclick="setFxSt(${i},'deferred')">🔜 待下次</div>
-      <div class="st-btn ${spg}" id="fspg-${i}" onclick="setFxSt(${i},'inprog')">🔄 處理中</div>
-    </div>
-    <div class="compose-grid">
-      <select id="fxa-${i}" class="fx-sel" style="margin-bottom:0;" onchange="autoFix(${i})"><option>更換</option><option>調整</option><option>加裝</option><option>補充</option><option>清除</option><option>協助</option></select>
-      <input id="fxq-${i}" class="fx-inp" type="text" placeholder="數量 如：1個、2顆" value="${e.fixQty||''}" oninput="autoFix(${i})"/>
-    </div>
-    <div style="display:flex;gap:7px;margin-bottom:7px;">
-      <select id="fxitem-${i}" class="fx-sel" style="flex:1;margin-bottom:0;" onchange="autoFix(${i})">
-        ${getPartNames(e.item).map(p=>'<option value="'+p+'"'+(( e.fixItem||e.item)===p?' selected':'')+'>'+p+'</option>').join('')}
-        <option value="__other__">── 其他（自訂）──</option>
-      </select>
-      <button class="btn-xs btn-ghost" onclick="addPartNamePrompt('${esc(e.item)}',${i})" style="flex:none;padding:8px 10px;white-space:nowrap;border:1.5px solid var(--bdr-md);border-radius:var(--rs);cursor:pointer;background:#fff;font-size:13px;">＋</button>
-    </div>
-    <select id="fxr-${i}" class="fx-sel" onchange="autoFix(${i})">
-      <option>恢復正常</option><option>現場測試可正常使用</option><option>現場測試沒有異音</option>
-      <option>列下次處理</option><option>有鳥蛋，列下個月施作</option><option>尚未到貨</option><option>已自行更換</option>
-    </select>
-    <textarea id="fxn-${i}" class="fx-inp" rows="2" placeholder="修復說明（自動組合後可手動修改）" style="min-height:52px;resize:vertical;">${e.fixNote||''}</textarea>
-    <div class="mat-section">
-      <label>耗材（更換才填；調整類免填）</label>
-      <div id="fxmats-${i}">${buildMatHtml(e.mats||[],i)}</div>
-      <div class="mat-add-row">
-        <select id="fxmsel-${i}" class="fx-sel" style="margin-bottom:0;">
-          <option value="">── 選擇耗材 ──</option>
-          <optgroup label="妙慧樓自備">${MAT_OPTS.filter(m=>m.src==='self').map(m=>`<option value="${m.k}">${m.lb}</option>`).join('')}</optgroup>
-          <optgroup label="廠商提供">${MAT_OPTS.filter(m=>m.src==='vendor').map(m=>`<option value="${m.k}">${m.lb}</option>`).join('')}</optgroup>
-          <optgroup label="廠商代購，住眾自費">${MAT_OPTS.filter(m=>m.src==='resident').map(m=>`<option value="${m.k}">${m.lb}</option>`).join('')}</optgroup>
-          <optgroup label="我的自訂耗材" id="fxmsel-custom-grp-${i}">${customMats.map(m=>`<option value="${m.k}">${m.lb}</option>`).join('')}</optgroup>
-          <option value="__custom__">＋ 其他（自訂新增）…</option>
-        </select>
-        <button class="btn btn-ghost btn-xs" onclick="addMat(${i})">＋</button>
-      </div>
-    </div>
-  </div>`;
-}
-function buildMatHtml(mats,ei){
-  if(!mats.length)return'<div class="mat-empty">無耗材</div>';
-  return'<div class="mat-list">'+mats.map(function(m,mi){
-    var feeInp='<div style="flex-shrink:0;text-align:center;width:64px;"><div class="mat-lbl">金額(元)</div><input type="number" class="mat-fee-inp" value="'+(m.fee||m.defaultFee||'')+'" oninput="updMat('+ei+','+mi+',&quot;fee&quot;,this.value)"/></div>';
-    var fee=m.hasFee?feeInp:'';
-    var qtyInp='<div style="flex-shrink:0;text-align:center;width:64px;"><div class="mat-lbl">數量</div><input type="number" class="mat-qty-inp" min="1" value="'+(m.qty||'')+'" oninput="updMat('+ei+','+mi+',&quot;qty&quot;,this.value)"/></div>';
-    var qty=m.noQty?'<span style="font-size:11px;color:var(--t3);flex-shrink:0;white-space:nowrap;">不計數量</span>':qtyInp;
-    return '<div class="mat-row"><div class="mat-info"><div class="mat-name">'+(m.lb||m.name)+'</div><span class="mat-src-badge '+(SRC_CLS[m.src]||'msv')+'">'+(SRC_LB[m.src]||m.src)+'</span></div>'+fee+qty+'<span class="mat-del" onclick="rmMat('+ei+','+mi+')">×</span></div>';
-  }).join('')+'</div>';
-}
-function setFxSt(i,st){
-  const r=records.find(r=>r.id===fixId);if(r)r.entries[i].fixStatus=st;
-  ['done','deferred','inprog'].forEach(s=>document.getElementById(`fs${s==='done'?'d':s==='deferred'?'df':'pg'}-${i}`).className='st-btn'+(st===s?({done:' sd',deferred:' sdf',inprog:' spg'}[s]):''));
-}
-function autoFix(i){
-  const date=document.getElementById('fx-date').value.trim();
-  const act=document.getElementById('fxa-'+i).value;
-  const qty=document.getElementById('fxq-'+i).value.trim();
-  const rawItem=document.getElementById('fxitem-'+i).value;
-  const item=(rawItem==='__other__'?'':rawItem).trim();
-  const result=document.getElementById('fxr-'+i).value;
-  document.getElementById('fxn-'+i).value=(date||'')+act+(qty||'')+(item||'')+'後，'+result;
-}
-function autoFixAll(){const r=records.find(r=>r.id===fixId);if(!r)return;r.entries.forEach((_,i)=>autoFix(i));}
-function addPartNamePrompt(item,i){
-  const name=prompt('新增維修項目名稱（將永久保存）：','');
-  if(!name||!name.trim())return;
-  addCustomPartName(item,name.trim());
-  // Rebuild select for this entry
-  const sel=document.getElementById('fxitem-'+i);
-  if(!sel)return;
-  const cur=sel.value;
-  const names=getPartNames(item);
-  sel.innerHTML=names.map(p=>'<option value="'+p+'"'+(cur===p?' selected':'')+'>'+p+'</option>').join('')+'<option value="__other__">── 其他（自訂）──</option>';
-  sel.value=name.trim();
-  autoFix(i);
-  toast('✅ 已新增「'+name.trim()+'」為固定選項');
-}
-function addMat(ei){
-  const sel=document.getElementById(`fxmsel-${ei}`);
-  const k=sel.value;if(!k)return;
-  const r=records.find(r=>r.id===fixId);if(!r)return;
-  let mObj;
-  if(k==='__custom__'){
-    const name=prompt('耗材名稱：','');if(!name)return;
-    const srcStr=prompt('來源（廠商提供/妙慧樓自備/住眾自費）：','廠商提供');
-    const src={廠商提供:'vendor',妙慧樓自備:'self',住眾自費:'resident'}[srcStr]||'vendor';
-    mObj={name,lb:name,src,noQty:false,hasFee:false,qty:''};
-    if(!customMats.find(m=>m.k===name)){
-    customMats.push({k:name,lb:name,src,noQty:false,hasFee:false});
-    saveCustomMats();
-    // Rebuild all fxmsel custom optgroups in modal
-    document.querySelectorAll('[id^="fxmsel-custom-grp-"]').forEach(grp=>{
-      grp.innerHTML=customMats.map(m=>'<option value="'+m.k+'">'+m.lb+'</option>').join('');
-    });
-    toast('✅ 已新增「'+name+'」為固定耗材選項');
-  }
-  }
-  else{const def=MAT_OPTS.find(m=>m.k===k);if(!def)return;if(r.entries[ei].mats.find(m=>m.name===def.k)){toast('已加入');return;}mObj={name:def.k,lb:def.lb,src:def.src,noQty:def.noQty,hasFee:def.hasFee,defaultFee:def.defaultFee,qty:'',fee:def.defaultFee||''};}
-  r.entries[ei].mats.push(mObj);
-  document.getElementById(`fxmats-${ei}`).innerHTML=buildMatHtml(r.entries[ei].mats,ei);
-  sel.value='';
-}
-function rmMat(ei,mi){const r=records.find(r=>r.id===fixId);if(!r)return;r.entries[ei].mats.splice(mi,1);document.getElementById(`fxmats-${ei}`).innerHTML=buildMatHtml(r.entries[ei].mats,ei);}
-function updMat(ei,mi,key,val){const r=records.find(r=>r.id===fixId);if(!r)return;const k=String(key).replace(/&quot;/g,'"');r.entries[ei].mats[mi][k]=val;}
-function closeModal(){document.getElementById('modal-fix').classList.remove('open');}
-async function saveFix(){
-  const r=records.find(r=>r.id===fixId);if(!r)return;
-  r.fixDate=document.getElementById('fx-date').value;
-  r.entries.forEach((e,i)=>{
-    e.fixAct=document.getElementById(`fxa-${i}`).value;
-    e.fixQty=document.getElementById(`fxq-${i}`).value;
-    e.fixItem=document.getElementById(`fxitem-${i}`).value;
-    e.fixResult=document.getElementById(`fxr-${i}`).value;
-    e.fixNote=document.getElementById(`fxn-${i}`).value;
-    // mats already updated via oninput → updMat()
-  });
-  const sts=r.entries.map(e=>e.fixStatus||'pending');
-  r.status=sts.every(s=>s==='done')?'done':sts.some(s=>s==='inprog')?'inprog':sts.some(s=>s==='deferred')?'deferred':'pending';
-  save();renderAll();closeModal();
-  setSyncStatus('儲存中…','syncing');
-  await pushRecord(records.find(r=>r.id===fixId));
-  setSyncStatus('已同步 ✓','ok');
-  toast('✅ 維修狀況已更新');
-  setTimeout(()=>setSyncStatus('',''),3000);
-}
-
-// ━━━━━━━━━━━━━━━━━━━━━━━━ EXCEL EXPORT ━━━━━━━━━━━━━━━━━━━━━━━━
-// Style helpers — SheetJS 0.18.5 with {cellStyles:true}
-const B_THIN={top:{style:'thin',color:{rgb:'FF999999'}},bottom:{style:'thin',color:{rgb:'FF999999'}},left:{style:'thin',color:{rgb:'FF999999'}},right:{style:'thin',color:{rgb:'FF999999'}}};
-const B_MED={top:{style:'medium',color:{rgb:'FF1A4A78'}},bottom:{style:'medium',color:{rgb:'FF1A4A78'}},left:{style:'medium',color:{rgb:'FF1A4A78'}},right:{style:'medium',color:{rgb:'FF1A4A78'}}};
-
-function cellStyle(align,isBold,bgRgb,textRgb){
-  return{
-    font:{name:'Calibri',sz:13,bold:!!isBold,color:{rgb:textRgb||'1A1816'}},
-    fill:bgRgb?{fgColor:{rgb:bgRgb},patternType:'solid'}:{},
-    alignment:{horizontal:align||'center',vertical:'center',wrapText:true},
-    border:B_THIN
+      if(res.rooms){
+        res.rooms.forEach(function(r){
+          if(r.room && r.name) dynamicRoomData[parseInt(r.room)] = r.name;
+        });
+        roomDataLoaded = true;
+      }
+    } catch(e) {}
+    delete window[cbName];
   };
-}
-function hdrStyle(align){
-  return{font:{name:'Calibri',sz:13,bold:true,color:{rgb:'FFFFFF'}},fill:{fgColor:{rgb:'1A4A78'},patternType:'solid'},alignment:{horizontal:align||'center',vertical:'center',wrapText:true},border:B_MED};
-}
-function titleStyle(){
-  return{font:{name:'Calibri',sz:14,bold:true,color:{rgb:'1A4A78'}},fill:{fgColor:{rgb:'EAF0F9'},patternType:'solid'},alignment:{horizontal:'center',vertical:'center'},border:B_THIN};
-}
-function altStyle(align,rowIdx){
-  const bg=rowIdx%2===0?'FFFFFF':'F2F6FC';
-  return{font:{name:'Calibri',sz:13,color:{rgb:'1A1816'}},fill:{fgColor:{rgb:bg},patternType:'solid'},alignment:{horizontal:align||'center',vertical:'center',wrapText:true},border:B_THIN};
+  var s = document.createElement('script');
+  s.src = scriptUrl + '?action=roomlist&callback=' + cbName;
+  s.onerror = function() { delete window[cbName]; };
+  document.head.appendChild(s);
 }
 
-function setCell(ws,r,c,val,style,isDate){
-  const addr=XLSX.utils.encode_cell({r,c});
-  if(isDate&&val){ws[addr]={t:'d',v:new Date(val),s:style};}
-  else if(typeof val==='number'){ws[addr]={t:'n',v:val,s:style};}
-  else{ws[addr]={t:'s',v:val==null?'':String(val),s:style};}
+
+function loadTodayData() {
+  var today = getTodayStr();
+  setStatus('yellow','載入紀錄中…');
+  fetch(scriptUrl+'?action=all&date='+encodeURIComponent(today))
+    .then(function(r){return r.json();})
+    .then(function(res){
+      if (res.status==='ok' && res.rows && res.rows.length>0) {
+        sessionLog = [];
+        backdateLog = [];
+        var sorted = res.rows.slice().sort(function(a,b){return a.time>b.time?1:-1;});
+        sorted.forEach(function(r){
+          var isMinus = MINUS_TYPES.indexOf(r.type)>=0;
+          var isBackdate = r.time.substring(0,10) !== today;
+          var entry = {time:r.time,room:r.room,name:r.name,amount:r.amount,type:r.type,note:r.note,minus:isMinus,backdate:isBackdate};
+          if (isBackdate) backdateLog.unshift(entry);
+          else sessionLog.unshift(entry);
+        });
+        updateCounters();
+        updateLogPage();
+        setStatus('connected','已連線・今日 '+sessionLog.length+' 筆・補登 '+backdateLog.length+' 筆');
+      } else {
+        setStatus('connected','已連線・資料將自動存入試算表');
+      }
+    })
+    .catch(function(){setStatus('connected','已連線・資料將自動存入試算表');});
 }
 
-// Alignment arrays are defined inline in each export function
+function lookupRoom(val) {
+  var input = document.getElementById('roomInput');
+  var display = document.getElementById('nameDisplay');
+  var num = parseInt(val);
+  if (!val || String(val).length < 3) {
+    input.className = 'room-input';
+    display.className = 'name-display empty';
+    display.innerHTML = '<span>👤</span><span>輸入房號後自動顯示姓名</span>';
+    currentName = ''; updateSubmit(); return;
+  }
+  // 靜態名單優先查詢，查無再查動態名單（住戶名單試算表新增的房號）
+  var name = roomData[num];
+  if (!name && dynamicRoomData[num]) name = dynamicRoomData[num];
+  if (name) {
+    currentName = name;
+    input.className = 'room-input valid';
+    display.className = 'name-display found';
+    var b = document.createElement('b');
+    b.style.fontSize = '20px';
+    b.style.letterSpacing = '2px';
+    b.textContent = currentName;
+    display.innerHTML = '<span>✓</span>';
+    display.appendChild(b);
+    updateSubmit();
+  } else {
+    currentName = '';
+    input.className = 'room-input invalid';
+    display.className = 'name-display not-found';
+    display.innerHTML = '<span>✗</span><span>查無此房號，請確認</span>';
+    updateSubmit();
+  }
+}
 
-function exportPremat(){
-  const vendor=document.getElementById('rp-vendor').value||'快陞';
-  const rpDate=document.getElementById('rp-date').value;
-  const ym=document.getElementById('rp-ym').value.split(',').map(s=>s.trim());
-  const year=ym[0]||new Date().getFullYear(),month=ym[1]||(new Date().getMonth()+1);
-  const ids=[...document.querySelectorAll('[data-rpid]:checked')].map(el=>+el.dataset.rpid);
-  const sel=records.filter(r=>ids.includes(r.id));
-  if(!sel.length){toast('請勾選紀錄');return;}
-  const matMap={};
-  sel.forEach(r=>{
-    (r.preMats||[]).forEach(m=>{
-      const key=m.name;
-      if(!matMap[key])matMap[key]={lb:m.lb||m.name,src:m.src,qty:0,noQty:m.noQty,unit:'個'};
-      if(!m.noQty&&m.qty) matMap[key].qty+=+m.qty||0;
-    });
+function selectAmount(val, el) {
+  document.querySelectorAll('.amount-chip').forEach(function(c){c.classList.remove('active');});
+  el.classList.add('active');
+  var wrap = document.getElementById('customWrap');
+  if (val==='custom') { wrap.classList.add('show'); selectedAmount=0; document.getElementById('customAmount').focus(); }
+  else { wrap.classList.remove('show'); selectedAmount=val; }
+  updateSubmit();
+}
+function onCustomAmount() { selectedAmount=parseInt(document.getElementById('customAmount').value)||0; updateSubmit(); }
+
+function selectType(el, isMinus) {
+  document.querySelectorAll('.type-chip').forEach(function(t){t.classList.remove('active');});
+  el.classList.add('active');
+  // 取得按鈕文字，去掉「支出」標籤文字
+  selectedType = el.textContent.replace('支出','').trim();
+  isMinusType = isMinus;
+  var prepayCard = document.getElementById('prepayMonthCard');
+  if (selectedType === '預繳') {
+    prepayCard.style.display = 'block';
+  } else {
+    prepayCard.style.display = 'none';
+    document.getElementById('prepayUntilMonth').value = '';
+  }
+}
+
+function updateSubmit() {
+  var room = document.getElementById('roomInput').value;
+  document.getElementById('submitBtn').disabled = !(room.length===3 && currentName && selectedAmount>0);
+}
+
+function updateCashCheck() {
+  var cashVal = document.getElementById('cashInput').value;
+  var cashDisplay = document.getElementById('cashDisplay');
+  var result = document.getElementById('checkResult');
+  var cash = parseInt(cashVal);
+  var todayNet = 0;
+  sessionLog.forEach(function(r){ todayNet += r.amount; });
+  if (!cashVal || isNaN(cash)) {
+    cashDisplay.textContent='— 元'; cashDisplay.style.color='var(--muted)';
+    result.style.display='none'; return;
+  }
+  cashDisplay.textContent=cash.toLocaleString()+' 元'; cashDisplay.style.color='var(--text)';
+  result.style.display='block';
+  if (cash===todayNet) {
+    result.textContent='✅ 金額相符，核對正確！'; result.style.color='var(--success)'; result.style.background='var(--success-light)';
+  } else {
+    var diff=cash-todayNet;
+    result.textContent='⚠️ 差異 '+(diff>0?'+':'')+diff.toLocaleString()+' 元，請重新確認';
+    result.style.color='var(--warn)'; result.style.background='var(--warn-light)';
+  }
+}
+
+function updateRunningTotal() {
+  var todayNet = 0;
+  sessionLog.forEach(function(r){ todayNet += r.amount; });
+  var el = document.getElementById('runningTotal');
+  el.textContent = todayNet.toLocaleString()+' 元';
+  el.style.color = todayNet<0?'var(--danger)':'var(--accent)';
+  if (document.getElementById('cashInput').value) updateCashCheck();
+}
+
+function updateCounters() {
+  var today = getTodayStr();
+  var todayNet = 0;
+  var todayCount = 0;
+  sessionLog.forEach(function(r){
+    if(r.time.substring(0,10)===today){ todayNet+=r.amount; todayCount++; }
   });
-  const vals=Object.values(matMap);
-  if(!vals.length){toast('所選紀錄中沒有預計耗材資料');return;}
-  const S=XB.S,ds=XB.ds;
-  const titleText=year+'年'+month+'月 所需耗材（廠商：'+vendor+'　報修日期：'+rpDate+'）';
-  const dataRows=vals.filter(m=>m.src==='vendor').concat(vals.filter(m=>m.src==='self')).concat(vals.filter(m=>m.src==='resident'));
-  const rows=[];
-  rows.push({ht:32,cells:[{v:titleText,s:S.TI},{v:'',s:S.TI},{v:'',s:S.TI},{v:'',s:S.TI},{v:'',s:S.TI}]});
-  rows.push({ht:39,cells:[{v:'編號',s:S.HC},{v:'所需耗材',s:S.HC},{v:'數量',s:S.HC},{v:'單位',s:S.HC},{v:'備註',s:S.HC}]});
-  dataRows.forEach((m,i)=>{
-    rows.push({ht:39,cells:[
-      {v:i+1,s:ds(i,'center')},
-      {v:m.lb,s:ds(i,'left')},
-      {v:m.noQty?'─':(m.qty||''),s:ds(i,'center')},
-      {v:m.noQty?'─':m.unit,s:ds(i,'center')},
-      {v:'',s:ds(i,'left')}
-    ]});
-  });
-  XB.dl(year+'年'+month+'月_妙慧樓所需耗材.xlsx','所需耗材',rows,[8,36,10,8,20],[{r1:0,c1:0,r2:0,c2:4}]);
-  toast('✅ 預計耗材表已下載');
-}
-function exportReport(){
-  const vendor=document.getElementById('rp-vendor').value||'快陞';
-  const rpDate=document.getElementById('rp-date').value;
-  const ym=document.getElementById('rp-ym').value.split(',').map(s=>s.trim());
-  const year=ym[0]||new Date().getFullYear(),month=ym[1]||(new Date().getMonth()+1);
-  const ids=[...document.querySelectorAll('[data-rpid]:checked')].map(el=>+el.dataset.rpid);
-  let sel=records.filter(r=>ids.includes(r.id));
-  if(!sel.length){toast('請勾選紀錄');return;}
-  // 按樓層排序：低樓層到高樓層，同樓層內房號從小到大
-  const FLOOR_ASC=['B1','一','二','三','四','五','六','頂樓'];
-  sel=[...sel].sort((a,b)=>{
-    const fa=FLOOR_ASC.indexOf(a.floor);
-    const fb=FLOOR_ASC.indexOf(b.floor);
-    if(fa!==fb) return (fa===-1?999:fa)-(fb===-1?999:fb);
-    return roomNum(a.room)-roomNum(b.room);
-  });
-
-  const S=XB.S,ds=XB.ds;
-  // Cols: 序號 報修日期 報修項目 區域 樓層 位置/房號 報修內容 預計耗材項目 廠商提供數量 妙慧樓自備數量
-  const AL=['center','center','center','center','center','center','left','left','center','center'];
-  const titleText=year+'年'+month+'月 報修單（廠商：'+vendor+'　報修日期：'+rpDate+'）';
-
-  const rows=[];
-  rows.push({ht:32,cells:AL.map((_,ci)=>({v:ci===0?titleText:'',s:S.TI}))});
-  rows.push({ht:39,cells:[
-    {v:'序號',s:S.HC},{v:'報修日期',s:S.HC},{v:'報修項目',s:S.HC},
-    {v:'區域',s:S.HC},{v:'樓層',s:S.HC},{v:'位置/房號',s:S.HC},
-    {v:'報修內容',s:S.HL},{v:'預計耗材項目',s:S.HL},
-    {v:'廠商提供數量',s:S.HC},{v:'妙慧樓自備數量',s:S.HC}
-  ]});
-
-  let seq=1, dataRowIdx=0;
-  sel.forEach(r=>{
-    const pmats=(r.preMats&&r.preMats.length)?r.preMats:[null];
-    r.entries.forEach((e,ei)=>{
-      pmats.forEach((pm,pmi)=>{
-        const isFirst=ei===0&&pmi===0;
-        const isEFirst=pmi===0;
-        const ri=dataRowIdx++;
-        const dsc=ds(ri,'center'), dsl=ds(ri,'left');
-        rows.push({ht:39,cells:[
-          {v:isFirst?seq:null,s:dsc},
-          {v:isFirst?(r.rdate?normDate(r.rdate):null):null,s:dsc},
-          {v:isEFirst?e.item:null,s:dsc},
-          {v:isFirst?r.zone:null,s:dsc},
-          {v:isFirst?r.floor:null,s:dsc},
-          {v:isFirst?r.room:null,s:dsc},
-          {v:isEFirst?e.content:null,s:dsl},
-          {v:pm?(pm.lb||pm.name):null,s:dsl},
-          {v:pm&&!pm.noQty&&pm.src==='vendor'?(+pm.qty||null):null,s:dsc},
-          {v:pm&&!pm.noQty&&pm.src==='self'?(+pm.qty||null):(pm&&pm.noQty?(pm.lb||pm.name):null),s:dsc},
-        ]});
-      });
-    });
-    seq++;
-  });
-
-  const merges=[{r1:0,c1:0,r2:0,c2:9}];
-  const cols=[6,13,14,8,6,14,30,26,12,12];
-  XB.dl(year+'年'+month+'月_妙慧樓報修單.xlsx',month+'月維修-已完成',rows,cols,merges);
-  toast('✅ 報修單已下載');
+  document.getElementById('countNum').textContent = todayCount;
+  document.getElementById('totalNum').textContent = todayNet.toLocaleString();
+  updateRunningTotal();
 }
 
+// ── 送出（已修正：加 Content-Type header，預繳月份驗證正確） ──
+function submitForm() {
+  if (!scriptUrl) { alert('請先設定 Apps Script 網址！'); return; }
+  var room = document.getElementById('roomInput').value;
+  var note = document.getElementById('noteInput').value.trim();
+  var timeStr = getSelectedDate();
+  var isBackdate = dateMode==='backdate';
+  var signedAmount = isMinusType ? -selectedAmount : selectedAmount;
 
-// Normalize date string — strips any JS Date toString garbage
-function normDate(v){
-  if(!v) return '';
-  var s=String(v);
-  // Already simple format like "6/3", "2026-05-26", "5/26" — keep as is
-  if(/^\d{1,4}[\/\-]\d{1,2}([\/\-]\d{1,4})?$/.test(s.trim())) return s.trim();
-  // JS Date toString: "Wed Jun 03 2026 00:00:00 GMT+0800..."
-  try{
-    var d=new Date(s);
-    if(!isNaN(d.getTime())){
-      return (d.getMonth()+1)+'/'+(d.getDate());
+  // 預繳月份驗證
+  var prepayUntil = '';
+  if (selectedType === '預繳') {
+    var prepayMonth = document.getElementById('prepayUntilMonth').value.trim();
+    if (!prepayMonth) {
+      alert('請填入預繳至月份！');
+      return;
     }
-  }catch(e){}
-  return s;
-}
+    prepayUntil = '2026/' + prepayMonth;
+  }
 
-function exportAll(){
-  const vendor=document.getElementById('rp-vendor').value||'快陞';
-  const rpDate=document.getElementById('rp-date').value;
-  const fxDate=document.getElementById('rp-fixdate').value;
-  const ym=document.getElementById('rp-ym').value.split(',').map(s=>s.trim());
-  const year=ym[0]||new Date().getFullYear(),month=ym[1]||(new Date().getMonth()+1);
+  document.getElementById('submitBtn').disabled = true;
+  document.getElementById('spinner').style.display = 'block';
+  document.getElementById('submitText').textContent = '送出中…';
 
-  const S=XB.S,ds=XB.ds;
-  // 14 cols: 序號 報修日期 廠商 維修日期 區域 樓層 位置/房號 報修項目 報修內容 維修狀態 修復說明 耗材項目 耗材數量(廠商提供) 耗材數量(妙慧樓自備)
-  const AL=['center','center','center','center','center','center','center','center','left','center','left','left','center','center'];
-  const titleText=year+'年'+month+'月 維修完整紀錄（廠商：'+vendor+'　報修日期：'+rpDate+'　維修日期：'+fxDate+'）';
+  var payload = {time:timeStr, room:room, name:currentName, amount:signedAmount, type:selectedType, note:note, prepayUntil:prepayUntil};
 
-  const rows=[];
-  rows.push({ht:32,cells:AL.map((_,ci)=>({v:ci===0?titleText:'',s:S.TI}))});
-  rows.push({ht:39,cells:[
-    {v:'序號',s:S.HC},{v:'報修日期',s:S.HC},{v:'廠商',s:S.HC},{v:'維修日期',s:S.HC},
-    {v:'區域',s:S.HC},{v:'樓層',s:S.HC},{v:'位置/房號',s:S.HC},{v:'報修項目',s:S.HC},
-    {v:'報修內容',s:S.HL},{v:'維修狀態',s:S.HC},{v:'修復說明',s:S.HL},
-    {v:'耗材項目',s:S.HL},{v:'耗材數量(廠商提供)',s:S.HC},{v:'耗材數量(妙慧樓自備)',s:S.HC}
-  ]});
-
-  // 匯出排序：樓層從低到高，同樓層房號從小到大
-  const FLOOR_ASC=['B1','一','二','三','四','五','六','頂樓'];
-  const exportRecords=[...records].sort((a,b)=>{
-    const fa=FLOOR_ASC.indexOf(a.floor);
-    const fb=FLOOR_ASC.indexOf(b.floor);
-    if(fa!==fb) return (fa===-1?999:fa)-(fb===-1?999:fb);
-    return roomNum(a.room)-roomNum(b.room);
-  });
-
-  let dataRowIdx=0;
-  exportRecords.forEach((r,ri)=>{
-    r.entries.forEach((e,ei)=>{
-      const mats=(e.mats&&e.mats.length)?e.mats:[null];
-      mats.forEach((m,mi)=>{
-        // isFirst: first row of this record (fills record-level fields)
-        // isEFirst: first mat of this entry (fills entry-level fields)
-        // For multi-mat rows: repeat entry-level AND record-level fields
-        // so every mat row has complete context — no empty rows
-        const isFirst=ei===0&&mi===0;
-        const dri=dataRowIdx++;
-        const dsc=ds(dri,'center'), dsl=ds(dri,'left');
-        rows.push({ht:39,cells:[
-          {v:ri+1,s:dsc},
-          {v:r.rdate?normDate(r.rdate):null,s:dsc},
-          {v:vendor,s:dsc},
-          {v:r.fixDate?normDate(r.fixDate):(fxDate?normDate(fxDate):null),s:dsc},
-          {v:r.zone,s:dsc},
-          {v:r.floor,s:dsc},
-          {v:r.room,s:dsc},
-          {v:e.item,s:dsc},
-          {v:e.content,s:dsl},
-          {v:ST_LB[e.fixStatus||'pending'],s:dsc},
-          {v:e.fixNote||null,s:dsl},
-          {v:m?(m.lb||m.name):null,s:dsl},
-          {v:m&&!m.noQty&&m.src==='vendor'?(+m.qty||null):null,s:dsc},
-          {v:m&&!m.noQty&&m.src==='self'?(+m.qty||null):(m&&m.noQty?(m.lb||m.name):null),s:dsc},
-        ]});
-      });
+  fetch(scriptUrl, {
+    method: 'POST',
+    body: JSON.stringify(payload)
+  })
+    .then(function(r){ return r.json(); })
+    .then(function(res){
+      document.getElementById('spinner').style.display = 'none';
+      document.getElementById('submitText').textContent = '送出這筆紀錄';
+      document.getElementById('submitBtn').disabled = false;
+      if (res.status==='ok') {
+        var entry={time:timeStr,room:room,name:currentName,amount:signedAmount,type:selectedType,note:note,minus:isMinusType,backdate:isBackdate};
+        if (isBackdate) backdateLog.unshift(entry);
+        else sessionLog.unshift(entry);
+        if (!periodStartDate) {
+          periodStartDate = timeStr.substring(0,10);
+          localStorage.setItem('periodStart', periodStartDate);
+        }
+        updateCounters();
+        updateLogPage();
+        showSuccess(true, room, note, timeStr, isBackdate, signedAmount);
+      } else {
+        showSuccess(false);
+      }
+    })
+    .catch(function(){
+      document.getElementById('spinner').style.display = 'none';
+      document.getElementById('submitText').textContent = '送出這筆紀錄';
+      document.getElementById('submitBtn').disabled = false;
+      showSuccess(false);
     });
+}
+
+function updateLogPage() {
+  var today = getTodayStr();
+  var allLogs = sessionLog.concat(backdateLog);
+  var total = allLogs.length;
+  document.getElementById('logBadge').textContent = total>0?'('+total+')':'';
+
+  var groups = {};
+  allLogs.forEach(function(r){
+    var d = r.time.substring(0,10);
+    if (!groups[d]) groups[d] = {net:0, count:0};
+    groups[d].net += r.amount;
+    groups[d].count++;
   });
 
-  // ── Sheet 2: 耗材數量 ──
-  const matMap=buildMatMap();
-  const matRows=[];
-  const matTitleText=year+'年'+month+'月 耗材數量';
-  matRows.push({ht:32,cells:[{v:matTitleText,s:S.TI},{v:'',s:S.TI},{v:'',s:S.TI},{v:'',s:S.TI}]});
-  matRows.push({ht:39,cells:[{v:'耗材項目',s:S.HL},{v:'來源',s:S.HC},{v:'廠商提供',s:S.HC},{v:'妙慧樓自備',s:S.HC}]});
-  Object.values(matMap).forEach((m,i)=>{
-    matRows.push({ht:39,cells:[
-      {v:m.lb,s:ds(i,'left')},
-      {v:SRC_LB[m.src],s:ds(i,'center')},
-      {v:m.src==='vendor'&&!m.noQty?(m.tv||null):null,s:ds(i,'center')},
-      {v:m.src==='self'&&!m.noQty?(m.ts||null):null,s:ds(i,'center')}
-    ]});
-  });
-  if(!Object.keys(matMap).length){
-    matRows.push({ht:39,cells:[{v:'尚無耗材紀錄',s:ds(0,'left')},{v:'',s:ds(0,'center')},{v:'',s:ds(0,'center')},{v:'',s:ds(0,'center')}]});
-  }
-
-  // ── Sheet 3: 本月廠商採購耗材 ──
-  const purRows=[];
-  purRows.push({ht:32,cells:[
-    {v:year+'年'+month+'月 廠商採購耗材',s:S.TI},
-    {v:'',s:S.TI},{v:'',s:S.TI}
-  ]});
-  purRows.push({ht:39,cells:[
-    {v:'採購項目',s:S.HL},{v:'數量',s:S.HC},{v:'單位',s:S.HC}
-  ]});
-  if(purchases.length){
-    purchases.forEach((p,i)=>{
-      purRows.push({ht:39,cells:[
-        {v:p.name||'',s:ds(i,'left')},
-        {v:p.qty?+p.qty:null,s:ds(i,'center')},
-        {v:p.unit||'',s:ds(i,'center')}
-      ]});
+  var dailyStats = document.getElementById('dailyStats');
+  var sortedDates = Object.keys(groups).sort();
+  if (sortedDates.length === 0) {
+    dailyStats.innerHTML = '<div style="text-align:center;color:var(--muted);font-size:13px;padding:10px 0;">尚無收費紀錄</div>';
+  } else {
+    var html = '';
+    var grandTotal = 0;
+    sortedDates.forEach(function(d){
+      var g = groups[d];
+      grandTotal += g.net;
+      var parts = d.split('/');
+      var shortDate = parseInt(parts[1])+'/'+parseInt(parts[2]);
+      var isToday = (d === today);
+      var amtClass = g.net >= 0 ? 'plus' : 'minus';
+      var amtStr = (g.net >= 0 ? '+' : '') + g.net.toLocaleString() + ' 元';
+      html += '<div class="daily-row"><span class="daily-date'+(isToday?' today':'')+'">'+shortDate+(isToday?' （今日）':'')+'</span><span class="daily-amount '+amtClass+'">'+amtStr+'</span></div>';
     });
-  }else{
-    purRows.push({ht:39,cells:[{v:'尚無採購紀錄',s:ds(0,'left')},{v:'',s:ds(0,'center')},{v:'',s:ds(0,'center')}]});
+    var totalClass = grandTotal >= 0 ? 'color:var(--success)' : 'color:var(--danger)';
+    var totalStr = (grandTotal >= 0 ? '+' : '') + grandTotal.toLocaleString() + ' 元';
+    html += '<div class="daily-total"><span>合計</span><b style="'+totalClass+'">'+totalStr+'</b></div>';
+    dailyStats.innerHTML = html;
   }
 
-  const sheet1={name:month+'月維修完整紀錄',rows,cols:[6,13,8,12,8,6,14,14,28,8,28,24,12,12],merges:[{r1:0,c1:0,r2:0,c2:13}]};
-  const sheet2={name:month+'月實際使用耗材',rows:matRows,cols:[32,12,12,12],merges:[{r1:0,c1:0,r2:0,c2:3}]};
-  const sheet3={name:month+'月廠商採購耗材',rows:purRows,cols:[36,12,10],merges:[{r1:0,c1:0,r2:0,c2:2}]};
-  XB.dl2(year+'年'+month+'月_妙慧樓完整紀錄.xlsx',[sheet1,sheet2,sheet3]);
-  toast('✅ 完整紀錄（含耗材及採購頁籤）已下載');
-}
+  var periodIn=0, periodOut=0;
+  allLogs.forEach(function(r){ if(r.amount>0) periodIn+=r.amount; else periodOut+=r.amount; });
+  var periodNet=periodIn+periodOut;
+  document.getElementById('periodIn').textContent='+'+periodIn.toLocaleString()+' 元';
+  document.getElementById('periodOut').textContent=periodOut.toLocaleString()+' 元';
+  var pn=document.getElementById('periodNet');
+  pn.textContent=periodNet.toLocaleString()+' 元';
+  pn.style.color=periodNet<0?'var(--danger)':'var(--success)';
 
-// ━━━━━━━━━━━━━━━━━━━━━━━━ REPORT LIST ━━━━━━━━━━━━━━━━━━━━━━━━
-function renderRpList(){
-  const el=document.getElementById('rp-list');
-  if(!records.length){el.innerHTML='<div class="empty">尚無紀錄</div>';return;}
-  el.innerHTML=records.map(r=>`
-    <div class="rp-item">
-      <input type="checkbox" data-rpid="${r.id}" checked/>
-      <div class="rp-info" onclick="this.previousElementSibling.click()">
-        <div style="font-size:14px;font-weight:700;">${r.floor}F ${r.room} <span style="color:var(--t3);font-weight:400;">${r.zone}</span>
-          <span class="badge ${ST_CLS[r.status]}" style="margin-left:6px;">${ST_LB[r.status]}</span>
-        </div>
-        <div style="font-size:12px;color:var(--t3);margin-top:2px;">${r.entries.map(e=>e.item).join('、')}</div>
-      </div>
-    </div>`).join('');
-}
-function rpSel(v){document.querySelectorAll('[data-rpid]').forEach(el=>el.checked=v);}
-function rpSelP(){document.querySelectorAll('[data-rpid]').forEach(el=>{const r=records.find(r=>r.id===+el.dataset.rpid);el.checked=r&&r.status==='pending';});}
-
-// ━━━━━━━━━━━━━━━━━━━━━━━━ MAT PAGE ━━━━━━━━━━━━━━━━━━━━━━━━
-function buildMatMap(){
-  const map={};
-  records.forEach(r=>r.entries.forEach(e=>(e.mats||[]).forEach(m=>{
-    if(!map[m.name])map[m.name]={name:m.name,lb:m.lb||m.name,src:m.src,tv:0,ts:0,noQty:m.noQty};
-    if(!m.noQty&&m.qty){if(m.src==='vendor')map[m.name].tv+=+m.qty||0;else if(m.src==='self')map[m.name].ts+=+m.qty||0;}
-  })));
-  return map;
-}
-function renderMat(){
-  const map=buildMatMap();const vals=Object.values(map);
-  document.getElementById('mat-auto').innerHTML=vals.length
-    ?vals.map(m=>`<tr><td>${m.lb}</td><td><span class="mat-src-badge ${SRC_CLS[m.src]||'msv'}">${SRC_LB[m.src]}</span></td><td style="text-align:center;">${m.src==='vendor'&&!m.noQty?(m.tv||'─'):'─'}</td><td style="text-align:center;">${m.src==='self'&&!m.noQty?(m.ts||'─'):'─'}</td></tr>`).join('')
-    :'<tr><td colspan="4" style="text-align:center;padding:16px;color:var(--t3);">尚無耗材紀錄</td></tr>';
-  document.getElementById('pur-body').innerHTML=purchases.map((p,i)=>`<tr>
-    <td><input type="text" value="${p.name||''}" style="width:100%;font-size:13px;" onchange="purchases[${i}].name=this.value;savePur()"/></td>
-    <td><input type="number" value="${p.qty||''}" style="width:60px;text-align:center;" onchange="purchases[${i}].qty=this.value;savePur()"/></td>
-    <td><input type="text" value="${p.unit||'個'}" style="width:38px;" onchange="purchases[${i}].unit=this.value;savePur()"/></td>
-    <td><span onclick="purchases.splice(${i},1);savePur();renderMat();" style="color:var(--red);cursor:pointer;font-size:18px;padding:0 4px;">×</span></td>
-  </tr>`).join('');
-}
-function addPur(){purchases.push({name:'',qty:'',unit:'個'});savePur();renderMat();}
-function exportMat(){
-  const month=new Date().getMonth()+1;
-  const year=new Date().getFullYear();
-  const map=buildMatMap();
-  const S=XB.S,ds=XB.ds;
-
-  // Sheet 1: 耗材數量
-  const rows1=[];
-  rows1.push({ht:32,cells:[{v:year+'年'+month+'月份耗材數量',s:S.TI},{v:'',s:S.TI},{v:'',s:S.TI},{v:'',s:S.TI}]});
-  rows1.push({ht:39,cells:[{v:'使用耗材',s:S.HL},{v:'來源',s:S.HC},{v:'廠商提供',s:S.HC},{v:'妙慧樓自備',s:S.HC}]});
-  Object.values(map).forEach((m,i)=>{
-    const dsc=ds(i,'center'), dsl=ds(i,'left');
-    rows1.push({ht:39,cells:[
-      {v:m.lb,s:dsl},
-      {v:SRC_LB[m.src],s:dsc},
-      {v:m.src==='vendor'&&!m.noQty?(m.tv||null):null,s:dsc},
-      {v:m.src==='self'&&!m.noQty?(m.ts||null):null,s:dsc}
-    ]});
-  });
-
-  // Sheet 2: 採購耗材
-  const rows2=[];
-  rows2.push({ht:32,cells:[{v:year+'年'+month+'月份採購耗材',s:S.TI},{v:'',s:S.TI},{v:'',s:S.TI}]});
-  rows2.push({ht:39,cells:[{v:'採購項目',s:S.HL},{v:'數量',s:S.HC},{v:'單位',s:S.HC}]});
-  purchases.forEach((p,i)=>{
-    rows2.push({ht:39,cells:[{v:p.name,s:ds(i,'left')},{v:p.qty?+p.qty:null,s:ds(i,'center')},{v:p.unit,s:ds(i,'center')}]});
-  });
-
-  // Download sheet 1 (sheet 2 would need multi-sheet support - for now combine)
-  const merges1=[{r1:0,c1:0,r2:0,c2:3}];
-  const merges2=[{r1:0,c1:0,r2:0,c2:2}];
-  XB.dl(year+'年'+month+'月_妙慧樓耗材數量.xlsx',month+'月份耗材數量',rows1,[32,12,12,12],merges1);
-  setTimeout(()=>{
-    XB.dl(year+'年'+month+'月_妙慧樓採購耗材.xlsx',month+'月份採購耗材',rows2,[32,10,8],merges2);
-  },500);
-  toast('✅ 耗材 Excel 已下載');
-}
-
-// ━━━━━━━━━━━━━━━━━━━━━━━━ UTILS ━━━━━━━━━━━━━━━━━━━━━━━━
-async function clearDone(){
-  const cnt=records.filter(r=>r.status==='done').length;
-  if(!cnt){toast('沒有已完修的紀錄');return;}
-  if(!confirm(`確定清除 ${cnt} 筆已完修的紀錄？\n建議先匯出備份。`))return;
-  // 先取得要刪除的 id 清單
-  const toDelete=records.filter(r=>r.status==='done').map(r=>r.id);
-  records=records.filter(r=>r.status!=='done');
-  save();renderAll();
-  setSyncStatus('Sheets 同步中…','syncing');
-  // 逐筆刪除，比批次覆寫更可靠
-  let ok=true;
-  for(const id of toDelete){
-    const res=await gasPost({action:'deleteRecord',id:id});
-    if(!res){ok=false;}
-  }
-  if(ok){
-    setSyncStatus('已同步 ✓','ok');
-    toast('✅ 已清除 '+cnt+' 筆已完修紀錄');
-  }else{
-    setSyncStatus('部分同步失敗','err');
-    toast('⚠️ 本機已清除，但部分 Sheets 同步失敗，請再按同步');
-  }
-  setTimeout(()=>setSyncStatus('',''),4000);
-}
-async function clearAll(){
-  if(!records.length){toast('沒有紀錄');return;}
-  if(!confirm(`確定清除全部 ${records.length} 筆紀錄？\n此操作無法還原，建議先匯出備份。`))return;
-  const cnt=records.length;
-  const toDelete=records.map(r=>r.id);
-  records=[];
-  save();renderAll();
-  // 自動更新年月為下一個月
-  const ymEl=document.getElementById('rp-ym');
-  if(ymEl){
-    const parts=ymEl.value.split(',').map(s=>s.trim());
-    let y=+parts[0],m=+parts[1];
-    m++;if(m>12){m=1;y++;}
-    ymEl.value=y+', '+m;
-    localStorage.setItem('mhb7_ym',ymEl.value);
-    pushCustom('reportYm',ymEl.value);
-  }
-  setSyncStatus('Sheets 同步中…','syncing');
-  let ok=true;
-  for(const id of toDelete){
-    const res=await gasPost({action:'deleteRecord',id:id});
-    if(!res){ok=false;}
-  }
-  if(ok){
-    setSyncStatus('已同步 ✓','ok');
-    toast('✅ 已清除全部 '+cnt+' 筆紀錄');
-  }else{
-    setSyncStatus('部分同步失敗','err');
-    toast('⚠️ 本機已清除，但部分 Sheets 同步失敗，請再按同步');
-  }
-  setTimeout(()=>setSyncStatus('',''),4000);
-}
-
-// ── 編輯報修 ──────────────────────────────────────────────
-let editPreMats = [];
-let editEntries = [];
-
-function parseContent(content){
-  // 解析 content 字串：「主燈故障*1(靠走道)」
-  // → {desc:'主燈故障', qty:'*1', loc:'靠走道'}
-  const locMatch=(content||'').match(/\(([^)]+)\)$/);
-  const loc=locMatch?locMatch[1]:'';
-  const withoutLoc=loc?(content||'').slice(0,-(loc.length+2)):(content||'');
-  const qtyMatch=withoutLoc.match(/(\*[^*]+)$/);
-  const qty=qtyMatch?qtyMatch[1]:'';
-  const desc=qty?withoutLoc.slice(0,-qty.length):withoutLoc;
-  return{desc:desc.trim(), qty:qty.trim(), loc:loc.trim()};
-}
-function buildContent(desc,qty,loc){
-  return (desc||'')+( qty?( /^\*/.test(qty)?qty:'*'+qty):'')+( loc?'('+loc+')':'');
-}
-function renderEditEntries(){
-  const el=document.getElementById('ed-entries-list');
-  if(!el)return;
-  if(!editEntries.length){el.innerHTML='<div style="color:var(--t3);font-size:13px;">無報修項目</div>';return;}
-  el.innerHTML=editEntries.map(function(e,i){
-    const p=parseContent(e.content);
-    return '<div style="border:1px solid var(--bdr);border-radius:var(--rs);padding:10px 12px;margin-bottom:8px;background:#fafafa;">'+
-      '<div style="font-weight:700;color:var(--pri);margin-bottom:8px;">'+e.item+'</div>'+
-      '<div class="f" style="margin-bottom:6px;">'+
-        '<label style="font-size:12px;color:var(--t2);">故障描述</label>'+
-        '<input class="fx-inp" type="text" value="'+p.desc+'" oninput="editEntries['+i+'].content=buildContent(this.value,editEntries['+i+']._qty||parseContent(editEntries['+i+'].content).qty,editEntries['+i+']._loc||parseContent(editEntries['+i+'].content).loc);editEntries['+i+']._desc=this.value;" placeholder="故障描述"/>'+
-      '</div>'+
-      '<div class="row2" style="margin-bottom:0;">'+
-        '<div class="f">'+
-          '<label style="font-size:12px;color:var(--t2);">數量（如 *1、*2）</label>'+
-          '<input class="fx-inp" type="text" value="'+p.qty+'" oninput="editEntries['+i+']._qty=this.value;editEntries['+i+'].content=buildContent(editEntries['+i+']._desc||parseContent(editEntries['+i+'].content).desc,this.value,editEntries['+i+']._loc||parseContent(editEntries['+i+'].content).loc);" placeholder="如 *1"/>'+
-        '</div>'+
-        '<div class="f">'+
-          '<label style="font-size:12px;color:var(--t2);">位置（如 靠走道）</label>'+
-          '<input class="fx-inp" type="text" value="'+p.loc+'" oninput="editEntries['+i+']._loc=this.value;editEntries['+i+'].content=buildContent(editEntries['+i+']._desc||parseContent(editEntries['+i+'].content).desc,editEntries['+i+']._qty||parseContent(editEntries['+i+'].content).qty,this.value);" placeholder="如 靠走道"/>'+
-        '</div>'+
-      '</div>'+
-    '</div>';
-  }).join('');
-}
-
-function openEdit(id){
-  const r = records.find(r=>r.id===id);
-  if(!r) return;
-  document.getElementById('ed-id').value = id;
-  document.getElementById('ed-loc').textContent = r.floor+'F '+r.room+'（'+r.zone+'）';
-  document.getElementById('ed-zone').value = r.zone||'';
-  document.getElementById('ed-floor').value = r.floor||'';
-  document.getElementById('ed-room').value = r.room||'';
-  document.getElementById('ed-rdate').value = r.rdate||'';
-  editPreMats = r.preMats ? JSON.parse(JSON.stringify(r.preMats)) : [];
-  editEntries = r.entries ? JSON.parse(JSON.stringify(r.entries)) : [];
-  renderEditPrematList();
-  renderEditEntries();
-  document.getElementById('modal-edit').classList.add('open');
-}
-
-function closeEditModal(){
-  document.getElementById('modal-edit').classList.remove('open');
-}
-
-function renderEditPrematList(){
-  const el = document.getElementById('ed-premat-list');
-  if(!editPreMats.length){
-    el.innerHTML = '<div class="mat-empty">尚無預計耗材</div>';
-    return;
-  }
-  el.innerHTML = '<div class="mat-list">'+editPreMats.map((m,i)=>`
-    <div class="mat-row">
-      <div class="mat-info">
-        <div class="mat-name">${m.lb||m.name}</div>
-        <span class="mat-src-badge ${SRC_CLS[m.src]||'msv'}">${SRC_LB[m.src]||m.src}</span>
-      </div>
-      ${m.noQty?'<span style="font-size:11px;color:var(--t3);">不計數量</span>':
-        `<div style="text-align:right;flex-shrink:0;min-width:0;">
-          <div class="mat-lbl">數量</div>
-          <input type="number" class="mat-qty-inp" min="1" value="${m.qty||''}" placeholder="數"
-            oninput="editPreMats[${i}].qty=this.value"/>
-        </div>`}
-      <span class="mat-del" onclick="editPreMats.splice(${i},1);renderEditPrematList()">×</span>
-    </div>`).join('')+'</div>';
-}
-
-function addEditPremat(){
-  const sel = document.getElementById('ed-premat-sel');
-  const v = sel.value;
-  if(!v) return;
-  const parts = v.split('|');
-  let name = parts[0], src = parts[1]||'vendor';
-  if(name==='__custom__'){
-    name = prompt('輸入耗材名稱：','');
-    if(!name||!name.trim()) return;
-    name = name.trim();
-    src = 'vendor';
-  }
-  const noQty = parts[2]==='noqty';
-  const feeMatch = (parts[2]||'').match(/fee:(\d+)/);
-  const hasFee = !!feeMatch;
-  const defaultFee = hasFee ? +feeMatch[1] : 0;
-  const def = [...MAT_OPTS,...customMats].find(m=>m.k===name);
-  const lb = def ? def.lb : name;
-  if(editPreMats.find(m=>m.name===name)){ toast('已加入'); return; }
-  editPreMats.push({name, lb, src, noQty, hasFee, fee:defaultFee, qty:''});
-  renderEditPrematList();
-  sel.value = '';
-}
-
-async function saveEdit(){
-  const id = +document.getElementById('ed-id').value;
-  const r = records.find(r=>r.id===id);
-  if(!r) return;
-  r.zone = document.getElementById('ed-zone').value;
-  r.floor = document.getElementById('ed-floor').value;
-  r.room = document.getElementById('ed-room').value.trim();
-  r.rdate = document.getElementById('ed-rdate').value;
-  r.preMats = JSON.parse(JSON.stringify(editPreMats));
-  if(editEntries.length) r.entries = JSON.parse(JSON.stringify(editEntries));
-  save(); renderAll(); closeEditModal();
-  setSyncStatus('儲存中…','syncing');
-  await pushRecord(records.find(r=>r.id===id));
-  setSyncStatus('已同步 ✓','ok');
-  toast('✅ 報修資料已更新');
-  setTimeout(()=>setSyncStatus('',''),3000);
-}
-
-function renderAll(){
-  const pending=records.filter(r=>r.status==='pending').length;
-  const badge=document.getElementById('pending-badge');
-  badge.textContent=pending+' 待維修';badge.className='hdr-pill'+(pending>0?' urgent':'');
-  renderList();renderRpList();renderMat();
-}
-function goPage(name,el){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
-  document.getElementById('pg-'+name).classList.add('on');
-  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('on'));
-  el.classList.add('on');
-}
-function toast(msg){
-  const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');
-  clearTimeout(window._t);window._t=setTimeout(()=>el.classList.remove('show'),2500);
-}
-
-init();
-
-// ═══════════════════════════════════════════════════════════════
-// XB — Pure JS XLSX Builder (bypasses SheetJS style limitations)
-// ═══════════════════════════════════════════════════════════════
-(function(){
-const _CT=new Uint32Array(256);for(let n=0;n<256;n++){let v=n;for(let k=0;k<8;k++)v=(v&1)?(0xEDB88320^(v>>>1)):(v>>>1);_CT[n]=v;}
-function _crc(d){let c=0xFFFFFFFF;for(let i=0;i<d.length;i++)c=_CT[(c^d[i])&0xFF]^(c>>>8);return(c^0xFFFFFFFF)>>>0;}
-function _u32(n){const b=new Uint8Array(4);new DataView(b.buffer).setUint32(0,n,true);return b;}
-function _u16(n){const b=new Uint8Array(2);new DataView(b.buffer).setUint16(0,n,true);return b;}
-function _cat(a){const t=a.reduce((s,x)=>s+x.length,0),o=new Uint8Array(t);let p=0;for(const x of a){o.set(x,p);p+=x.length;}return o;}
-function _enc(s){return new TextEncoder().encode(s);}
-function _zip(files){
-  const es=[];let off=0;
-  for(const[nm,data]of files){
-    const nb=_enc(nm),db=typeof data==='string'?_enc(data):data,crc=_crc(db);
-    const loc=_cat([new Uint8Array([0x50,0x4B,0x03,0x04,0x14,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00]),_u32(crc),_u32(db.length),_u32(db.length),_u16(nb.length),_u16(0),nb,db]);
-    es.push({nb,crc,sz:db.length,off,loc});off+=loc.length;
-  }
-  const cds=[];let cdsz=0;
-  for(const e of es){
-    const cd=_cat([new Uint8Array([0x50,0x4B,0x01,0x02,0x14,0x00,0x14,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00]),_u32(e.crc),_u32(e.sz),_u32(e.sz),_u16(e.nb.length),_u16(0),_u16(0),_u16(0),_u16(0),_u32(0),_u32(e.off),e.nb]);
-    cds.push(cd);cdsz+=cd.length;
-  }
-  const eocd=_cat([new Uint8Array([0x50,0x4B,0x05,0x06,0x00,0x00,0x00,0x00]),_u16(es.length),_u16(es.length),_u32(cdsz),_u32(off),_u16(0)]);
-  return _cat([...es.map(e=>e.loc),...cds,eocd]);
-}
-const _ST='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><fonts count="4"><font><sz val="13"/><name val="Calibri"/></font><font><sz val="13"/><b/><name val="Calibri"/></font><font><sz val="13"/><b/><color rgb="FFFFFFFF"/><name val="Calibri"/></font><font><sz val="14"/><b/><color rgb="FF1A4A78"/><name val="Calibri"/></font></fonts><fills count="6"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FF1A4A78"/></patternFill></fill><fill><patternFill patternType="solid"><fgColor rgb="FFEAF0F9"/></patternFill></fill><fill><patternFill patternType="solid"><fgColor rgb="FFFFFFFF"/></patternFill></fill><fill><patternFill patternType="solid"><fgColor rgb="FFF2F6FC"/></patternFill></fill></fills><borders count="3"><border><left/><right/><top/><bottom/><diagonal/></border><border><left style="thin"><color rgb="FF999999"/></left><right style="thin"><color rgb="FF999999"/></right><top style="thin"><color rgb="FF999999"/></top><bottom style="thin"><color rgb="FF999999"/></bottom><diagonal/></border><border><left style="medium"><color rgb="FF1A4A78"/></left><right style="medium"><color rgb="FF1A4A78"/></right><top style="medium"><color rgb="FF1A4A78"/></top><bottom style="medium"><color rgb="FF1A4A78"/></bottom><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="9"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/><xf numFmtId="0" fontId="3" fillId="3" borderId="1" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center" wrapText="1"/></xf><xf numFmtId="0" fontId="2" fillId="2" borderId="2" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center" wrapText="1"/></xf><xf numFmtId="0" fontId="2" fillId="2" borderId="2" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="left" vertical="center" wrapText="1"/></xf><xf numFmtId="0" fontId="0" fillId="4" borderId="1" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center" wrapText="1"/></xf><xf numFmtId="0" fontId="0" fillId="4" borderId="1" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="left" vertical="center" wrapText="1"/></xf><xf numFmtId="0" fontId="0" fillId="5" borderId="1" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center" wrapText="1"/></xf><xf numFmtId="0" fontId="0" fillId="5" borderId="1" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="left" vertical="center" wrapText="1"/></xf><xf numFmtId="0" fontId="1" fillId="3" borderId="1" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center" wrapText="1"/></xf></cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>';
-function _col(c){let s='';c++;while(c>0){s=String.fromCharCode(65+(c-1)%26)+s;c=Math.floor((c-1)/26);}return s;}
-function _esc(s){return String(s===null||s===undefined?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-function _ws(rows,cols,merges){
-  let x='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><cols>';
-  cols.forEach((w,i)=>{x+='<col min="'+(i+1)+'" max="'+(i+1)+'" width="'+w+'" customWidth="1"/>';});
-  x+='</cols><sheetData>';
-  rows.forEach((row,ri)=>{
-    x+='<row r="'+(ri+1)+'" ht="'+(row.ht||39)+'" customHeight="1">';
-    row.cells.forEach((cell,ci)=>{
-      if(cell.skip)return;
-      const addr=_col(ci)+(ri+1);
-      const v=cell.v;
-      const isNum=typeof v==='number';
-      x+='<c r="'+addr+'" s="'+(cell.s||0)+'"'+(isNum?'':' t="str"')+'>'+( (v===null||v===undefined||v==='')? '' : '<v>'+_esc(v)+'</v>' )+'</c>';
+  var allItems = document.getElementById('allItems');
+  allItems.innerHTML = '';
+  if (total === 0) {
+    allItems.innerHTML = '<div style="text-align:center;color:var(--muted);font-size:13px;padding:16px 0;">尚無收費紀錄</div>';
+  } else {
+    var sortedLogs = allLogs.slice().sort(function(a,b){ return b.time > a.time ? 1 : -1; });
+    sortedLogs.forEach(function(r){
+      var isBackdate = r.time.substring(0,10) !== today;
+      var idxInSession = sessionLog.indexOf(r);
+      var idxInBackdate = backdateLog.indexOf(r);
+      var idx = idxInSession >= 0 ? idxInSession : idxInBackdate;
+      allItems.appendChild(makeLogCard(r, idx, isBackdate));
     });
-    x+='</row>';
-  });
-  x+='</sheetData>';
-  if(merges&&merges.length){x+='<mergeCells count="'+merges.length+'">';merges.forEach(m=>{x+='<mergeCell ref="'+_col(m.c1)+(m.r1+1)+':'+_col(m.c2)+(m.r2+1)+'"/>';});x+='</mergeCells>';}
-  x+='</worksheet>';return x;
+  }
+  document.getElementById('logEmpty').style.display = total===0?'block':'none';
 }
-// Multi-sheet download: sheets = [{name, rows, cols, merges}, ...]
-function _dlSheets(fn, sheets){
-  const CT_parts=sheets.map((s,i)=>'<Override PartName="/xl/worksheets/sheet'+(i+1)+'.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>').join('');
-  const CT='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>'+CT_parts+'<Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/></Types>';
-  const RR='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>';
-  const WB_sheets=sheets.map((s,i)=>'<sheet name="'+_esc(s.name)+'" sheetId="'+(i+1)+'" r:id="rId'+(i+1)+'"/>').join('');
-  const WB='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets>'+WB_sheets+'</sheets></workbook>';
-  const WR_rels=sheets.map((s,i)=>'<Relationship Id="rId'+(i+1)+'" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet'+(i+1)+'.xml"/>').join('');
-  const WR='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'+WR_rels+'<Relationship Id="rId'+(sheets.length+1)+'" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>';
-  const files=[['[Content_Types].xml',CT],['_rels/.rels',RR],['xl/workbook.xml',WB],['xl/_rels/workbook.xml.rels',WR]];
-  sheets.forEach((s,i)=>files.push(['xl/worksheets/sheet'+(i+1)+'.xml',_ws(s.rows,s.cols,s.merges)]));
-  files.push(['xl/styles.xml',_ST]);
-  const zip=_zip(files);
-  const blob=new Blob([zip],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
-  const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=fn;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
-}
-function _dl(fn,sn,rows,cols,merges){_dlSheets(fn,[{name:sn,rows,cols,merges}]);}
-// Style helpers: ds(rowIndex, 'center'|'left') -> style index for data rows
-window.XB={dl:_dl,dl2:_dlSheets,S:{TI:1,HC:2,HL:3,DC:4,DL:5,AC:6,AL:7,HN:8},ds:function(ri,al){const a=ri%2!==0;return a?(al==='left'?7:6):(al==='left'?5:4);}};
-})();
 
+function makeLogCard(r, idx, isBackdate) {
+  var div = document.createElement('div');
+  div.className = 'log-item'+(r.minus?' minus':r.backdate?' backdate-item':'');
+  var amtHtml = r.minus
+    ? '<span class="log-amount-minus">'+r.amount.toLocaleString()+' 元</span>'
+    : '<span class="log-amount-plus">+'+r.amount.toLocaleString()+' 元</span>';
+  var badgeClass = r.minus?'minus':r.backdate?'backdate':'';
+  var dateLabel = r.backdate ? '補登 '+r.time.substring(0,10) : r.time;
+  div.innerHTML =
+    '<div class="log-top"><div><span class="log-room">'+r.room+'</span><span class="log-name">'+r.name+'</span></div>'+amtHtml+'</div>'+
+    '<div class="log-meta"><span class="log-type-badge '+badgeClass+'">'+r.type+'</span><span>'+dateLabel+'</span></div>'+
+    (r.note?'<div class="log-note">備註：'+r.note+'</div>':'')+
+    '<div class="log-delete-btn"><button class="delete-btn" onclick="deleteRecord('+idx+','+!!isBackdate+')">🗑️ 刪除這筆</button></div>';
+  return div;
+}
+
+function showSuccess(ok, room, note, timeStr, isBackdate, signedAmount) {
+  var icon=document.getElementById('overlayIcon');
+  var title=document.getElementById('overlayTitle');
+  var detail=document.getElementById('overlayDetail');
+  var nextBtn=document.getElementById('nextBtn');
+  if (ok) {
+    icon.textContent = isMinusType?'💸':'✅';
+    title.className='success-title';
+    title.textContent = isBackdate?'已補登入試算表！':'已存入試算表！';
+    var todayNet=0; sessionLog.forEach(function(r){todayNet+=r.amount;});
+    detail.innerHTML='<b>'+room+' '+currentName+'</b><br>金額：<b>'+(signedAmount>0?'+':'')+signedAmount.toLocaleString()+' 元</b><br>性質：'+selectedType+'<br>'+(note?'備註：'+note+'<br>':'')+'時間：'+timeStr+(isBackdate?'':'<br><br>今日淨額 <b style="color:'+(todayNet<0?'var(--danger)':'var(--accent)')+'">'+todayNet.toLocaleString()+'</b> 元');
+    nextBtn.textContent='登記下一筆';
+  } else {
+    icon.textContent='❌'; title.className='success-title err'; title.textContent='送出失敗';
+    detail.innerHTML='資料未能存入試算表。<br>請確認網路連線後重新送出。';
+    nextBtn.textContent='重試';
+  }
+  document.getElementById('successOverlay').classList.add('show');
+}
+
+function nextRecord() {
+  document.getElementById('successOverlay').classList.remove('show');
+  if (document.getElementById('overlayTitle').textContent!=='送出失敗') {
+    document.getElementById('roomInput').value='';
+    document.getElementById('noteInput').value='';
+    document.getElementById('customAmount').value='';
+    document.getElementById('prepayUntilMonth').value='';
+    document.getElementById('prepayMonthCard').style.display='none';
+    document.getElementById('customWrap').classList.remove('show');
+    document.getElementById('noteBody').classList.remove('show');
+    document.getElementById('noteToggle').classList.remove('open');
+    lookupRoom('');
+    document.querySelectorAll('.amount-chip').forEach(function(c,i){c.classList.toggle('active',i===0);});
+    selectedAmount=2500;
+    document.querySelectorAll('.type-chip').forEach(function(t,i){t.classList.toggle('active',i===0);});
+    selectedType='本月正常繳交'; isMinusType=false;
+    document.getElementById('roomInput').focus();
+  }
+  updateSubmit();
+}
+
+function deleteRecord(idx, isBackdate) {
+  var log = isBackdate ? backdateLog : sessionLog;
+  var r = log[idx];
+  if (!r) return;
+  if (!confirm('確認刪除這筆紀錄？\n'+r.room+' '+r.name+'\n'+r.amount.toLocaleString()+' 元・'+r.type+'\n\n此操作無法復原')) return;
+  var payload = { action: 'delete', time: r.time, room: r.room, amount: r.amount, type: r.type };
+  fetch(scriptUrl, { method: 'POST', body: JSON.stringify(payload) })
+    .then(function(res){ return res.json(); })
+    .then(function(data){
+      if (data.status === 'ok') {
+        log.splice(idx, 1);
+        if (!isBackdate) sessionLog = log; else backdateLog = log;
+        updateCounters();
+        updateLogPage();
+        alert('✅ 已刪除！清冊已自動更新。');
+      } else {
+        alert('刪除失敗：'+data.message);
+      }
+    })
+    .catch(function(){ alert('刪除失敗，請確認網路連線。'); });
+}
+
+function confirmSettle() {
+  var allLogs = sessionLog.concat(backdateLog);
+  if (allLogs.length===0) { alert('目前沒有任何紀錄可以結帳！'); return; }
+  var periodIn=0, periodOut=0;
+  allLogs.forEach(function(r){ if(r.amount>0) periodIn+=r.amount; else periodOut+=r.amount; });
+  var net = periodIn+periodOut;
+  if (!confirm('確認結帳？\n本期收入：'+periodIn.toLocaleString()+' 元\n本期支出：'+Math.abs(periodOut).toLocaleString()+' 元\n本期淨額：'+net.toLocaleString()+' 元\n\n結帳後將清零，資料存入歷史。')) return;
+  var history = JSON.parse(localStorage.getItem('settleHistory')||'[]');
+  var now = new Date();
+  var settleDate = now.getFullYear()+'/'+String(now.getMonth()+1).padStart(2,'0')+'/'+String(now.getDate()).padStart(2,'0');
+  history.unshift({settleDate:settleDate,periodStart:periodStartDate||allLogs[allLogs.length-1].time.substring(0,10),periodEnd:settleDate,income:periodIn,expense:periodOut,net:net,records:allLogs});
+  localStorage.setItem('settleHistory', JSON.stringify(history));
+  sessionLog=[]; backdateLog=[]; periodStartDate='';
+  localStorage.removeItem('periodStart');
+  updateCounters(); updateLogPage();
+  alert('✅ 結帳完成！本期淨額：'+net.toLocaleString()+' 元');
+}
+
+function showHistory() {
+  var history = JSON.parse(localStorage.getItem('settleHistory')||'[]');
+  var list = document.getElementById('historyList');
+  list.innerHTML = '';
+  if (history.length===0) {
+    list.innerHTML='<p style="color:var(--muted);text-align:center;padding:20px;">尚無歷史紀錄</p>';
+  } else {
+    history.forEach(function(h,idx){
+      var div=document.createElement('div');
+      div.className='history-item';
+      div.innerHTML='<div class="history-period">第'+(history.length-idx)+'期・'+h.periodStart+' ～ '+h.periodEnd+'</div><div class="history-amount">淨額：'+h.net.toLocaleString()+' 元</div><div class="history-detail">收入 '+h.income.toLocaleString()+' 元 / 支出 '+Math.abs(h.expense).toLocaleString()+' 元・共 '+h.records.length+' 筆</div><button onclick="showHistoryDetail('+idx+')" style="font-size:12px;color:var(--accent);background:none;border:none;cursor:pointer;padding:4px 0;">查看明細 →</button>';
+      list.appendChild(div);
+    });
+  }
+  document.getElementById('historyOverlay').classList.add('show');
+}
+
+function showHistoryDetail(idx) {
+  var history = JSON.parse(localStorage.getItem('settleHistory')||'[]');
+  var h = history[idx];
+  var list = document.getElementById('historyList');
+  list.innerHTML = '<button onclick="showHistory()" style="font-size:13px;color:var(--accent);background:none;border:none;cursor:pointer;padding:4px 0 12px;">← 返回列表</button>';
+  h.records.forEach(function(r){ list.appendChild(makeLogCard(r)); });
+}
 </script>
 </body>
 </html>
