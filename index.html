@@ -473,28 +473,58 @@ function loadRoomData() {
 function loadTodayData() {
   var today = getTodayStr();
   setStatus('yellow','載入紀錄中…');
-  fetch(scriptUrl+'?action=all&date='+encodeURIComponent(today))
-    .then(function(r){return r.json();})
-    .then(function(res){
-      if (res.status==='ok' && res.rows && res.rows.length>0) {
-        sessionLog = [];
-        backdateLog = [];
-        var sorted = res.rows.slice().sort(function(a,b){return a.time>b.time?1:-1;});
-        sorted.forEach(function(r){
-          var isMinus = MINUS_TYPES.indexOf(r.type)>=0;
-          var isBackdate = r.time.substring(0,10) !== today;
-          var entry = {time:r.time,room:r.room,name:r.name,amount:r.amount,type:r.type,note:r.note,minus:isMinus,backdate:isBackdate};
-          if (isBackdate) backdateLog.unshift(entry);
-          else sessionLog.unshift(entry);
-        });
-        updateCounters();
-        updateLogPage();
-        setStatus('connected','已連線・今日 '+sessionLog.length+' 筆・補登 '+backdateLog.length+' 筆');
-      } else {
-        setStatus('connected','已連線・資料將自動存入試算表');
-      }
-    })
-    .catch(function(){setStatus('connected','已連線・資料將自動存入試算表');});
+
+  // 換期偵測：若 GAS 回傳的期別與 localStorage 記錄的不同，自動清除舊快取
+  var savedPeriod = localStorage.getItem('currentPeriod') || '';
+
+  var cbName = 'gasTodayCb_' + Date.now();
+  window[cbName] = function(res) {
+    delete window[cbName];
+    if (res.status !== 'ok') {
+      setStatus('connected','已連線・資料將自動存入試算表');
+      return;
+    }
+
+    // 期別換月自動清除舊資料
+    if (res.period && res.period !== savedPeriod) {
+      sessionLog = [];
+      backdateLog = [];
+      periodStartDate = '';
+      localStorage.removeItem('periodStart');
+      localStorage.setItem('currentPeriod', res.period);
+      savedPeriod = res.period;
+    }
+
+    if (res.rows && res.rows.length > 0) {
+      sessionLog = [];
+      backdateLog = [];
+      var sorted = res.rows.slice().sort(function(a,b){return a.time>b.time?1:-1;});
+      sorted.forEach(function(r){
+        var isMinus = MINUS_TYPES.indexOf(r.type)>=0;
+        var isBackdate = r.time.substring(0,10) !== today;
+        var entry = {time:r.time,room:r.room,name:r.name,amount:r.amount,type:r.type,note:r.note,minus:isMinus,backdate:isBackdate};
+        if (isBackdate) backdateLog.unshift(entry);
+        else sessionLog.unshift(entry);
+      });
+      updateCounters();
+      updateLogPage();
+      setStatus('connected','已連線・今日 '+sessionLog.length+' 筆・補登 '+backdateLog.length+' 筆');
+    } else {
+      sessionLog = [];
+      backdateLog = [];
+      updateCounters();
+      updateLogPage();
+      setStatus('connected','已連線・資料將自動存入試算表');
+    }
+  };
+
+  var s = document.createElement('script');
+  s.src = scriptUrl + '?action=all&date=' + encodeURIComponent(today) + '&callback=' + cbName;
+  s.onerror = function() {
+    delete window[cbName];
+    setStatus('connected','已連線・資料將自動存入試算表');
+  };
+  document.head.appendChild(s);
 }
 
 function lookupRoom(val) {
