@@ -365,7 +365,7 @@ const roomData = {
   558:'周筱靜',559:'彭金玉',560:'陳金菊',561:'李慧琳',562:'陳怜君',563:'謝于寧',564:'謝秀娟',
   565:'簡一修',567:'周媛',568:'羅竹君',
   617:'王夢愉',618:'何倩馨',619:'曾晴鈺',620:'蔡孟蓉',621:'曾綉芳',622:'鄭綸霈',623:'郭珮緹',
-  625:'吳姿儀',626:'鄭安安',627:'鄧文琪',630:'何翊嘉',634:'侯妙璇',636:'孫佩貝',637:'陳怡君',
+  625:'吳姿儀',626:'鄭安安',627:'鄧文琪',634:'侯妙璇',636:'孫佩貝',637:'陳怡君',
   638:'蘇郁鈞',639:'王薏菁',640:'王麗君',641:'劉姿佑',642:'龔品蓉',643:'劉芷妤',644:'李敏瑜',
   645:'戴雅琪',646:'李家儀',647:'許瀞文',648:'江承澂',649:'黃亭穎',650:'許庭禎',652:'林佳臻',
   653:'徐采伶',654:'周裘語',655:'黃宜婷',659:'匡婕',660:'劉書菡',662:'呂明霞',663:'陳映頤',664:'林郁婷'
@@ -455,8 +455,13 @@ function loadRoomData() {
         document.getElementById('periodLabel').textContent = res.period;
       }
       if(res.rooms){
+        // 支援同房號多人：dynamicRoomData[房號] = [姓名1, 姓名2, ...]
         res.rooms.forEach(function(r){
-          if(r.room && r.name) dynamicRoomData[parseInt(r.room)] = r.name;
+          if(r.room && r.name) {
+            var num = parseInt(r.room);
+            if (!dynamicRoomData[num]) dynamicRoomData[num] = [];
+            if (dynamicRoomData[num].indexOf(r.name) < 0) dynamicRoomData[num].push(r.name);
+          }
         });
         roomDataLoaded = true;
       }
@@ -534,16 +539,36 @@ function lookupRoom(val) {
   if (!val || String(val).length < 3) {
     input.className = 'room-input';
     display.className = 'name-display empty';
+    display.style.cssText = '';
     display.innerHTML = '<span>👤</span><span>輸入房號後自動顯示姓名</span>';
     currentName = ''; updateSubmit(); return;
   }
-  // 靜態名單優先查詢，查無再查動態名單（住戶名單試算表新增的房號）
-  var name = roomData[num];
-  if (!name && dynamicRoomData[num]) name = dynamicRoomData[num];
-  if (name) {
-    currentName = name;
+
+  // 收集此房號所有住戶（靜態名單 + 動態名單合併，去重）
+  var names = [];
+  if (roomData[num]) names.push(roomData[num]);
+  if (dynamicRoomData[num]) {
+    dynamicRoomData[num].forEach(function(n){
+      if (names.indexOf(n) < 0) names.push(n);
+    });
+  }
+
+  if (names.length === 0) {
+    currentName = '';
+    input.className = 'room-input invalid';
+    display.className = 'name-display not-found';
+    display.style.cssText = '';
+    display.innerHTML = '<span>✗</span><span>查無此房號，請確認</span>';
+    updateSubmit();
+    return;
+  }
+
+  if (names.length === 1) {
+    // 只有一人，直接帶出姓名
+    currentName = names[0];
     input.className = 'room-input valid';
     display.className = 'name-display found';
+    display.style.cssText = '';
     var b = document.createElement('b');
     b.style.fontSize = '20px';
     b.style.letterSpacing = '2px';
@@ -552,10 +577,34 @@ function lookupRoom(val) {
     display.appendChild(b);
     updateSubmit();
   } else {
+    // 多人同房號，顯示選人按鈕
     currentName = '';
-    input.className = 'room-input invalid';
-    display.className = 'name-display not-found';
-    display.innerHTML = '<span>✗</span><span>查無此房號，請確認</span>';
+    input.className = 'room-input valid';
+    display.className = 'name-display found';
+    display.style.cssText = 'flex-direction:column;align-items:flex-start;gap:6px;';
+    display.innerHTML = '<span style="font-size:12px;color:#d97706;">⚠️ 此房號有多位住戶，請選擇：</span>';
+    var btnRow = document.createElement('div');
+    btnRow.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap;';
+    names.forEach(function(n){
+      var btn = document.createElement('button');
+      btn.textContent = n;
+      btn.style.cssText = 'padding:6px 14px;border-radius:20px;border:1.5px solid #2563eb;background:#eff6ff;color:#2563eb;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;';
+      btn.onclick = function(e){
+        e.preventDefault();
+        currentName = n;
+        display.className = 'name-display found';
+        display.style.cssText = '';
+        var b2 = document.createElement('b');
+        b2.style.fontSize = '20px';
+        b2.style.letterSpacing = '2px';
+        b2.textContent = n;
+        display.innerHTML = '<span>✓</span>';
+        display.appendChild(b2);
+        updateSubmit();
+      };
+      btnRow.appendChild(btn);
+    });
+    display.appendChild(btnRow);
     updateSubmit();
   }
 }
