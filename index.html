@@ -299,6 +299,14 @@
       <div style="text-align:center;color:var(--muted);font-size:13px;padding:10px 0;">載入中…</div>
     </div>
     <div class="section-title">每筆明細</div>
+    <div style="padding:0 0 8px 0;">
+      <input id="searchInput" type="text" inputmode="search"
+        placeholder="🔍 搜尋房號或姓名…"
+        style="width:100%;font-size:15px;font-family:'Noto Sans TC',sans-serif;padding:9px 14px;border:2px solid var(--border);border-radius:10px;outline:none;background:var(--card);color:var(--text);box-sizing:border-box;"
+        oninput="filterLogs(this.value)"
+        onfocus="this.style.borderColor='var(--accent)'"
+        onblur="this.style.borderColor='var(--border)'">
+    </div>
     <div id="allItems"></div>
     <div class="section-title">本期累計</div>
     <div class="period-summary">
@@ -740,8 +748,35 @@ function submitForm() {
     });
 }
 
+function filterLogs(query) {
+  var today = getTodayStr();
+  var allLogs = sessionLog.concat(backdateLog);
+  var q = query.trim();
+  var filtered = q === '' ? allLogs : allLogs.filter(function(r){
+    return String(r.room).indexOf(q) >= 0 || r.name.indexOf(q) >= 0;
+  });
+
+  var allItems = document.getElementById('allItems');
+  allItems.innerHTML = '';
+  if (filtered.length === 0) {
+    allItems.innerHTML = '<div style="text-align:center;color:var(--muted);font-size:13px;padding:16px 0;">找不到符合「'+q+'」的紀錄</div>';
+    return;
+  }
+  var sortedLogs = filtered.slice().sort(function(a,b){ return b.time > a.time ? 1 : -1; });
+  sortedLogs.forEach(function(r){
+    var isBackdate = r.time.substring(0,10) !== today;
+    var idxInSession = sessionLog.indexOf(r);
+    var idxInBackdate = backdateLog.indexOf(r);
+    var idx = idxInSession >= 0 ? idxInSession : idxInBackdate;
+    allItems.appendChild(makeLogCard(r, idx, isBackdate));
+  });
+}
+
 function updateLogPage() {
   var today = getTodayStr();
+  // 更新資料時清空搜尋欄，確保顯示完整紀錄
+  var searchEl = document.getElementById('searchInput');
+  if (searchEl) searchEl.value = '';
   var allLogs = sessionLog.concat(backdateLog);
   var total = allLogs.length;
   document.getElementById('logBadge').textContent = total>0?'('+total+')':'';
@@ -861,6 +896,7 @@ function nextRecord() {
 }
 
 function deleteRecord(idx, isBackdate) {
+  if (idx < 0) return; // 歷史紀錄檢視模式，不可刪除
   var log = isBackdate ? backdateLog : sessionLog;
   var r = log[idx];
   if (!r) return;
@@ -922,7 +958,10 @@ function showHistoryDetail(idx) {
   var h = history[idx];
   var list = document.getElementById('historyList');
   list.innerHTML = '<button onclick="showHistory()" style="font-size:13px;color:var(--accent);background:none;border:none;cursor:pointer;padding:4px 0 12px;">← 返回列表</button>';
-  h.records.forEach(function(r){ list.appendChild(makeLogCard(r)); });
+  h.records.forEach(function(r){
+    // 歷史紀錄只供檢視，刪除按鈕傳-1表示不可刪除
+    list.appendChild(makeLogCard(r, -1, false));
+  });
 }
 </script>
 </body>
