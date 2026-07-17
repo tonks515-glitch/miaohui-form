@@ -55,6 +55,8 @@
   .amount-chip{padding:8px 14px;border-radius:20px;border:1.5px solid var(--border);background:var(--bg);font-size:14px;font-weight:700;cursor:pointer;color:var(--text);transition:all 0.15s;font-family:'Noto Sans TC',sans-serif;}
   .amount-chip.active{background:var(--accent);border-color:var(--accent);color:#fff;}
   .amount-chip:active{transform:scale(0.95);}
+  .amount-chip.minus-chip{border-color:#fca5a5;color:var(--danger);}
+  .amount-chip.minus-chip.active{background:var(--danger);border-color:var(--danger);color:#fff;}
   .amount-custom-wrap{margin-top:8px;display:none;}
   .amount-custom-wrap.show{display:block;}
   .amount-input{width:100%;font-size:20px;font-weight:700;font-family:'Noto Sans TC',sans-serif;color:var(--text);background:var(--bg);border:2px solid var(--accent);border-radius:10px;padding:9px 16px;outline:none;-webkit-appearance:none;}
@@ -215,6 +217,8 @@
       <button class="amount-chip active" onclick="selectAmount(2500,this)">2500 元</button>
       <button class="amount-chip" onclick="selectAmount(1000,this)">1000 元</button>
       <button class="amount-chip" onclick="selectAmount(2000,this)">2000 元</button>
+      <button class="amount-chip minus-chip" onclick="selectAmount(-1500,this)">-1500 元</button>
+      <button class="amount-chip minus-chip" onclick="selectAmount(-1000,this)">-1000 元</button>
       <button class="amount-chip" onclick="selectAmount('custom',this)">其他</button>
     </div>
     <div class="amount-hint">
@@ -238,6 +242,7 @@
       <button class="type-chip" onclick="selectType(this,false)">收保證金</button>
       <button class="type-chip minus-chip" onclick="selectType(this,true)">退保證金<span class="minus-label">支出</span></button>
       <button class="type-chip minus-chip" onclick="selectType(this,true)">歸還零用金<span class="minus-label">支出</span></button>
+      <button class="type-chip minus-chip" onclick="selectType(this,false)">管理費退費<span class="minus-label">支出</span></button>
     </div>
     <!-- 預繳至月份（選預繳才出現） -->
     <div class="prepay-card" id="prepayMonthCard">
@@ -692,7 +697,7 @@ function loadTodayData() {
       backdateLog = [];
       var sorted = res.rows.slice().sort(function(a,b){return a.time>b.time?1:-1;});
       sorted.forEach(function(r){
-        var isMinus = MINUS_TYPES.indexOf(r.type)>=0;
+        var isMinus = r.amount<0;
         var isBackdate = r.time.substring(0,10) !== today;
         var entry = {time:r.time,room:r.room,name:r.name,amount:r.amount,type:r.type,note:r.note,minus:isMinus,backdate:isBackdate};
         if (isBackdate) backdateLog.unshift(entry);
@@ -823,7 +828,7 @@ function selectType(el, isMinus) {
 
 function updateSubmit() {
   var room = document.getElementById('roomInput').value;
-  document.getElementById('submitBtn').disabled = !(room.length===3 && currentName && selectedAmount>0);
+  document.getElementById('submitBtn').disabled = !(room.length===3 && currentName && selectedAmount!==0);
 }
 
 function updateCashCheck() {
@@ -905,7 +910,7 @@ function submitForm() {
       document.getElementById('submitText').textContent = '送出這筆紀錄';
       document.getElementById('submitBtn').disabled = false;
       if (res.status==='ok') {
-        var entry={time:timeStr,room:room,name:currentName,amount:signedAmount,type:selectedType,note:note,minus:isMinusType,backdate:isBackdate};
+        var entry={time:timeStr,room:room,name:currentName,amount:signedAmount,type:selectedType,note:note,minus:(signedAmount<0),backdate:isBackdate};
         if (isBackdate) backdateLog.unshift(entry);
         else sessionLog.unshift(entry);
         if (!periodStartDate) {
@@ -1039,7 +1044,7 @@ function showSuccess(ok, room, note, timeStr, isBackdate, signedAmount) {
   var detail=document.getElementById('overlayDetail');
   var nextBtn=document.getElementById('nextBtn');
   if (ok) {
-    icon.textContent = isMinusType?'💸':'✅';
+    icon.textContent = signedAmount<0?'💸':'✅';
     title.className='success-title';
     title.textContent = isBackdate?'已補登入試算表！':'已存入試算表！';
     var todayNet=0; sessionLog.forEach(function(r){todayNet+=r.amount;});
